@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расширенный тест интернета</title>
+    <link rel="stylesheet" href="./styles/main.css">
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Pliant:ital,wght@0,100..900;1,100..900&display=swap');
+
+    :root {
+        --main-bg-color: #0a0e1a;
+        --main-text-color: #fff;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header__left-col-btn {
+        border: 2px solid #2a3555;
+        border-radius: 12px;
+        display: flex;
+        transition: all 0.3s;
+        padding: 5px;
+    }
+
+    .header__left-col-btn:hover {
+        background-color: #2b3555;
+        transition: all 0.3s;
+    }
+
+    body {
+        font-family: Pliant;
+        background: var(--main-bg-color);
+        color: var(--main-text-color);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 800px;
+        width: 100%;
+        border-radius: 24px;
+        padding: 30px;
+    }
+
+    /* ===== ЗАГОЛОВОК ===== */
+    .header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .header p {
+        color: #8892b0;
+        font-size: 14px;
+    }
+
+    /* ===== КНОПКА ТЕСТА ===== */
+    .test-button {
+        display: block;
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 25px;
+    }
+
+    .test-button:hover:not(:disabled) {
+        background-color: #2a3555;
+        color: white;
+    }
+
+    .test-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .test-button .spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(10, 14, 26, 0.2);
+        border-top: 3px solid #0a0e1a;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto;
+    }
+
+    .test-button.loading .spinner {
+        display: block;
+    }
+
+    .test-button.loading .button-text {
+        display: none;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* ===== РЕЗУЛЬТАТЫ ===== */
+    .results {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 0 0 10px 0;
+        flex-wrap: wrap;
+    }
+
+    .d-elem {
+        width: 50px;
+        height: 10px;
+    }
+
+    .n-1 {
+        background-color: #ff4757;
+    }
+
+    .n-2 {
+        background-color: #ff9147;
+    }
+
+    .n-3 {
+        background-color: #fff347;
+    }
+
+    .n-4 {
+        background-color: #afff47;
+    }
+
+    .n-5 {
+        background-color: #6cff47;
+    }
+
+    .display {
+        display: flex;
+        gap: 5px;
+        flex-direction: column;
+        align-items: center;
+        border: 2px solid #2a3555;
+        padding: 10px;
+        width: 75px;
+        background-color: var(--main-bg-color);
+    }
+
+    .result-card {
+        border-radius: 12px;
+        padding: 18px;
+        border: 1px solid #2a3555;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    .result-card:hover {
+        background-color: #2b3555;
+        transition: all 0.3s;
+    }
+
+    .result-card .label {
+        font-size: 12px;
+        color: #8892b0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+    }
+
+    .result-card .value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ccd6f6;
+    }
+
+    .result-card .value .unit {
+        font-size: 14px;
+        font-weight: 400;
+        color: #8892b0;
+        margin-left: 4px;
+    }
+
+    .result-card .sub-value {
+        font-size: 13px;
+        color: #8892b0;
+        margin-top: 4px;
+    }
+
+    /* ===== КАТЕГОРИИ САЙТОВ ===== */
+    .categories {
+        margin-top: 25px;
+    }
+
+    .categories-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #ccd6f6;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .categories-title .badge {
+        font-size: 12px;
+        background: #2a3555;
+        padding: 2px 10px;
+        border-radius: 20px;
+        color: #8892b0;
+        font-weight: 400;
+    }
+
+    .category-item {
+        background: #FFF;
+        color: #1a2238;
+        font-weight: bold;
+        border-radius: 10px;
+        padding: 14px 16px;
+        border: 1px solid #2a3555;
+        display: flex;
+        justify-content: space-between;
+        transition: all 0.3s ease;
+        align-items: flex-end;
+    }
+
+    .category-item .name {
+        font-size: 14px;
+    }
+
+    .category-item .name .sub {
+        font-size: 11px;
+        display: block;
+        margin-top: 2px;
+        font-weight: 500;
+    }
+
+    .category-item .status-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .category-item .status-icon.success {
+        display: block;
+        color: #2ed573;
+        padding: 20px;
+        /* background-image: linear-gradient(90deg, #fff, #d5f7e3);*/
+    }
+
+    .category-item .status-icon.error {
+        display: block;
+        color: #ff4757;
+        padding: 20px;
+    }
+
+
+    .category-item .status-icon.warning {
+        display: block;
+        color: #ffa502;
+        padding: 20px;
+    }
+
+    .category-item .status-icon.partial {
+        background: rgba(79, 172, 254, 0.2);
+        color: #4facfe;
+    }
+
+    .show {
+        opacity: 1;
+    }
+
+    .hide {
+        opacity: 0;
+    }
+
+    .n-5-dis {
+        display: none;
+    }
+
+    .nav-bar {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        background-color: var(--main-bg-color);
+        padding: 40px 30px;
+        border-left: 2px solid #2a3555;
+        height: 100vh;
+        width: 320px;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        overflow-y: auto;
+    }
+
+    .full-nav-bar {
+        position: fixed;
+        top: 0;
+        right: -2000px;
+        background-color: var(--main-bg-color);
+        padding: 40px 30px;
+        border-left: 2px solid #2a3555;
+        height: 100vh;
+        width: 100%;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        overflow-y: auto;
+    }
+
+    .show-nav {
+        right: 0 !important;
+    }
+
+    .top-block {
+        font-size: 22px;
+        color: var(--main-text-color);
+        border-bottom: 1px solid #2a3555;
+        padding-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .nav-bar ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+    }
+
+    .nav-bar ul li {
+        padding: 12px 16px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        cursor: pointer;
+        color: #ccd6f6;
+    }
+
+    .nav-bar ul li:hover {
+        background: #2a3555;
+        color: white;
+    }
+
+    .nav-bar ul li div {
+        width: 100%;
+    }
+
+    .nav-bar p,
+    footer p {
+        color: #8892b0;
+        font-size: 14px;
+        padding-top: 15px;
+        border-top: 1px solid #2a3555;
+    }
+
+    .nav-bar a,
+    footer a {
+        color: #4facfe;
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    .nav-bar a:hover {
+        color: #00f2fe;
+    }
+
+    .alert-block {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .history-item {
+        background: #FFF;
+        color: #1a2238;
+        font-weight: bold;
+        border-radius: 10px;
+        padding: 14px 16px;
+        border: 1px solid #2a3555;
+        display: flex;
+        justify-content: space-between;
+        transition: all 0.3s ease;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .history-item-row {
+        font-weight: 500;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .history-clear-btn {
+        width: 100%;
+        padding: 10px;
+        font-weight: bold;
+        margin-top: 12px;
+        background: transparent;
+        border: 1px solid #fff;
+        color: #fff;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            padding: 20px;
+        }
+
+        .result-card {
+            width: 45%;
+        }
+
+        .result-card:hover {
+            background: none !important;
+        }
+
+        .category-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .status-bar {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+        }
+
+        .status-dot {
+            align-self: center;
+        }
+
+        .header h1 {
+            font-size: 22px;
+        }
+
+        .nav-bar {
+            width: 280px;
+            right: -300px;
+            padding: 25px 20px;
+        }
+
+        .full-nav-bar {
+            right: -400px;
+        }
+    }
+</style>
+
+<body>
+    <div class="nav-bar" id="navBar">
+        <div class="top-block">
+            <h2>Меню</h2>
+            <div class="close" onclick="closemenu()"><svg xmlns="http://www.w3.org/2000/svg" height="40px"
+                    viewBox="0 -960 960 960" width="40px" fill="#fff">
+                    <path
+                        d="M480-433.33 274.67-228q-9.67 9.67-23.34 9.67-13.66 0-23.33-9.67-9.67-9.67-9.67-23.33 0-13.67 9.67-23.34L433.33-480 228-685.33q-9.67-9.67-9.67-23.34 0-13.66 9.67-23.33 9.67-9.67 23.33-9.67 13.67 0 23.34 9.67L480-526.67 685.33-732q9.67-9.67 23.34-9.67 13.66 0 23.33 9.67 9.67 9.67 9.67 23.33 0 13.67-9.67 23.34L526.67-480 732-274.67q9.67 9.67 9.67 23.34 0 13.66-9.67 23.33-9.67 9.67-23.33 9.67-13.67 0-23.34-9.67L480-433.33Z" />
+                </svg>
+            </div>
+        </div>
+        <ul>
+            <li>
+                <div onclick="openSettings()">Настройки</div>
+            </li>
+            <li>
+                <div onclick="historyload()">История проверок</div>
+            </li>
+            <li>
+                <div onclick="openwiki()">Справка</div>
+            </li>
+            <li>
+                <div onclick="openlink()">Исходный код проекта</div>
+            </li>
+        </ul>
+        <p>Версия: 1.0.1</p>
+        <a href="https://github.com/Artemproector" target="_blank">By Artemproector</a>
+    </div>
+    <div class="full-nav-bar" id="navBar-full">
+        <div class="top-block">
+            <h2 class="labal-full-menu"></h2>
+            <div class="close" onclick="closefullmenu()"><svg xmlns="http://www.w3.org/2000/svg" height="40px"
+                    viewBox="0 -960 960 960" width="40px" fill="#fff">
+                    <path
+                        d="M287-446.67 503.67-230q10 10 9.83 23.33-.17 13.34-10.17 23.34-10 9.66-23.33 9.83-13.33.17-23.33-9.83L183.33-456.67q-5.33-5.33-7.5-11-2.16-5.66-2.16-12.33t2.16-12.33q2.17-5.67 7.5-11l273.34-273.34q9.66-9.66 23.16-9.66t23.5 9.66q10 10 10 23.5t-10 23.5L287-513.33h479.67q14.33 0 23.83 9.5 9.5 9.5 9.5 23.83 0 14.33-9.5 23.83-9.5 9.5-23.83 9.5H287Z" />
+                </svg>
+            </div>
+        </div>
+
+    </div>
+    <div class="container">
+        <div class="header">
+            <div class="header__right-col">
+                <h1 class="header__right-col-title">Расширенный тест интернета</h1>
+                <p class="header__right-col-text">Проверка скорости, доступности и режима работы сети</p>
+            </div>
+            <div class="header__left-col">
+                <div class="header__left-col-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px"
+                        fill="#fff">
+                        <path
+                            d="M153.33-240q-14.16 0-23.75-9.62-9.58-9.61-9.58-23.83 0-14.22 9.58-23.72 9.59-9.5 23.75-9.5h653.34q14.16 0 23.75 9.62 9.58 9.62 9.58 23.83 0 14.22-9.58 23.72-9.59 9.5-23.75 9.5H153.33Zm0-206.67q-14.16 0-23.75-9.61-9.58-9.62-9.58-23.84 0-14.21 9.58-23.71 9.59-9.5 23.75-9.5h653.34q14.16 0 23.75 9.61 9.58 9.62 9.58 23.84 0 14.21-9.58 23.71-9.59 9.5-23.75 9.5H153.33Zm0-206.66q-14.16 0-23.75-9.62-9.58-9.62-9.58-23.83 0-14.22 9.58-23.72 9.59-9.5 23.75-9.5h653.34q14.16 0 23.75 9.62 9.58 9.61 9.58 23.83 0 14.22-9.58 23.72-9.59 9.5-23.75 9.5H153.33Z" />
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+        <div class="results">
+            <div class="result-card">
+                <div class="display">
+                    <div class="d-elem n-5 dwn"></div>
+                    <div class="d-elem n-4 dwn"></div>
+                    <div class="d-elem n-3 dwn"></div>
+                    <div class="d-elem n-2 dwn"></div>
+                    <div class="d-elem n-1 dwn"></div>
+                </div>
+                <div class="value" id="downloadSpeed">-- <span class="unit">Мбит/с</span></div>
+                <div class="alert-block"
+                    onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                    <p>Входящая</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="40px"
+                        fill="#BB271A">
+                        <path
+                            d="m379.33-339.33 355-355q10-10 23.67-10 13.67 0 23.67 10 10 10 10 23.83 0 13.83-10 23.83l-379 379.34q-10 10-23.34 10-13.33 0-23.33-10L177.33-446q-10-10-9.5-23.83.5-13.84 10.5-23.84t23.84-10q13.83 0 23.83 10l153.33 154.34ZM584.83-97Q528-153.33 528-233.33q0-80.34 56.83-137.17 56.84-56.83 136.5-56.83 79.67 0 136.5 56.83 56.84 56.83 56.84 137.17 0 80-56.84 136.33Q801-40.67 721.33-40.67q-79.66 0-136.5-56.33Zm136.5-21q8.67 0 15-6 6.34-6 6.34-15.33 0-9.34-6.34-15.34-6.33-6-15-6-9.33 0-15.33 6t-6 15.34q0 9.33 6 15.33t15.33 6Zm0-83.33q8 0 13-5.34 5-5.33 5-13.33v-112q0-8-5.33-13t-13.33-5q-8 0-13 5.33-5 5.34-5 13.34v112q0 8 5.33 13t13.33 5Z" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <div class="display">
+                    <div class="d-elem n-5 up"></div>
+                    <div class="d-elem n-4 up"></div>
+                    <div class="d-elem n-3 up"></div>
+                    <div class="d-elem n-2 up"></div>
+                    <div class="d-elem n-1 up"></div>
+                </div>
+                <div class="value" id="uploadSpeed">-- <span class="unit">Мбит/с</span></div>
+                <div class="alert-block"
+                    onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                    <p>Исходящая</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="40px"
+                        fill="#BB271A">
+                        <path
+                            d="m379.33-339.33 355-355q10-10 23.67-10 13.67 0 23.67 10 10 10 10 23.83 0 13.83-10 23.83l-379 379.34q-10 10-23.34 10-13.33 0-23.33-10L177.33-446q-10-10-9.5-23.83.5-13.84 10.5-23.84t23.84-10q13.83 0 23.83 10l153.33 154.34ZM584.83-97Q528-153.33 528-233.33q0-80.34 56.83-137.17 56.84-56.83 136.5-56.83 79.67 0 136.5 56.83 56.84 56.83 56.84 137.17 0 80-56.84 136.33Q801-40.67 721.33-40.67q-79.66 0-136.5-56.33Zm136.5-21q8.67 0 15-6 6.34-6 6.34-15.33 0-9.34-6.34-15.34-6.33-6-15-6-9.33 0-15.33 6t-6 15.34q0 9.33 6 15.33t15.33 6Zm0-83.33q8 0 13-5.34 5-5.33 5-13.33v-112q0-8-5.33-13t-13.33-5q-8 0-13 5.33-5 5.34-5 13.34v112q0 8 5.33 13t13.33 5Z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="result-card">
+                <div class="display">
+                    <div class="d-elem n-5 ping"></div>
+                    <div class="d-elem n-4 ping"></div>
+                    <div class="d-elem n-3 ping"></div>
+                    <div class="d-elem n-2 ping"></div>
+                    <div class="d-elem n-1 ping"></div>
+                </div>
+                <div class="value" id="ping">-- <span class="unit">мс</span></div>
+                <p>Пинг</p>
+            </div>
+            <div class="result-card">
+                <div class="display">
+                    <div class="d-elem n-5-dis mode"></div>
+                    <div class="d-elem n-4 mode"></div>
+                    <div class="d-elem n-3 mode"></div>
+                    <div class="d-elem n-2 mode"></div>
+                    <div class="d-elem n-1 mode"></div>
+                </div>
+                <div class="value" id="networkMode" style="font-size: 18px;">--</div>
+                <p>Режим сети</p>
+            </div>
+        </div>
+        <!-- ===== КНОПКА ===== -->
+        <button class="test-button" id="testBtn">
+            <span class="button-text">Запустить тест</span>
+            <div class="spinner"></div>
+        </button>
+
+        <!-- ===== КАТЕГОРИИ САЙТОВ ===== -->
+        <div class="categories">
+            <div class="categories-title">
+                Доступность категорий:
+            </div>
+            <div class="category" id="categoryGrid">
+                <div class="category-item" data-category="ru1">
+                    <div class="name">
+                        Отечественные 1
+                        <span class="sub">Сервисы чаще всего работующие без перебоев</span>
+                    </div>
+                    <div class="status-icon" id="cat-ru1"></div>
+                </div>
+                <div class="category-item" data-category="ru2">
+                    <div class="name">
+                        Отечественные 2
+                        <span class="sub">Сервисы, которые могут неработать при белых списках</span>
+                    </div>
+                    <div class="status-icon" id="cat-ru2"></div>
+                </div>
+                <div class="category-item" data-category="en1">
+                    <div class="name">
+                        Зарубежные 1
+                        <span class="sub">Сервисы, которые не заблокировали</span>
+                    </div>
+                    <div class="status-icon" id="cat-en1"></div>
+                </div>
+                <div class="category-item" data-category="en2">
+                    <div class="name">
+                        Зарубежные 2
+                        <span class="sub">Сервисы, которые заблокированны</span>
+                    </div>
+                    <div class="status-icon" id="cat-en2"></div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p>Версия: 1.0.1</p>
+            <a href="https://github.com/Artemproector" target="_blank">By Artemproector</a>
+        </footer>
+    </div>
+    <script src="./js/config.js"></script>
+    <script src="./js/main.js"></script>
+    <script>
+        const CONFIG = {
+            // Сайты для проверки доступности по категориям
+            categories: {
+                ru1: {
+                    name: 'Отечественные 1',
+                    sites: [
+                        'https://home.imgsmail.ru/resplash/816229/i/meta/favicon.ico',
+                        "https://web.max.ru/favicon.png?v=2026"
+                    ]
+                },
+                ru2: {
+                    name: 'Отечественные 2',
+                    sites: [
+                        'https://yastatic.net/s3/home-static/_/nova/B5CxuyJ3.png',
+                        'https://gosuslugi.ru/favicon.ico',
+                        'https://www.avito.st/dstatic/favicon.ico',
+                        'http://kremlin.ru/static/favicon-32x32.png'
+
+                    ]
+                },
+                en1: {
+                    name: 'Зарубежные 1',
+                    sites: [
+                        'https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico',
+                        'https://fe-static.deepseek.com/chat/favicon.svg',
+                        "https://ssl.gstatic.com/ui/v1/icons/mail/images/favicon_gmail_2026_v2.ico"
+                    ]
+                },
+                en2: {
+                    name: 'Зарубежные 2',
+                    sites: [
+                        'https://www.youtube.com/yts/img/favicon-vfl8qSV2F.ico',
+                        'https://soundcloud.com/favicon.ico'
+                    ]
+                }
+            },
+
+            // Для теста скорости 
+            speedTest: {
+                download: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js',
+                upload: 'https://httpbin.org/post'
+            },
+
+            // Настройки таймаутов
+            timeout: 5000,
+            quickCheckTimeout: 3000
+        };
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function formatSpeed(bitsPerSecond) {
+            if (bitsPerSecond === 0 || !isFinite(bitsPerSecond)) return '0';
+            const mbps = bitsPerSecond / 1024 / 1024;
+            return mbps.toFixed(2);
+        }
+
+        function formatPing(ms) {
+            if (ms === Infinity || !isFinite(ms)) return '∞';
+            return Math.round(ms);
+        }
+        // ============================================================
+        // ОБЫЧНЫЕ ФУНКЦИИ ИНТЕРФЕЙСА!!!!
+        // ============================================================
+        let navbar = document.querySelector('.nav-bar');
+        let fullnavbar = document.querySelector('.full-nav-bar');
+        let header__left_col_btn = document.querySelector('.header__left-col-btn');
+
+        // Открытие/закрытие меню
+        header__left_col_btn.addEventListener('click', function (e) {
+            e.stopPropagation(); // Чтобы не закрывалось сразу
+            navbar.classList.toggle('show-nav');
+        });
+
+        document.addEventListener('click', function (e) {
+            // Проверяем, что клик был не по меню и не по кнопке
+            const isClickOnNavbar = navbar.contains(e.target);
+            const isClickOnFullNavbar = fullnavbar.contains(e.target);
+            const isClickOnButton = header__left_col_btn.contains(e.target);
+
+            if (navbar.classList.contains('show-nav')) {
+                if (!isClickOnNavbar && !isClickOnFullNavbar && !isClickOnButton) {
+                    navbar.classList.remove('show-nav');
+                }
+            }
+        });
+
+        // Закрытие меню по Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && navbar.classList.contains('show-nav')) {
+                navbar.classList.remove('show-nav');
+            }
+        });
+
+        // Функции для пунктов меню
+        function openSettings() {
+            navbar.classList.remove('show-nav');
+            alert('Настройки будут доступны в следующей версии');
+        }
+        // Здесь раньше была функция openHistory()
+        // Но она была лишней, так что я её удалил ¯\_(ツ)_/¯
+        // historyload() вызывается напрямую из меню. Она кстати в самом низу
+        // На момент написания этого комента она на 1388 строке (инлайн)
+        function openlink() {
+            navbar.classList.remove('show-nav');
+            window.location.href = 'https://github.com/Artemproector/AdvancedTestInternet';
+        }
+        function closemenu() {
+            navbar.classList.remove('show-nav');
+        }
+        function closefullmenu() {
+            fullnavbar.classList.remove('show-nav');
+        }
+        // ============================================================
+        // 3. ПРОВЕРКА ДОСТУПНОСТИ САЙТОВ
+        // ============================================================
+
+        async function checkSiteAvailability(url, timeout = CONFIG.timeout) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+            try {
+                const start = performance.now();
+                const response = await fetch(url, {
+                    method: 'HEAD',
+                    signal: controller.signal,
+                    mode: 'no-cors'
+                });
+                const end = performance.now();
+                clearTimeout(timeoutId);
+                return {
+                    success: true,
+                    time: end - start
+                };
+            } catch (error) {
+                clearTimeout(timeoutId);
+                return {
+                    success: false,
+                    time: timeout
+                };
+            }
+        }
+
+        async function checkCategory(categoryKey, sites) {
+            const results = await Promise.all(
+                sites.map(url => checkSiteAvailability(url, CONFIG.quickCheckTimeout))
+            );
+
+            const successful = results.filter(r => r.success).length;
+            const total = results.length;
+
+            return {
+                category: categoryKey,
+                successRate: successful / total,
+                successful,
+                total,
+                results
+            };
+        }
+
+        // ============================================================
+        // 4. ТЕСТ СКОРОСТИ
+        // ============================================================
+        async function testDownloadSpeed(url, attempts = 3) {
+            const results = [];
+            let totalBytes = 0;
+            let successfulAttempts = 0;
+
+            try {
+                // Делаем несколько попыток
+                for (let i = 0; i < attempts; i++) {
+                    try {
+                        const start = performance.now();
+
+                        const response = await fetch(url, {
+                            signal: AbortSignal.timeout(5000) // 5 секунд на попытку
+                        });
+
+                        if (!response.ok) throw new Error(`Download failed: ${response.status}`);
+
+                        const data = await response.arrayBuffer();
+                        const end = performance.now();
+
+                        const durationSeconds = (end - start) / 1000;
+                        const bitsLoaded = data.byteLength * 8;
+                        const speedBps = bitsLoaded / durationSeconds;
+
+                        // Сохраняем результат
+                        results.push({
+                            success: true,
+                            speedBps: speedBps,
+                            bytes: data.byteLength,
+                            time: durationSeconds
+                        });
+
+                        totalBytes += data.byteLength;
+                        successfulAttempts++;
+
+                        // Небольшая задержка между запросами
+                        await sleep(300);
+
+                    } catch (error) {
+                        results.push({
+                            success: false,
+                            speedBps: 0,
+                            error: error.message
+                        });
+                    }
+                }
+
+                // Если все попытки провалились
+                if (successfulAttempts === 0) {
+                    return {
+                        success: false,
+                        speedBps: 0,
+                        error: 'Все попытки загрузки провалились',
+                        results: results
+                    };
+                }
+
+                // Вычисляем среднюю скорость (только по успешным попыткам)
+                const successfulResults = results.filter(r => r.success);
+                const totalSpeed = successfulResults.reduce((sum, r) => sum + r.speedBps, 0);
+                const averageSpeedBps = totalSpeed / successfulResults.length;
+
+                // Находим медиану для более точного результата (убираем выбросы)
+                const speeds = successfulResults.map(r => r.speedBps).sort((a, b) => a - b);
+                const medianSpeed = speeds[Math.floor(speeds.length / 2)];
+
+                // Вычисляем стандартное отклонение (чтобы понять стабильность)
+                const variance = speeds.reduce((sum, speed) => sum + Math.pow(speed - averageSpeedBps, 2), 0) / speeds.length;
+                const stdDev = Math.sqrt(variance);
+
+                // Определяем стабильность (чем меньше отклонение, тем стабильнее)
+                const stability = Math.max(0, 1 - (stdDev / averageSpeedBps));
+
+                return {
+                    success: true,
+                    speedBps: averageSpeedBps,        // Средняя скорость
+                    medianSpeed: medianSpeed,          // Медианная скорость (для сравнения)
+                    bytes: totalBytes,
+                    attempts: attempts,
+                    successfulAttempts: successfulAttempts,
+                    results: results,
+                    stability: stability,               // 0-1, где 1 = идеально стабильно
+                    quality: stability > 0.8 ? 'Стабильно' :
+                        stability > 0.5 ? 'Нестабильно' : 'Очень нестабильно',
+                    stdDev: stdDev                      // Стандартное отклонение
+                };
+
+            } catch (error) {
+                return {
+                    success: false,
+                    speedBps: 0,
+                    error: error.message
+                };
+            }
+        }
+
+        // Вспомогательная функция для задержки
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function testUploadSpeed(url, attempts = 3) {
+            const results = [];
+            let successfulAttempts = 0;
+            const testDataSize = 1 * 1024 * 1024; // 1 МБ
+
+            try {
+                for (let i = 0; i < attempts; i++) {
+                    try {
+                        // Генерируем тестовые данные
+                        const testData = new Uint8Array(testDataSize);
+                        for (let j = 0; j < testData.length; j++) {
+                            testData[j] = Math.floor(Math.random() * 256);
+                        }
+
+                        const start = performance.now();
+
+                        // Отправляем как FormData (работает с httpbin)
+                        const formData = new FormData();
+                        formData.append('file', new Blob([testData]), 'test.bin');
+
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            body: formData,
+                            signal: AbortSignal.timeout(10000) // 10 секунд
+                        });
+
+                        const end = performance.now();
+
+                        if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+
+                        const durationSeconds = (end - start) / 1000;
+                        const bitsLoaded = testDataSize * 8;
+                        const speedBps = bitsLoaded / durationSeconds;
+
+                        results.push({
+                            success: true,
+                            speedBps: speedBps,
+                            bytes: testDataSize,
+                            time: durationSeconds
+                        });
+
+                        successfulAttempts++;
+                        await sleep(300);
+
+                    } catch (error) {
+                        results.push({
+                            success: false,
+                            speedBps: 0,
+                            error: error.message
+                        });
+                    }
+                }
+
+                if (successfulAttempts === 0) {
+                    return {
+                        success: false,
+                        speedBps: 0,
+                        error: 'Все попытки загрузки провалились',
+                        results: results
+                    };
+                }
+
+                // Вычисляем среднюю скорость
+                const successfulResults = results.filter(r => r.success);
+                const totalSpeed = successfulResults.reduce((sum, r) => sum + r.speedBps, 0);
+                const averageSpeedBps = totalSpeed / successfulResults.length;
+
+                return {
+                    success: true,
+                    speedBps: averageSpeedBps,
+                    bytes: testDataSize * successfulAttempts,
+                    attempts: attempts,
+                    successfulAttempts: successfulAttempts,
+                    results: results
+                };
+
+            } catch (error) {
+                return {
+                    success: false,
+                    speedBps: 0,
+                    error: error.message
+                };
+            }
+        }
+        // ============================================================
+        // 5. ТЕСТ ПИНГА
+        // ============================================================
+        async function testPing(url = 'https://www.avito.st/dstatic/favicon.ico', attempts = 3) {
+            const pings = [];
+
+            for (let i = 0; i < attempts; i++) {
+                const result = await checkSiteAvailability(url, 3000);
+                if (result.success) {
+                    pings.push(result.time);
+                }
+                await sleep(200);
+            }
+
+            if (pings.length === 0) {
+                return { success: false, average: Infinity, min: Infinity, max: Infinity };
+            }
+
+            const average = pings.reduce((a, b) => a + b, 0) / pings.length;
+            const min = Math.min(...pings);
+            const max = Math.max(...pings);
+            if (average <= 30) {
+                updateDisplay("ping", 5)
+            }
+            if (average >= 31 && average <= 60) {
+                updateDisplay("ping", 4)
+            }
+            if (average >= 61 && average <= 100) {
+                updateDisplay("ping", 3)
+            }
+            if (average >= 101 && average <= 200) {
+                updateDisplay("ping", 2)
+            }
+            if (average >= 200) {
+                updateDisplay("ping", 1)
+            }
+            return {
+                success: true,
+                average,
+                min,
+                max,
+                attempts: pings.length
+            };
+        }
+
+        // ============================================================
+        // 6. БЫСТРАЯ ПРОВЕРКА НАЛИЧИЯ ИНТЕРНЕТА
+        // ============================================================
+        async function quickInternetCheck() {
+            const testUrls = [
+                'https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico',
+                'https://yastatic.net/s3/home-static/_/nova/B5CxuyJ3.png',
+                'https://www.avito.st/dstatic/favicon.ico'
+            ];
+
+            const results = await Promise.all(
+                testUrls.map(url => checkSiteAvailability(url, 2000))
+            );
+
+            const successCount = results.filter(r => r.success).length;
+            const total = results.length;
+            const successRate = successCount / total;
+
+            return {
+                hasInternet: successRate >= 0.5,
+                successRate,
+                successCount,
+                total,
+                results
+            };
+        }
+
+        // ============================================================
+        // 7. ОПРЕДЕЛЕНИЕ РЕЖИМА РАБОТЫ СЕТИ
+        // ============================================================
+        function determineNetworkMode(categoryResults) {
+            const ru1 = categoryResults['ru1']?.successRate || 0;
+            const ru2 = categoryResults['ru2']?.successRate || 0;
+            const en1 = categoryResults['en1']?.successRate || 0;
+            const en2 = categoryResults['en2']?.successRate || 0;
+            const ruAvailable = ru1 && ru2;
+            const enAvailable = en1 && en2;
+            const ru1Ok = ru1;
+            const ru2Ok = ru2;
+            const en1Ok = en1;
+            const en2Ok = en2;
+            if (!ru1Ok && !ru2Ok && !en1Ok && !en2Ok) {
+                updateDisplay("mode", '1');
+                return {
+                    mode: 'Нет интернета',
+                    title: 'Нет интернета',
+                    description: 'Проверьте доступ в интернет.',
+                    emoji: ''
+                };
+            }
+            if (ruAvailable && enAvailable) {
+                updateDisplay("mode", '5');
+                return {
+                    mode: 'Полный доступ',
+                    title: 'Полный доступ',
+                    description: 'Все сайты доступны.',
+                    emoji: ''
+                };
+            }
+
+            if (ruAvailable && !en1Ok && !en2Ok) {
+                updateDisplay("mode", '2');
+                return {
+                    mode: 'Белые списки',
+                    title: 'Белые списки',
+                    description: 'Доступны только отечественные ресурсы.',
+                    emoji: ''
+                };
+            }
+            if (!ru1Ok || !ru2Ok && !enAvailable) {
+                updateDisplay("mode", '2');
+                return {
+                    mode: 'Белые списки',
+                    title: 'Белые списки',
+                    description: 'Доступны только отечественные ресурсы.',
+                    emoji: ''
+                };
+            }
+            if (ruAvailable && en1Ok && !en2Ok) {
+                updateDisplay("mode", '3');
+                return {
+                    mode: 'Черные списки',
+                    title: 'Черные списки',
+                    description: 'Разрешено все, кроме заблокированного.',
+                    emoji: ''
+                };
+            }
+            updateDisplay("mode", '0');
+            return {
+                mode: '???',
+                title: 'Частичный доступ',
+                description: 'Часть сайтов недоступна.',
+                emoji: ''
+            };
+        }
+        // ============================================================
+        // 8. UI ОБНОВЛЕНИЯ
+        // ============================================================
+        const dwnElements = document.querySelectorAll('.dwn');
+        const upElements = document.querySelectorAll('.up');
+        const pingElements = document.querySelectorAll('.ping');
+        const modeElements = document.querySelectorAll('.mode');
+
+        /**
+         * Обновляет дисплей
+         * @param {string} type - Тип дисплея: 'dwn', 'up', 'ping', 'mode', 'all'
+         * @param {number} value - Значение от 0 до 5 (сколько элементов зажечь)
+         */
+        function updateDisplay(type, value = 0) {
+            // Приводим значение к числу и ограничиваем от 0 до 5
+            const level = Math.min(Math.max(Math.round(value), 0), 5);
+
+            // Выбираем нужные элементы
+            let elements = [];
+            if (type === 'dwn') elements = dwnElements;
+            else if (type === 'up') elements = upElements;
+            else if (type === 'ping') elements = pingElements;
+            else if (type === 'mode') elements = modeElements;
+            else if (type === 'all') {
+                updateDisplay('dwn', value);
+                updateDisplay('up', value);
+                updateDisplay('ping', value);
+                updateDisplay('mode', value);
+                return;
+            } else {
+                console.warn(`Неизвестный тип дисплея: ${type}`);
+                return;
+            }
+
+            // Обновляем каждый элемент
+            elements.forEach((el, index) => {
+                const isActive = index >= (5 - level);
+                el.classList.remove('show', 'hide', 'active', 'inactive');
+                if (isActive) {
+                    el.classList.add('show');
+                } else {
+                    el.classList.add('hide');
+                }
+            });
+        }
+
+        function setButtonLoading(isLoading) {
+            const btn = document.getElementById('testBtn');
+            if (isLoading) {
+                btn.classList.add('loading');
+                btn.disabled = true;
+            } else {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        }
+        function getSpeedColor(speedMbps) {
+            if (speedMbps < 5) {
+                return {
+                    color: '#ff4757',
+                    level: 1
+                };
+            } else if (speedMbps < 20) {
+                return {
+                    color: '#ff6b35',
+                    level: 2
+                };
+            } else if (speedMbps < 50) {
+                return {
+                    color: '#ffa502',
+                    level: 3
+                };
+            } else if (speedMbps < 100) {
+                return {
+                    color: '#2ed573',
+                    level: 4
+                };
+            } else {
+                return {
+                    color: '#2ed573',
+                    level: 5
+                };
+            }
+        }
+
+        function getPingColor(pingMs) {
+            if (pingMs < 30) {
+                return {
+                    color: '#2ed573',
+                    level: 5
+                };
+            } else if (pingMs < 60) {
+                return {
+                    color: '#7bed9f',
+                    level: 4
+                };
+            } else if (pingMs < 100) {
+                return {
+                    color: '#ffa502',
+                    level: 3
+                };
+            } else if (pingMs < 200) {
+                return {
+                    color: '#ff6b35',
+                    level: 2
+                };
+            } else {
+                return {
+                    color: '#ff4757',
+                    level: 1
+                };
+            }
+        }
+        // ============================================================
+        // 9. ОСНОВНОЙ ТЕСТ
+        // ============================================================
+        async function runFullTest() {
+            const testBtn = document.getElementById('testBtn');
+            const statusText = document.getElementById('statusText');
+            const statusDot = document.getElementById('statusDot');
+            testBtn.classList.add('loading');
+            testBtn.disabled = true;
+            updateDisplay("all", 5)
+            document.getElementById('downloadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
+            document.getElementById('uploadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
+            document.getElementById('ping').innerHTML = '--<span class="unit">мс</span>';
+            document.getElementById('networkMode').textContent = '--';
+            const categoryKeys = ['ru1', 'ru2', 'en1', 'en2'];
+            for (const key of categoryKeys) {
+                const icon = document.getElementById(`cat-${key}`);
+                if (icon) {
+                    icon.className = 'status-icon';
+                    icon.innerHTML = ``;
+                }
+            }
+            try {
+                // ============================================================
+                // ЭТАП 1: БЫСТРАЯ ПРОВЕРКА ИНТЕРНЕТА
+                // ============================================================
+                const quickCheck = await quickInternetCheck();
+                if (!quickCheck.hasInternet) {
+                    document.getElementById('downloadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
+                    document.getElementById('uploadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
+                    document.getElementById('ping').innerHTML = '--<span class="unit">мс</span>';
+                    document.getElementById('networkMode').textContent = 'Нет сети';
+                    updateDisplay('dwn', 1);
+                    updateDisplay('up', 1);
+                    updateDisplay('ping', 1);
+                    updateDisplay('mode', 1);
+                    saveFailedTest();
+                    testBtn.classList.remove('loading');
+                    testBtn.disabled = false;
+                    return;
+                }
+                const downloadResult = await testDownloadSpeed(CONFIG.speedTest.download, 3);
+                const uploadResult = await testUploadSpeed(CONFIG.speedTest.upload, 3);
+                const pingResult = await testPing('https://www.avito.st/dstatic/favicon.ico', 5);
+                if (downloadResult.success) {
+                    const speedMbps = downloadResult.speedBps / 1024 / 1024;
+                    const dwnColor = getSpeedColor(speedMbps);
+                    document.getElementById('downloadSpeed').innerHTML = `
+                <span style="color: ${dwnColor.color}">
+                    ${speedMbps.toFixed(2)}
+                </span>
+                <span class="unit">Мбит/с</span>
+                <span style="color: ${dwnColor.color}; font-size: 12px; margin-left: 8px;"></span>
+            `;
+                    updateDisplay('dwn', dwnColor.level);
+                } else {
+                    document.getElementById('downloadSpeed').innerHTML = '-- <span class="unit">Мбит/с</span>';
+                    updateDisplay('dwn', 1);
+                }
+
+                // Обновляем UI скорости загрузки
+                if (uploadResult.success) {
+                    const speedMbps = uploadResult.speedBps / 1024 / 1024;
+                    const upColor = getSpeedColor(speedMbps);
+                    document.getElementById('uploadSpeed').innerHTML = `
+                <span style="color: ${upColor.color}">
+                    ${speedMbps.toFixed(2)}
+                </span>
+                <span class="unit">Мбит/с</span>
+                <span style="color: ${upColor.color}; font-size: 12px; margin-left: 8px;"></span>
+
+            `;
+                    updateDisplay('up', upColor.level);
+                } else {
+                    document.getElementById('uploadSpeed').innerHTML = '-- <span class="unit">Мбит/с</span>';
+                    updateDisplay('up', 1);
+                }
+
+                if (pingResult.success) {
+                    const pingColor = getPingColor(pingResult.average);
+                    document.getElementById('ping').innerHTML = `
+                <span style="color: ${pingColor.color}">
+                    ${Math.round(pingResult.average)}
+                </span>
+                <span class="unit">мс</span>
+                <span style="color: ${pingColor.color}; font-size: 12px; margin-left: 8px;">
+                </span>
+            `;
+                    updateDisplay('ping', pingColor.level);
+                } else {
+                    document.getElementById('ping').innerHTML = '∞ <span class="unit">мс</span>';
+                    updateDisplay('ping', 1);
+                }
+
+                // ============================================================
+                // ЭТАП 3: ПРОВЕРКА КАТЕГОРИЙ
+                // ============================================================
+                const categoryResults = {};
+                const categoryKeys = ['ru1', 'ru2', 'en1', 'en2'];
+
+                for (const key of categoryKeys) {
+                    const sites = CONFIG.categories[key]?.sites || [];
+                    if (sites.length === 0) {
+                        categoryResults[key] = { successRate: 0, successful: 0, total: 0 };
+                        continue;
+                    }
+                    const result = await checkCategory(key, sites);
+                    categoryResults[key] = result;
+
+                    const icon = document.getElementById(`cat-${key}`);
+                    if (icon) {
+                        const threshold = 0.5;
+                        icon.className = 'status-icon';
+                        if (result.successRate >= threshold) {
+                            icon.classList.add('success');
+                            icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10" stroke="#2ed573" stroke-width="2"/>
+    <path d="M7 12L10.5 15.5L17 9" stroke="#2ed573" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+                        } else if (result.successRate > 0) {
+                            icon.classList.add('partial');
+                            icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10" stroke="#ff4757" stroke-width="2"/>
+    <path d="M12 7V13" stroke="#ff4757" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="12" cy="16" r="1" fill="#ff4757"/>
+</svg>`;
+                        } else {
+                            icon.classList.add('warning');
+                            icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2L2 21H22L12 2Z" stroke="#ffa502" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M12 9V14" stroke="#ffa502" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="12" cy="17" r="1" fill="#ffa502"/>
+</svg>`;
+
+                        }
+                    }
+
+                    await sleep(200);
+                }
+
+                // ============================================================
+                // ЭТАП 4: ОПРЕДЕЛЕНИЕ РЕЖИМА
+                // ============================================================
+                const mode = determineNetworkMode(categoryResults);
+                document.getElementById('networkMode').textContent = mode.mode;
+                if (downloadResult.success) {
+                    let speedHistory = JSON.parse(localStorage.getItem('speedHistory') || '[]');
+
+                    speedHistory.push({
+                        timestamp: Date.now(),
+                        downloadSpeed: Math.floor(downloadResult.speedBps / 1024 / 1024),
+                        uploadSpeed: uploadResult.success ? Math.floor(uploadResult.speedBps / 1024 / 1024) : null,
+                        ping: pingResult.success ? Math.round(pingResult.average) : null,
+                        mode: mode.mode,
+                        date: new Date().toLocaleString()
+                    });
+
+                    if (speedHistory.length > 50) {
+                        speedHistory = speedHistory.slice(-50);
+                    }
+
+                    localStorage.setItem('speedHistory', JSON.stringify(speedHistory));
+                }
+            } catch (error) {
+                console.error('Ошибка в тесте:', error);
+            } finally {
+                testBtn.classList.remove('loading');
+                testBtn.disabled = false;
+                let history = JSON.parse(localStorage.getItem('speedHistory') || '[]');
+                history.push({
+                    timestamp: Date.now(),
+                    speed: Math.floor(short_check_result),
+                    date: new Date().toLocaleString()
+                });
+                localStorage.setItem('speedHistory', JSON.stringify(history));
+            }
+        }
+        function saveFailedTest() {
+            let speedHistory = JSON.parse(localStorage.getItem('speedHistory') || '[]');
+
+            speedHistory.push({
+                timestamp: Date.now(),
+                downloadSpeed: '—',
+                uploadSpeed: '—',
+                ping: '—',
+                mode: 'Нет интернета',
+                date: new Date().toLocaleString(),
+                success: false 
+            });
+            if (speedHistory.length > 50) {
+                speedHistory = speedHistory.slice(-50);
+            }
+
+            localStorage.setItem('speedHistory', JSON.stringify(speedHistory));
+        }
+        // ============================================================
+        // ИСТОРИЯ!
+        // ============================================================
+
+        function getSpeedHistory() {
+            const history = localStorage.getItem('speedHistory');
+            if (history === null) {
+                return [];
+            }
+            try {
+                return JSON.parse(history);
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function historyload() {
+            fullnavbar.classList.add('show-nav');
+
+            let fullLabel = document.querySelector('.labal-full-menu');
+            if (fullLabel) {
+                fullLabel.textContent = 'История проверок';
+            }
+
+            let area = document.querySelector('.his-area');
+            if (!area) {
+                const container = document.createElement('div');
+                container.className = 'his-area';
+                fullnavbar.appendChild(container);
+                area = container;
+            }
+
+            const historyData = getSpeedHistory();
+
+            if (historyData.length === 0) {
+                area.innerHTML = `
+            <div class="history-empty">
+                <p>История проверок пока пуста</p>
+                <p style="font-size: 12px; color: #8892b0;">Проведите первый тест, чтобы появились данные</p>
+            </div>
+        `;
+                return;
+            }
+
+            let html = '<div class="history-list">';
+            const reversed = [...historyData].reverse().slice(0, 10);
+
+            reversed.forEach((item) => {
+                // Берем данные из сохраненного объекта
+                const download = item.downloadSpeed !== undefined && item.downloadSpeed !== null ? item.downloadSpeed : '—';
+                const upload = item.uploadSpeed !== undefined && item.uploadSpeed !== null ? item.uploadSpeed : '—';
+                const ping = item.ping !== undefined && item.ping !== null ? item.ping : '—';
+                const mode = item.mode || 'Неизвестно';
+                const date = item.date || new Date(item.timestamp).toLocaleString() || 'Дата неизвестна';
+
+                html += `
+            <div class="history-item">
+                <div class="history-item-date">${date}</div>
+                <div class="history-item-row">
+                    <span class="history-speed-down">↓ ${download} Мбит/с</span>
+                    <span class="history-speed-up">↑ ${upload} Мбит/с</span>
+                    <span class="history-ping">${ping} мс</span>
+                    <span class="history-mode-tag">${mode}</span>
+                </div>
+            </div>
+        `;
+            });
+
+            html += `
+        </div>
+        <button onclick="clearHistory()" class="history-clear-btn">
+            Очистить историю
+        </button>
+    `;
+
+            area.innerHTML = html;
+        }
+
+        function clearHistory() {
+            if (confirm('Удалить всю историю проверок?')) {
+                localStorage.removeItem('speedHistory');
+                historyload();
+            }
+        }
+        // ============================================================
+        // 10. ИНИЦИАЛИЗАЦИЯ
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('testBtn');
+            btn.addEventListener('click', runFullTest);
+        });
+    </script>
+</body>
+
+</html>
