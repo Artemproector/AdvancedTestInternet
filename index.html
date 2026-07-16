@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Расширенный тест интернета</title>
-    <link rel="stylesheet" href="./styles/main.css">
 </head>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Pliant:ital,wght@0,100..900;1,100..900&display=swap');
@@ -334,8 +333,9 @@
         padding: 40px 30px;
         border-left: 2px solid #2a3555;
         height: 100vh;
-        width: 100%;
-        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 40%;
+        transition: right 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+
         z-index: 1000;
         display: flex;
         flex-direction: column;
@@ -357,7 +357,8 @@
         align-items: flex-start;
     }
 
-    .nav-bar ul {
+    .nav-bar ul,
+    .full-nav-bar ul {
         list-style: none;
         padding: 0;
         display: flex;
@@ -366,7 +367,8 @@
         flex: 1;
     }
 
-    .nav-bar ul li {
+    .nav-bar ul li,
+    .full-nav-bar ul li {
         padding: 12px 16px;
         border-radius: 8px;
         transition: all 0.3s;
@@ -392,6 +394,7 @@
     }
 
     .nav-bar a,
+    .full-nav-bar a,
     footer a {
         color: #4facfe;
         text-decoration: none;
@@ -444,6 +447,90 @@
         font-size: 14px;
     }
 
+    /* ===== СПРАВКА ===== */
+    .help-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 10px 0;
+    }
+
+    .help-section {
+        border-radius: 12px;
+        padding: 18px 20px;
+        border: 1px solid #2a3555;
+    }
+
+    .help-section h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #2a3555;
+        padding-bottom: 8px;
+        font-weight: 900;
+    }
+
+    .help-section p {
+        color: #fff;
+        line-height: 1.6;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .help-section ul,
+    .help-section ol {
+        color: #ffffff;
+        line-height: 1.8;
+        padding-left: 20px;
+        font-size: 14px;
+    }
+
+    .help-section ul li,
+    .help-section ol li {
+        margin-bottom: 4px;
+    }
+
+    .help-section strong {
+        color: #fff;
+    }
+
+    .tip {
+        margin-top: 10px;
+        padding: 10px 14px;
+        background: #ffffff;
+        color: #0a0e1a;
+        font-size: 15px;
+        border-radius: 12px;
+    }
+
+
+    .mode-item {
+        background: #0a0e1a;
+        padding: 10px 14px;
+        margin-top: 8px;
+    }
+
+    .mode-item strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #fff;
+    }
+
+    .mode-item p {
+        margin: 0;
+        font-size: 13px;
+        color: #fff;
+    }
+
+    .help-section a {
+        color: #4facfe;
+        text-decoration: none;
+    }
+
+    .help-section a:hover {
+        color: #00f2fe;
+        text-decoration: underline;
+    }
+
     @media (max-width: 600px) {
         .container {
             padding: 20px;
@@ -482,7 +569,8 @@
         }
 
         .full-nav-bar {
-            right: -400px;
+            right: -500px;
+            width: 100%;
         }
     }
 </style>
@@ -524,6 +612,9 @@
                         d="M287-446.67 503.67-230q10 10 9.83 23.33-.17 13.34-10.17 23.34-10 9.66-23.33 9.83-13.33.17-23.33-9.83L183.33-456.67q-5.33-5.33-7.5-11-2.16-5.66-2.16-12.33t2.16-12.33q2.17-5.67 7.5-11l273.34-273.34q9.66-9.66 23.16-9.66t23.5 9.66q10 10 10 23.5t-10 23.5L287-513.33h479.67q14.33 0 23.83 9.5 9.5 9.5 9.5 23.83 0 14.33-9.5 23.83-9.5 9.5-23.83 9.5H287Z" />
                 </svg>
             </div>
+        </div>
+        <div class="area">
+            Наверное, разработчик забыл что-то написать. Например: текст этого меню (e404).
         </div>
 
     </div>
@@ -650,12 +741,10 @@
             </div>
         </div>
         <footer>
-            <p>Версия: 1.0.1</p>
+            <p>Версия: 1.0.2</p>
             <a href="https://github.com/Artemproector" target="_blank">By Artemproector</a>
         </footer>
     </div>
-    <script src="./js/config.js"></script>
-    <script src="./js/main.js"></script>
     <script>
         const CONFIG = {
             // Сайты для проверки доступности по категориям
@@ -750,19 +839,163 @@
                 navbar.classList.remove('show-nav');
             }
         });
+        function probka_zaglushka() {
+            fullnavbar.classList.add('show-nav');
+            let fullLabel = document.querySelector('.labal-full-menu');
+            if (fullLabel) {
+                fullLabel.textContent = 'Упс...';
+            }
+            let area = document.querySelector('.area');
+            area.innerHTML = `<pre> 
+    ┌─────────────────────────────────────┐
+    │   Настройки будут... когда-нибудь   │
+    │              ¯\\_(ツ)_/¯             │
+    └─────────────────────────────────────┘
+    </pre> А пока просто пользуйся тестом. Он и без этого не плохой (наверное)`
+        }
 
-        // Функции для пунктов меню
         function openSettings() {
-            navbar.classList.remove('show-nav');
-            alert('Настройки будут доступны в следующей версии');
+            fullnavbar.classList.add('show-nav');
+            let fullLabel = document.querySelector('.labal-full-menu');
+            if (fullLabel) {
+                fullLabel.textContent = 'Настройки';
+            }
+            let area = document.querySelector('.area');
+            area.innerHTML = ''
+            area.innerHTML = `<ul>
+            <li>
+                <div onclick="ShowSettings('general')">Общие</div>
+            </li>
+            <li>
+                <div onclick="ShowSettings('tests')">Управление тестированием</div>
+            </li>
+            <li>
+                <div onclick="ShowSettings('history')">Управление историей</div>
+            </li>
+            <li>
+                <div onclick="ShowSettings('profi')">Только для профессионалов!</div>
+            </li>
+        </ul>`
+        }
+        function ShowSettings(type) {
+            probka_zaglushka()
+        }
+        function openwiki() {
+            fullnavbar.classList.add('show-nav');
+            let fullLabel = document.querySelector('.labal-full-menu');
+            if (fullLabel) {
+                fullLabel.textContent = 'Справка';
+            }
+            let area = document.querySelector('.area');
+            area.innerHTML = `
+        <div class="help-container">
+            <div class="help-section">
+                <h3>Что такое скорость интернета?</h3>
+                <p>Скорость интернета — это объём данных, который ваше устройство может получить (скачать) или отправить (загрузить) за единицу времени. Измеряется в <strong>Мбит/с</strong> (мегабитах в секунду).</p>
+                <ul>
+                    <li><strong>Входящая скорость</strong> — скорость скачивания. Важно для просмотра видео, игр и загрузки файлов.</li>
+                    <li><strong>Исходящая скорость</strong> — скорость отправки. Важно для видеозвонков, отправки фото и стримов.</li>
+                </ul>
+                <div class="tip">
+                    Чем выше скорость — тем быстрее грузятся сайты и видео. Для 4K нужно от 30 Мбит/с.
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3>Что такое пинг?</h3>
+                <p><strong>Пинг</strong> — это время, за которое сигнал доходит от вашего устройства до сервера и обратно. Измеряется в <strong>мс</strong> (миллисекундах).</p>
+                <ul>
+                    <li><strong>0-30 мс</strong> — отлично, идеально для игр и звонков</li>
+                    <li><strong>30-60 мс</strong> — хорошо, комфортный серфинг</li>
+                    <li><strong>60-100 мс</strong> — средне, заметные задержки</li>
+                    <li><strong>100-200 мс</strong> — плохо, видео тормозит, игры некомфортны</li>
+                    <li><strong>200+ мс</strong> — очень плохо, сайты грузятся долго</li>
+                </ul>
+                <div class="tip">
+                    Низкий пинг важен для онлайн-игр. Чем меньше пинг — тем быстрее реакция.
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3>Что такое ТСПУ?</h3>
+                <p><strong>ТСПУ</strong> (Технические средства противодействия угрозам) — это оборудование, которое устанавливается на сетях российских операторов по закону «Яровой» (ФЗ-374). Оно анализирует весь трафик и может:</p>
+                <ul>
+                    <li><strong>Блокировать</strong> доступ к запрещённым сайтам</li>
+                    <li><strong>Замедлять</strong> скорость для определённых сервисов</li>
+                    <li><strong>Обрывать</strong> соединения (если сайт в чёрном списке)</li>
+                    <li><strong>Перенаправлять</strong> на страницы-заглушки</li>
+                </ul>
+                <div class="tip">
+                    ТСПУ может влиять на работу YouTube, Discord и других зарубежных сервисов.
+                </div>
+            </div>
+<div class="help-section">
+    <h3>Варианты обхода ограничений</h3>
+    <p>Если тест показывает наличие ограничений, могут помочь следующие методы:</p>
+    <ul>
+        <li><strong>VPN</strong> — шифрует трафик и позволяет менять регион</li>
+        <li><strong>Прокси-серверы</strong> — перенаправляют запросы через другой узел</li>
+        <li><strong>DNS-over-HTTPS</strong> — защищает DNS-запросы от подмены</li>
+        <li><strong>Зеркала сайтов</strong> — альтернативные адреса ресурсов</li>
+        <li><strong>Защищённые протоколы</strong> — шифрование SNI (ECH)</li>
+    </ul>
+    <div class="tip">
+        Эффективность методов зависит от конкретной сети и уровня фильтрации.
+    </div>
+</div>
+            <div class="help-section">
+                <h3>Режимы работы сети</h3>
+                <p>Наш тест определяет 4 основных режима работы интернета:</p>
+                
+                <div class="mode-item">
+                    <strong>Полный доступ</strong>
+                    <p>Все категории сайтов доступны. Интернет работает в штатном режиме без ограничений.</p>
+                </div>
+                <div class="mode-item">
+                    <strong>Белые списки</strong>
+                    <p>Доступны только отечественные ресурсы. Зарубежные сайты заблокированы.</p>
+                </div>
+                <div class="mode-item">
+                    <strong>Черные списки</strong>
+                    <p>Доступны все сайты, кроме конкретных заблокированных. Например, работает Google, но заблокирован YouTube.</p>
+                </div>
+                <div class="mode-item">
+                    <strong>Нет интернета</strong>
+                    <p>Ни один сайт не доступен.</p>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3>Как пользоваться тестом?</h3>
+                <ol>
+                    <li>Нажмите кнопку <strong>"Запустить тест"</strong></li>
+                    <li>Дождитесь завершения проверки (обычно 5-10 секунд)</li>
+                    <li>Посмотрите результаты:</li>
+                        <p>Скорость скачивания (входящая)</p>
+                        <p>Скорость отправки (исходящая)</p>
+                        <p>Пинг (задержка)</p>
+                    <li>Проверьте доступность категорий сайтов (отечественные и зарубежные)</li>
+                    <li>Прочитайте диагноз — он объяснит, что происходит с вашим интернетом</li>
+                </ol>
+                <div class="tip">
+                    Если тест показал "Белые списки" — скорее всего, ваш провайдер блокируют зарубежные сайты.
+                </div>
+            </div>`
         }
         // Здесь раньше была функция openHistory()
         // Но она была лишней, так что я её удалил ¯\_(ツ)_/¯
         // historyload() вызывается напрямую из меню. Она кстати в самом низу
         // На момент написания этого комента она на 1388 строке (инлайн)
         function openlink() {
-            navbar.classList.remove('show-nav');
-            window.location.href = 'https://github.com/Artemproector/AdvancedTestInternet';
+            //window.location.href = 'https://github.com/Artemproector/AdvancedTestInternet';
+            fullnavbar.classList.add('show-nav');
+            let fullLabel = document.querySelector('.labal-full-menu');
+            if (fullLabel) {
+                fullLabel.textContent = 'Переход на другой сайт';
+            }
+            let area = document.querySelector('.area');
+            area.innerHTML = ''
+            area.innerHTML = 'Внимание, данная кнопка ведет на другой сайт (github.com). Если вы действительно хотите перейти нажмите далее<br> <a href="https://github.com/Artemproector/AdvancedTestInternet">Далее</a>'
         }
         function closemenu() {
             navbar.classList.remove('show-nav');
@@ -835,7 +1068,7 @@
                             signal: AbortSignal.timeout(5000) // 5 секунд на попытку
                         });
 
-                        if (!response.ok) throw new Error(`Download failed: ${response.status}`);
+                        if (!response.ok) throw new Error(`Download failed: ${response.status} `);
 
                         const data = await response.arrayBuffer();
                         const end = performance.now();
@@ -895,16 +1128,16 @@
 
                 return {
                     success: true,
-                    speedBps: averageSpeedBps,        // Средняя скорость
-                    medianSpeed: medianSpeed,          // Медианная скорость (для сравнения)
+                    speedBps: averageSpeedBps,
+                    medianSpeed: medianSpeed,
                     bytes: totalBytes,
                     attempts: attempts,
                     successfulAttempts: successfulAttempts,
                     results: results,
-                    stability: stability,               // 0-1, где 1 = идеально стабильно
+                    stability: stability,
                     quality: stability > 0.8 ? 'Стабильно' :
                         stability > 0.5 ? 'Нестабильно' : 'Очень нестабильно',
-                    stdDev: stdDev                      // Стандартное отклонение
+                    stdDev: stdDev
                 };
 
             } catch (error) {
@@ -949,7 +1182,7 @@
 
                         const end = performance.now();
 
-                        if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+                        if (!response.ok) throw new Error(`Upload failed: ${response.status} `);
 
                         const durationSeconds = (end - start) / 1000;
                         const bitsLoaded = testDataSize * 8;
@@ -1175,7 +1408,7 @@
                 updateDisplay('mode', value);
                 return;
             } else {
-                console.warn(`Неизвестный тип дисплея: ${type}`);
+                console.warn(`Неизвестный тип дисплея: ${type} `);
                 return;
             }
 
@@ -1274,7 +1507,7 @@
             document.getElementById('networkMode').textContent = '--';
             const categoryKeys = ['ru1', 'ru2', 'en1', 'en2'];
             for (const key of categoryKeys) {
-                const icon = document.getElementById(`cat-${key}`);
+                const icon = document.getElementById(`cat - ${key} `);
                 if (icon) {
                     icon.className = 'status-icon';
                     icon.innerHTML = ``;
@@ -1306,9 +1539,9 @@
                     const speedMbps = downloadResult.speedBps / 1024 / 1024;
                     const dwnColor = getSpeedColor(speedMbps);
                     document.getElementById('downloadSpeed').innerHTML = `
-                <span style="color: ${dwnColor.color}">
+                <span style = "color: ${dwnColor.color}">
                     ${speedMbps.toFixed(2)}
-                </span>
+                </span >
                 <span class="unit">Мбит/с</span>
                 <span style="color: ${dwnColor.color}; font-size: 12px; margin-left: 8px;"></span>
             `;
@@ -1323,9 +1556,9 @@
                     const speedMbps = uploadResult.speedBps / 1024 / 1024;
                     const upColor = getSpeedColor(speedMbps);
                     document.getElementById('uploadSpeed').innerHTML = `
-                <span style="color: ${upColor.color}">
+                <span style = "color: ${upColor.color}" >
                     ${speedMbps.toFixed(2)}
-                </span>
+                </span >
                 <span class="unit">Мбит/с</span>
                 <span style="color: ${upColor.color}; font-size: 12px; margin-left: 8px;"></span>
 
@@ -1339,16 +1572,16 @@
                 if (pingResult.success) {
                     const pingColor = getPingColor(pingResult.average);
                     document.getElementById('ping').innerHTML = `
-                <span style="color: ${pingColor.color}">
+                <span style = "color: ${pingColor.color}" >
                     ${Math.round(pingResult.average)}
-                </span>
+                </span >
                 <span class="unit">мс</span>
                 <span style="color: ${pingColor.color}; font-size: 12px; margin-left: 8px;">
                 </span>
             `;
                     updateDisplay('ping', pingColor.level);
                 } else {
-                    document.getElementById('ping').innerHTML = '∞ <span class="unit">мс</span>';
+                    document.getElementById('ping').innerHTML = '-- <span class="unit">мс</span>';
                     updateDisplay('ping', 1);
                 }
 
@@ -1373,25 +1606,24 @@
                         icon.className = 'status-icon';
                         if (result.successRate >= threshold) {
                             icon.classList.add('success');
-                            icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns ="http://www.w3.org/2000/svg">
     <circle cx="12" cy="12" r="10" stroke="#2ed573" stroke-width="2"/>
     <path d="M7 12L10.5 15.5L17 9" stroke="#2ed573" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>`;
+</svg> `;
                         } else if (result.successRate > 0) {
                             icon.classList.add('partial');
                             icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="12" cy="12" r="10" stroke="#ff4757" stroke-width="2"/>
     <path d="M12 7V13" stroke="#ff4757" stroke-width="2" stroke-linecap="round"/>
     <circle cx="12" cy="16" r="1" fill="#ff4757"/>
-</svg>`;
+</svg> `;
                         } else {
                             icon.classList.add('warning');
                             icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 2L2 21H22L12 2Z" stroke="#ffa502" stroke-width="2" stroke-linejoin="round"/>
     <path d="M12 9V14" stroke="#ffa502" stroke-width="2" stroke-linecap="round"/>
     <circle cx="12" cy="17" r="1" fill="#ffa502"/>
-</svg>`;
-
+</svg> `;
                         }
                     }
 
@@ -1426,13 +1658,6 @@
             } finally {
                 testBtn.classList.remove('loading');
                 testBtn.disabled = false;
-                let history = JSON.parse(localStorage.getItem('speedHistory') || '[]');
-                history.push({
-                    timestamp: Date.now(),
-                    speed: Math.floor(short_check_result),
-                    date: new Date().toLocaleString()
-                });
-                localStorage.setItem('speedHistory', JSON.stringify(history));
             }
         }
         function saveFailedTest() {
@@ -1445,10 +1670,10 @@
                 ping: '—',
                 mode: 'Нет интернета',
                 date: new Date().toLocaleString(),
-                success: false 
+                success: false
             });
-            if (speedHistory.length > 50) {
-                speedHistory = speedHistory.slice(-50);
+            if (speedHistory.length > 100) {
+                speedHistory = speedHistory.slice(-100);
             }
 
             localStorage.setItem('speedHistory', JSON.stringify(speedHistory));
@@ -1477,10 +1702,10 @@
                 fullLabel.textContent = 'История проверок';
             }
 
-            let area = document.querySelector('.his-area');
+            let area = document.querySelector('.area');
             if (!area) {
                 const container = document.createElement('div');
-                container.className = 'his-area';
+                container.className = 'area';
                 fullnavbar.appendChild(container);
                 area = container;
             }
@@ -1489,17 +1714,22 @@
 
             if (historyData.length === 0) {
                 area.innerHTML = `
-            <div class="history-empty">
+                <div class="history-empty">
                 <p>История проверок пока пуста</p>
                 <p style="font-size: 12px; color: #8892b0;">Проведите первый тест, чтобы появились данные</p>
-            </div>
-        `;
+            </div >
+                `;
                 return;
             }
 
             let html = '<div class="history-list">';
-            const reversed = [...historyData].reverse().slice(0, 10);
-
+            const reversed = [...historyData].reverse();
+            html += `
+        </div >
+                <button onclick="clearHistory()" class="history-clear-btn">
+                    Очистить историю
+                </button>
+    `;
             reversed.forEach((item) => {
                 // Берем данные из сохраненного объекта
                 const download = item.downloadSpeed !== undefined && item.downloadSpeed !== null ? item.downloadSpeed : '—';
@@ -1509,7 +1739,7 @@
                 const date = item.date || new Date(item.timestamp).toLocaleString() || 'Дата неизвестна';
 
                 html += `
-            <div class="history-item">
+                <div class="history-item">
                 <div class="history-item-date">${date}</div>
                 <div class="history-item-row">
                     <span class="history-speed-down">↓ ${download} Мбит/с</span>
@@ -1517,16 +1747,9 @@
                     <span class="history-ping">${ping} мс</span>
                     <span class="history-mode-tag">${mode}</span>
                 </div>
-            </div>
-        `;
+            </div >
+                `;
             });
-
-            html += `
-        </div>
-        <button onclick="clearHistory()" class="history-clear-btn">
-            Очистить историю
-        </button>
-    `;
 
             area.innerHTML = html;
         }
