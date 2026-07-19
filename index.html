@@ -128,6 +128,14 @@
     /* ===== РЕЗУЛЬТАТЫ ===== */
     .results {
         display: flex;
+        gap: 10px;
+        margin: 0 0 10px 0;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .displays {
+        display: flex;
         justify-content: center;
         gap: 10px;
         margin: 0 0 10px 0;
@@ -292,8 +300,8 @@
     }
 
     .category-item .status-icon.partial {
-        background: rgba(79, 172, 254, 0.2);
-        color: #4facfe;
+        display: block;
+        padding: 20px;
     }
 
     .show {
@@ -531,7 +539,98 @@
         text-decoration: underline;
     }
 
+    .progress-bar {
+        display: flex;
+        scroll-behavior: smooth;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        width: 100%;
+        padding: 6px 4px;
+        border: 2px solid #2a3555;
+        border-radius: 10px;
+        background: var(--main-bg-color);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .pr-bar-section {
+        flex: 0 1 auto;
+        padding: 6px 10px;
+        border-left: 2px solid #2a3555;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        text-align: center;
+        color: #8892b0;
+        transition: all 0.3s ease;
+    }
+
+    .pr-bar-section:first-child {
+        border-left: none;
+    }
+
+    /* Активный этап */
+    .pr-bar-section--active {
+        background-color: #2a3555;
+        color: #fff;
+        font-weight: 700;
+        animation: noise 2s infinite cubic-bezier(0.4, 0, 1, 1);
+        ;
+    }
+
+    .pr-bar-section--pass {
+        color: #2ed573;
+    }
+
+    .pr-bar-section--fail {
+        color: #ff4757;
+    }
+
+    @keyframes noise {
+        0% {
+            background-color: #2a3555;
+        }
+
+        50% {
+            background-color: #2a355554;
+        }
+
+        100% {
+            background-color: #2a3555;
+        }
+    }
+
     @media (max-width: 600px) {
+        .progress-bar {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 6px 4px;
+            gap: 2px;
+            justify-content: flex-start;
+            /* Чтобы блоки не растягивались */
+        }
+
+        .pr-bar-section {
+            font-size: 10px;
+            /* Меньше шрифт на телефонах */
+            padding: 4px 8px;
+            flex-shrink: 0;
+            /* Запрещаем сжатие, чтобы текст не переносился */
+        }
+
+        /* Убираем скроллбар (но скролл остаётся) */
+        .progress-bar::-webkit-scrollbar {
+            height: 2px;
+            background: transparent;
+        }
+
+        .progress-bar::-webkit-scrollbar-thumb {
+            background: #2a3555;
+            border-radius: 4px;
+        }
+
         .container {
             padding: 20px;
         }
@@ -600,7 +699,7 @@
                 <div onclick="openlink()">Исходный код проекта</div>
             </li>
         </ul>
-        <p>Версия: 1.0.1</p>
+        <p>Версия: 1.0.3</p>
         <a href="https://github.com/Artemproector" target="_blank">By Artemproector</a>
     </div>
     <div class="full-nav-bar" id="navBar-full">
@@ -636,66 +735,75 @@
 
         </div>
         <div class="results">
-            <div class="result-card">
-                <div class="display">
-                    <div class="d-elem n-5 dwn"></div>
-                    <div class="d-elem n-4 dwn"></div>
-                    <div class="d-elem n-3 dwn"></div>
-                    <div class="d-elem n-2 dwn"></div>
-                    <div class="d-elem n-1 dwn"></div>
+            <div class="displays">
+                <div class="result-card">
+                    <div class="display">
+                        <div class="d-elem n-5 dwn"></div>
+                        <div class="d-elem n-4 dwn"></div>
+                        <div class="d-elem n-3 dwn"></div>
+                        <div class="d-elem n-2 dwn"></div>
+                        <div class="d-elem n-1 dwn"></div>
+                    </div>
+                    <div class="value" id="downloadSpeed">-- <span class="unit">Мбит/с</span></div>
+                    <div class="alert-block"
+                        onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                        <p>Входящая</p>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="40px"
+                            fill="#BB271A">
+                            <path
+                                d="m379.33-339.33 355-355q10-10 23.67-10 13.67 0 23.67 10 10 10 10 23.83 0 13.83-10 23.83l-379 379.34q-10 10-23.34 10-13.33 0-23.33-10L177.33-446q-10-10-9.5-23.83.5-13.84 10.5-23.84t23.84-10q13.83 0 23.83 10l153.33 154.34ZM584.83-97Q528-153.33 528-233.33q0-80.34 56.83-137.17 56.84-56.83 136.5-56.83 79.67 0 136.5 56.83 56.84 56.83 56.84 137.17 0 80-56.84 136.33Q801-40.67 721.33-40.67q-79.66 0-136.5-56.33Zm136.5-21q8.67 0 15-6 6.34-6 6.34-15.33 0-9.34-6.34-15.34-6.33-6-15-6-9.33 0-15.33 6t-6 15.34q0 9.33 6 15.33t15.33 6Zm0-83.33q8 0 13-5.34 5-5.33 5-13.33v-112q0-8-5.33-13t-13.33-5q-8 0-13 5.33-5 5.34-5 13.34v112q0 8 5.33 13t13.33 5Z" />
+                        </svg>
+                    </div>
                 </div>
-                <div class="value" id="downloadSpeed">-- <span class="unit">Мбит/с</span></div>
-                <div class="alert-block"
-                    onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
-                    <p>Входящая</p>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="40px"
-                        fill="#BB271A">
-                        <path
-                            d="m379.33-339.33 355-355q10-10 23.67-10 13.67 0 23.67 10 10 10 10 23.83 0 13.83-10 23.83l-379 379.34q-10 10-23.34 10-13.33 0-23.33-10L177.33-446q-10-10-9.5-23.83.5-13.84 10.5-23.84t23.84-10q13.83 0 23.83 10l153.33 154.34ZM584.83-97Q528-153.33 528-233.33q0-80.34 56.83-137.17 56.84-56.83 136.5-56.83 79.67 0 136.5 56.83 56.84 56.83 56.84 137.17 0 80-56.84 136.33Q801-40.67 721.33-40.67q-79.66 0-136.5-56.33Zm136.5-21q8.67 0 15-6 6.34-6 6.34-15.33 0-9.34-6.34-15.34-6.33-6-15-6-9.33 0-15.33 6t-6 15.34q0 9.33 6 15.33t15.33 6Zm0-83.33q8 0 13-5.34 5-5.33 5-13.33v-112q0-8-5.33-13t-13.33-5q-8 0-13 5.33-5 5.34-5 13.34v112q0 8 5.33 13t13.33 5Z" />
-                    </svg>
-                </div>
-            </div>
 
-            <div class="result-card">
-                <div class="display">
-                    <div class="d-elem n-5 up"></div>
-                    <div class="d-elem n-4 up"></div>
-                    <div class="d-elem n-3 up"></div>
-                    <div class="d-elem n-2 up"></div>
-                    <div class="d-elem n-1 up"></div>
+                <div class="result-card">
+                    <div class="display">
+                        <div class="d-elem n-5 up"></div>
+                        <div class="d-elem n-4 up"></div>
+                        <div class="d-elem n-3 up"></div>
+                        <div class="d-elem n-2 up"></div>
+                        <div class="d-elem n-1 up"></div>
+                    </div>
+                    <div class="value" id="uploadSpeed">-- <span class="unit">Мбит/с</span></div>
+                    <div class="alert-block"
+                        onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                        <p>Исходящая</p>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="40px"
+                            fill="#BB271A">
+                            <path
+                                d="m379.33-339.33 355-355q10-10 23.67-10 13.67 0 23.67 10 10 10 10 23.83 0 13.83-10 23.83l-379 379.34q-10 10-23.34 10-13.33 0-23.33-10L177.33-446q-10-10-9.5-23.83.5-13.84 10.5-23.84t23.84-10q13.83 0 23.83 10l153.33 154.34ZM584.83-97Q528-153.33 528-233.33q0-80.34 56.83-137.17 56.84-56.83 136.5-56.83 79.67 0 136.5 56.83 56.84 56.83 56.84 137.17 0 80-56.84 136.33Q801-40.67 721.33-40.67q-79.66 0-136.5-56.33Zm136.5-21q8.67 0 15-6 6.34-6 6.34-15.33 0-9.34-6.34-15.34-6.33-6-15-6-9.33 0-15.33 6t-6 15.34q0 9.33 6 15.33t15.33 6Zm0-83.33q8 0 13-5.34 5-5.33 5-13.33v-112q0-8-5.33-13t-13.33-5q-8 0-13 5.33-5 5.34-5 13.34v112q0 8 5.33 13t13.33 5Z" />
+                        </svg>
+                    </div>
                 </div>
-                <div class="value" id="uploadSpeed">-- <span class="unit">Мбит/с</span></div>
-                <div class="alert-block"
-                    onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
-                    <p>Исходящая</p>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="40px"
-                        fill="#BB271A">
-                        <path
-                            d="m379.33-339.33 355-355q10-10 23.67-10 13.67 0 23.67 10 10 10 10 23.83 0 13.83-10 23.83l-379 379.34q-10 10-23.34 10-13.33 0-23.33-10L177.33-446q-10-10-9.5-23.83.5-13.84 10.5-23.84t23.84-10q13.83 0 23.83 10l153.33 154.34ZM584.83-97Q528-153.33 528-233.33q0-80.34 56.83-137.17 56.84-56.83 136.5-56.83 79.67 0 136.5 56.83 56.84 56.83 56.84 137.17 0 80-56.84 136.33Q801-40.67 721.33-40.67q-79.66 0-136.5-56.33Zm136.5-21q8.67 0 15-6 6.34-6 6.34-15.33 0-9.34-6.34-15.34-6.33-6-15-6-9.33 0-15.33 6t-6 15.34q0 9.33 6 15.33t15.33 6Zm0-83.33q8 0 13-5.34 5-5.33 5-13.33v-112q0-8-5.33-13t-13.33-5q-8 0-13 5.33-5 5.34-5 13.34v112q0 8 5.33 13t13.33 5Z" />
-                    </svg>
+                <div class="result-card">
+                    <div class="display">
+                        <div class="d-elem n-5 ping"></div>
+                        <div class="d-elem n-4 ping"></div>
+                        <div class="d-elem n-3 ping"></div>
+                        <div class="d-elem n-2 ping"></div>
+                        <div class="d-elem n-1 ping"></div>
+                    </div>
+                    <div class="value" id="ping">-- <span class="unit">мс</span></div>
+                    <p>Пинг</p>
+                </div>
+                <div class="result-card">
+                    <div class="display">
+                        <div class="d-elem n-5-dis mode"></div>
+                        <div class="d-elem n-4 mode"></div>
+                        <div class="d-elem n-3 mode"></div>
+                        <div class="d-elem n-2 mode"></div>
+                        <div class="d-elem n-1 mode"></div>
+                    </div>
+                    <div class="value" id="networkMode" style="font-size: 18px;">--</div>
+                    <p>Режим сети</p>
                 </div>
             </div>
-            <div class="result-card">
-                <div class="display">
-                    <div class="d-elem n-5 ping"></div>
-                    <div class="d-elem n-4 ping"></div>
-                    <div class="d-elem n-3 ping"></div>
-                    <div class="d-elem n-2 ping"></div>
-                    <div class="d-elem n-1 ping"></div>
-                </div>
-                <div class="value" id="ping">-- <span class="unit">мс</span></div>
-                <p>Пинг</p>
-            </div>
-            <div class="result-card">
-                <div class="display">
-                    <div class="d-elem n-5-dis mode"></div>
-                    <div class="d-elem n-4 mode"></div>
-                    <div class="d-elem n-3 mode"></div>
-                    <div class="d-elem n-2 mode"></div>
-                    <div class="d-elem n-1 mode"></div>
-                </div>
-                <div class="value" id="networkMode" style="font-size: 18px;">--</div>
-                <p>Режим сети</p>
+            <div class="progress-bar">
+                <div id="pr-bar-1" class="pr-bar-section pr-bar-1">Проверка интернета</div>
+                <div id="pr-bar-2" class="pr-bar-section pr-bar-2">Измерение скорости</div>
+                <div id="pr-bar-3" class="pr-bar-section pr-bar-3">Измерение пинга</div>
+                <div id="pr-bar-4" class="pr-bar-section pr-bar-4">Проверка режима</div>
+                <div id="pr-bar-5" class="pr-bar-section pr-bar-5">Конец</div>
             </div>
         </div>
         <!-- ===== КНОПКА ===== -->
@@ -741,7 +849,7 @@
             </div>
         </div>
         <footer>
-            <p>Версия: 1.0.2</p>
+            <p>Версия: 1.0.3</p>
             <a href="https://github.com/Artemproector" target="_blank">By Artemproector</a>
         </footer>
     </div>
@@ -778,7 +886,10 @@
                     name: 'Зарубежные 2',
                     sites: [
                         'https://www.youtube.com/yts/img/favicon-vfl8qSV2F.ico',
-                        'https://soundcloud.com/favicon.ico'
+                        'https://soundcloud.com/favicon.ico',
+                        "https://web.telegram.org/favicon.ico",
+                        "https://static.whatsapp.net/rsrc.php/y1/r/FJbTMJqMap7.svg"
+
                     ]
                 }
             },
@@ -804,16 +915,60 @@
         }
 
         function formatPing(ms) {
-            if (ms === Infinity || !isFinite(ms)) return '∞';
+            if (ms === Infinity || !isFinite(ms)) return '--';
             return Math.round(ms);
         }
         // ============================================================
         // ОБЫЧНЫЕ ФУНКЦИИ ИНТЕРФЕЙСА!!!!
         // ============================================================
+        let progress_el_1 = document.querySelector('.pr-bar-1')
+        let progress_el_2 = document.querySelector('.pr-bar-2')
+        let progress_el_3 = document.querySelector('.pr-bar-3')
+        let progress_el_4 = document.querySelector('.pr-bar-4')
+        let progress_el_5 = document.querySelector('.pr-bar-5')
         let navbar = document.querySelector('.nav-bar');
         let fullnavbar = document.querySelector('.full-nav-bar');
         let header__left_col_btn = document.querySelector('.header__left-col-btn');
+        function scrollToActiveProgress() {
+            const progressBar = document.querySelector('.progress-bar');
+            const activeElement = progressBar.querySelector('.pr-bar-section--active');
 
+            if (activeElement) {
+                // Вычисляем позицию активного элемента относительно контейнера
+                const containerWidth = progressBar.offsetWidth;
+                const elementOffset = activeElement.offsetLeft;
+                const elementWidth = activeElement.offsetWidth;
+
+                // Прокручиваем так, чтобы элемент оказался по центру
+                progressBar.scrollLeft = elementOffset - (containerWidth / 2) + (elementWidth / 2);
+            }
+        }
+        function scrollToLast() {
+            const progressBar = document.querySelector('.progress-bar');
+            const element = progressBar.querySelectorAll('.pr-bar-section');
+
+            if (element) {
+                const containerWidth = progressBar.offsetWidth;
+                const elementOffset = element[element.length - 1].offsetLeft;
+                const elementWidth = element[element.length - 1].offsetWidth;
+
+                // Прокручиваем так, чтобы элемент оказался по центру
+                progressBar.scrollLeft = elementOffset - (containerWidth / 2) + (elementWidth / 2);
+            }
+        }
+        function scrollToFirst() {
+            const progressBar = document.querySelector('.progress-bar');
+            const element = progressBar.querySelectorAll('.pr-bar-section');
+
+            if (element) {
+                const containerWidth = progressBar.offsetWidth;
+                const elementOffset = element[0].offsetLeft;
+                const elementWidth = element[0].offsetWidth;
+
+                // Прокручиваем так, чтобы элемент оказался по центру
+                progressBar.scrollLeft = elementOffset - (containerWidth / 2) + (elementWidth / 2);
+            }
+        }
         // Открытие/закрытие меню
         header__left_col_btn.addEventListener('click', function (e) {
             e.stopPropagation(); // Чтобы не закрывалось сразу
@@ -964,7 +1119,47 @@
                     <p>Ни один сайт не доступен.</p>
                 </div>
             </div>
+<div class="help-section">
+    <h3>Индикаторы состояния сети</h3>
+    <p>В интерфейсе приложения используются три индикатора, которые показывают состояние доступности сайтов в каждой категории:</p>
+    <div class="mode-item">
+        <strong>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
+                <circle cx="12" cy="12" r="10" stroke="#2ed573" stroke-width="2"/>
+                <path d="M7 12L10.5 15.5L17 9" stroke="#2ed573" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            - ОК
+        </strong>
+        <p><strong>Все сайты в этой категории доступны и работаютв штатном режиме.</strong>  При открытии страницы проблем не возникает. Это означает, что ваш провайдер или сетевое оборудование не ограничивает доступ к данным ресурсам.</p>
+    </div><div class="mode-item">
+        <strong>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
+                <path d="M12 2L2 21H22L12 2Z" stroke="#ffa502" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M12 9V14" stroke="#ffa502" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="17" r="1" fill="#ffa502"/>
+            </svg>
+            - Неисправность
+        </strong>
+        <p><strong>Все сайты в категории недоступны.</strong> Это может указывать на полную блокировку категории провайдером (например, ТСПУ)</p>
 
+    </div>
+    <div class="mode-item">
+        <strong>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
+                <circle cx="12" cy="12" r="10" stroke="#ff4757" stroke-width="2"/>
+                <path d="M12 7V13" stroke="#ff4757" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="16" r="1" fill="#ff4757"/>
+            </svg>
+            - Проблема
+        </strong>
+        <p><strong>Некоторые сайты в категории недоступны, но часть работает.</strong>
+            Это может указывать на то, что провайдер или администратор сети заблокировал только определённые ресурсы (черные списки).</p>
+        <div class="tip">
+            Если у вас жёлтый треугольник в категории "Зарубежные 1" и "Зарубежные 2", это часто означает, что провайдер или администратор сети применяет "белые списки"(О режимах сети читайте в справке).
+        </div>
+    </div>
+    
+</div>
             <div class="help-section">
                 <h3>Как пользоваться тестом?</h3>
                 <ol>
@@ -975,7 +1170,6 @@
                         <p>Скорость отправки (исходящая)</p>
                         <p>Пинг (задержка)</p>
                     <li>Проверьте доступность категорий сайтов (отечественные и зарубежные)</li>
-                    <li>Прочитайте диагноз — он объяснит, что происходит с вашим интернетом</li>
                 </ol>
                 <div class="tip">
                     Если тест показал "Белые списки" — скорее всего, ваш провайдер блокируют зарубежные сайты.
@@ -1006,11 +1200,9 @@
         // ============================================================
         // 3. ПРОВЕРКА ДОСТУПНОСТИ САЙТОВ
         // ============================================================
-
         async function checkSiteAvailability(url, timeout = CONFIG.timeout) {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), timeout);
-
             try {
                 const start = performance.now();
                 const response = await fetch(url, {
@@ -1507,17 +1699,34 @@
             document.getElementById('networkMode').textContent = '--';
             const categoryKeys = ['ru1', 'ru2', 'en1', 'en2'];
             for (const key of categoryKeys) {
-                const icon = document.getElementById(`cat - ${key} `);
+                const icon = document.getElementById(`cat-${key}`);
                 if (icon) {
                     icon.className = 'status-icon';
                     icon.innerHTML = ``;
                 }
             }
+            progress_el_1.classList.remove('pr-bar-section--pass')
+            progress_el_2.classList.remove('pr-bar-section--pass')
+            progress_el_3.classList.remove('pr-bar-section--pass')
+            progress_el_4.classList.remove('pr-bar-section--pass')
+            progress_el_5.classList.remove('pr-bar-section--pass')
+            progress_el_1.classList.remove('pr-bar-section--fail')
+            progress_el_2.classList.remove('pr-bar-section--fail')
+            progress_el_3.classList.remove('pr-bar-section--fail')
+            progress_el_4.classList.remove('pr-bar-section--fail')
+            progress_el_5.classList.remove('pr-bar-section--fail')
+            progress_el_1.classList.remove('pr-bar-section--active')
+            progress_el_2.classList.remove('pr-bar-section--active')
+            progress_el_3.classList.remove('pr-bar-section--active')
+            progress_el_4.classList.remove('pr-bar-section--active')
+            progress_el_5.classList.remove('pr-bar-section--active')
+            scrollToFirst()
             try {
                 // ============================================================
                 // ЭТАП 1: БЫСТРАЯ ПРОВЕРКА ИНТЕРНЕТА
                 // ============================================================
                 const quickCheck = await quickInternetCheck();
+                progress_el_1.classList.add('pr-bar-section--active')
                 if (!quickCheck.hasInternet) {
                     document.getElementById('downloadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
                     document.getElementById('uploadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
@@ -1530,22 +1739,38 @@
                     saveFailedTest();
                     testBtn.classList.remove('loading');
                     testBtn.disabled = false;
+                    progress_el_1.classList.add('pr-bar-section--fail')
+                    progress_el_2.classList.add('pr-bar-section--fail')
+                    progress_el_3.classList.add('pr-bar-section--fail')
+                    progress_el_4.classList.add('pr-bar-section--fail')
+                    progress_el_5.classList.add('pr-bar-section--fail')
+                    progress_el_1.classList.remove('pr-bar-section--active')
+                    scrollToLast()
                     return;
                 }
+                progress_el_1.classList.remove('pr-bar-section--active')
+                progress_el_1.classList.add('pr-bar-section--pass')
+                progress_el_2.classList.add('pr-bar-section--active')
+                await sleep(500);
+
+                scrollToActiveProgress()
                 const downloadResult = await testDownloadSpeed(CONFIG.speedTest.download, 3);
                 const uploadResult = await testUploadSpeed(CONFIG.speedTest.upload, 3);
                 const pingResult = await testPing('https://www.avito.st/dstatic/favicon.ico', 5);
+                progress_el_3.classList.add('pr-bar-section--active')
+                scrollToActiveProgress()
                 if (downloadResult.success) {
                     const speedMbps = downloadResult.speedBps / 1024 / 1024;
                     const dwnColor = getSpeedColor(speedMbps);
                     document.getElementById('downloadSpeed').innerHTML = `
                 <span style = "color: ${dwnColor.color}">
                     ${speedMbps.toFixed(2)}
-                </span >
+                </span>
                 <span class="unit">Мбит/с</span>
                 <span style="color: ${dwnColor.color}; font-size: 12px; margin-left: 8px;"></span>
             `;
                     updateDisplay('dwn', dwnColor.level);
+
                 } else {
                     document.getElementById('downloadSpeed').innerHTML = '-- <span class="unit">Мбит/с</span>';
                     updateDisplay('dwn', 1);
@@ -1556,14 +1781,17 @@
                     const speedMbps = uploadResult.speedBps / 1024 / 1024;
                     const upColor = getSpeedColor(speedMbps);
                     document.getElementById('uploadSpeed').innerHTML = `
-                <span style = "color: ${upColor.color}" >
+                <span style = "color: ${upColor.color}">
                     ${speedMbps.toFixed(2)}
-                </span >
+                </span>
                 <span class="unit">Мбит/с</span>
                 <span style="color: ${upColor.color}; font-size: 12px; margin-left: 8px;"></span>
 
             `;
                     updateDisplay('up', upColor.level);
+                    progress_el_2.classList.add('pr-bar-section--pass')
+                    progress_el_2.classList.remove('pr-bar-section--active')
+
                 } else {
                     document.getElementById('uploadSpeed').innerHTML = '-- <span class="unit">Мбит/с</span>';
                     updateDisplay('up', 1);
@@ -1572,17 +1800,22 @@
                 if (pingResult.success) {
                     const pingColor = getPingColor(pingResult.average);
                     document.getElementById('ping').innerHTML = `
-                <span style = "color: ${pingColor.color}" >
+                <span style = "color: ${pingColor.color}">
                     ${Math.round(pingResult.average)}
-                </span >
+                </span>
                 <span class="unit">мс</span>
                 <span style="color: ${pingColor.color}; font-size: 12px; margin-left: 8px;">
                 </span>
             `;
                     updateDisplay('ping', pingColor.level);
+                    progress_el_3.classList.add('pr-bar-section--pass')
+                    progress_el_3.classList.remove('pr-bar-section--active')
+
                 } else {
                     document.getElementById('ping').innerHTML = '-- <span class="unit">мс</span>';
                     updateDisplay('ping', 1);
+                    progress_el_3.classList.add('pr-bar-section--fail')
+                    progress_el_3.classList.remove('pr-bar-section--active')
                 }
 
                 // ============================================================
@@ -1590,7 +1823,8 @@
                 // ============================================================
                 const categoryResults = {};
                 const categoryKeys = ['ru1', 'ru2', 'en1', 'en2'];
-
+                progress_el_4.classList.add('pr-bar-section--active')
+                scrollToActiveProgress()
                 for (const key of categoryKeys) {
                     const sites = CONFIG.categories[key]?.sites || [];
                     if (sites.length === 0) {
@@ -1629,6 +1863,8 @@
 
                     await sleep(200);
                 }
+                progress_el_4.classList.add('pr-bar-section--pass')
+                progress_el_4.classList.remove('pr-bar-section--active')
 
                 // ============================================================
                 // ЭТАП 4: ОПРЕДЕЛЕНИЕ РЕЖИМА
@@ -1658,8 +1894,15 @@
             } finally {
                 testBtn.classList.remove('loading');
                 testBtn.disabled = false;
+                await sleep(500);
+                progress_el_5.classList.add('pr-bar-section--pass')
+                scrollToLast()
             }
         }
+
+        // ============================================================
+        // ИСТОРИЯ!
+        // ============================================================
         function saveFailedTest() {
             let speedHistory = JSON.parse(localStorage.getItem('speedHistory') || '[]');
 
@@ -1678,10 +1921,6 @@
 
             localStorage.setItem('speedHistory', JSON.stringify(speedHistory));
         }
-        // ============================================================
-        // ИСТОРИЯ!
-        // ============================================================
-
         function getSpeedHistory() {
             const history = localStorage.getItem('speedHistory');
             if (history === null) {
@@ -1717,7 +1956,7 @@
                 <div class="history-empty">
                 <p>История проверок пока пуста</p>
                 <p style="font-size: 12px; color: #8892b0;">Проведите первый тест, чтобы появились данные</p>
-            </div >
+            </div>
                 `;
                 return;
             }
@@ -1725,7 +1964,7 @@
             let html = '<div class="history-list">';
             const reversed = [...historyData].reverse();
             html += `
-        </div >
+        </div>
                 <button onclick="clearHistory()" class="history-clear-btn">
                     Очистить историю
                 </button>
@@ -1747,7 +1986,7 @@
                     <span class="history-ping">${ping} мс</span>
                     <span class="history-mode-tag">${mode}</span>
                 </div>
-            </div >
+            </div>
                 `;
             });
 
