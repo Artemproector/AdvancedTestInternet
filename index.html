@@ -698,8 +698,11 @@
             <li>
                 <div onclick="openlink()">Исходный код проекта</div>
             </li>
+            <li>
+                <div onclick="openupdate()">Проверить обнавление</div>
+            </li>
         </ul>
-        <p>Версия: 1.0.3</p>
+        <p class="app_ver">Версия: ?.?.?</p>
         <a href="https://github.com/Artemproector" target="_blank">By Artemproector</a>
     </div>
     <div class="full-nav-bar" id="navBar-full">
@@ -849,7 +852,7 @@
             </div>
         </div>
         <footer>
-            <p>Версия: 1.0.3</p>
+            <p class="app_ver">Версия: ?.?.?</p>
             <a href="https://github.com/Artemproector" target="_blank">By Artemproector</a>
         </footer>
     </div>
@@ -902,7 +905,8 @@
 
             // Настройки таймаутов
             timeout: 5000,
-            quickCheckTimeout: 3000
+            quickCheckTimeout: 3000,
+            version: "1.1.1"
         };
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -921,6 +925,7 @@
         // ============================================================
         // ОБЫЧНЫЕ ФУНКЦИИ ИНТЕРФЕЙСА!!!!
         // ============================================================
+        let app_ver = document.querySelectorAll('.app_ver')
         let progress_el_1 = document.querySelector('.pr-bar-1')
         let progress_el_2 = document.querySelector('.pr-bar-2')
         let progress_el_3 = document.querySelector('.pr-bar-3')
@@ -929,6 +934,9 @@
         let navbar = document.querySelector('.nav-bar');
         let fullnavbar = document.querySelector('.full-nav-bar');
         let header__left_col_btn = document.querySelector('.header__left-col-btn');
+        app_ver.forEach(e => {
+            e.textContent = `Версия: ${CONFIG.version}`
+        });
         function scrollToActiveProgress() {
             const progressBar = document.querySelector('.progress-bar');
             const activeElement = progressBar.querySelector('.pr-bar-section--active');
@@ -1008,7 +1016,6 @@
     └─────────────────────────────────────┘
     </pre> А пока просто пользуйся тестом. Он и без этого не плохой (наверное)`
         }
-
         function openSettings() {
             fullnavbar.classList.add('show-nav');
             let fullLabel = document.querySelector('.labal-full-menu');
@@ -1196,6 +1203,112 @@
         }
         function closefullmenu() {
             fullnavbar.classList.remove('show-nav');
+        }
+        // ============================================================
+        // ПРОВЕРКА ОБНОВЛЕНИЙ
+        // ============================================================
+
+        async function checkupdate() {
+            try {
+                const response = await fetch('https://api.github.com/repos/Artemproector/AdvancedTestInternet/releases/latest', {
+                    signal: AbortSignal.timeout(5000)
+                });
+
+                if (!response.ok) throw new Error('Ошибка загрузки');
+
+                const data = await response.json();
+                const latestVersion = data.tag_name.replace('v', '');
+
+                if (latestVersion === CONFIG.version) {
+                    return {
+                        status: 'up_to_date',
+                        version: CONFIG.version
+                    };
+                } else {
+                    return {
+                        status: 'outdated',
+                        currentVersion: CONFIG.version,
+                        latestVersion: latestVersion,
+                        url: data.html_url
+                    };
+                }
+            } catch (error) {
+                return {
+                    status: 'error',
+                    message: 'Не удалось проверить обновления'
+                };
+            }
+        }
+
+        function openupdate() {
+            fullnavbar.classList.add('show-nav');
+            let fullLabel = document.querySelector('.labal-full-menu');
+            if (fullLabel) {
+                fullLabel.textContent = 'Проверка обновлений';
+            }
+            let area = document.querySelector('.area');
+
+            // Показываем сообщение о загрузке
+            area.innerHTML = `
+        <div style="text-align: center; padding: 40px 20px;">
+            <p style="color: #8892b0;">⏳ Проверка обновлений...</p>
+        </div>
+    `;
+
+            // Запускаем проверку
+            checkupdate().then(result => {
+                if (result.status === 'up_to_date') {
+                    area.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px;">
+                    <p style="color: #2ed573; font-size: 20px; font-weight: 600;">Установлена последняя версия</p>
+                    <p style="color: #8892b0; margin-top: 10px;">Версия: ${result.version}</p>
+                </div>
+            `;
+                } else if (result.status === 'outdated') {
+                    area.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px;">
+                    <p style="color: #ffa502; font-size: 20px; font-weight: 600;">Доступна новая версия!</p>
+                    <p style="color: #8892b0; margin-top: 10px;">
+                        Текущая версия: ${result.currentVersion}
+                    </p>
+                    <p style="color: #8892b0;">
+                        Последняя версия: ${result.latestVersion}
+                    </p>
+                    <br>
+                    <a href="${result.url}" target="_blank" style="
+                        display: inline-block;
+                        padding: 12px 30px;
+                        background: #4facfe;
+                        color: #0a0e1a;
+                        border-radius: 8px;
+                        text-decoration: none;
+                        font-weight: 600;
+                        margin-top: 15px;
+                    ">Перейти к загрузке</a>
+                </div>
+            `;
+                } else {
+                    area.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px;">
+                    <p style="color: #ff4757; font-size: 18px; font-weight: 600;">${result.message}</p>
+                    <p style="color: #8892b0; margin-top: 10px;">
+                        Проверьте подключение к интернету и повторите попытку.
+                    </p>
+                    <button onclick="openupdate()" style="
+                        display: inline-block;
+                        padding: 10px 25px;
+                        background: #2a3555;
+                        color: #fff;
+                        border: none;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        margin-top: 15px;
+                        font-size: 14px;
+                    ">Повторить проверку</button>
+                </div>
+            `;
+                }
+            });
         }
         // ============================================================
         // 3. ПРОВЕРКА ДОСТУПНОСТИ САЙТОВ
@@ -1774,6 +1887,7 @@
                 } else {
                     document.getElementById('downloadSpeed').innerHTML = '-- <span class="unit">Мбит/с</span>';
                     updateDisplay('dwn', 1);
+                    progress_el_2.classList.add('pr-bar-section--fail')
                 }
 
                 // Обновляем UI скорости загрузки
@@ -1795,6 +1909,7 @@
                 } else {
                     document.getElementById('uploadSpeed').innerHTML = '-- <span class="unit">Мбит/с</span>';
                     updateDisplay('up', 1);
+                    progress_el_2.classList.add('pr-bar-section--fail')
                 }
 
                 if (pingResult.success) {
