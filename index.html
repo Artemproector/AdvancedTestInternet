@@ -7,7 +7,7 @@
     <title>Расширенный тест интернета</title>
 </head>
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pliant:ital,wght@0,100..900;1,100..900&display=swap');
+    /*@import url('https://fonts.googleapis.com/css2?family=Pliant:ital,wght@0,100..900;1,100..900&display=swap');*/
 
     :root {
         --main-bg-color: #0a0e1a;
@@ -140,6 +140,7 @@
         gap: 10px;
         margin: 0 0 10px 0;
         flex-wrap: wrap;
+        width: 100%;
     }
 
     .d-elem {
@@ -538,7 +539,7 @@
         color: #00f2fe;
         text-decoration: underline;
     }
-
+/* ===== прогресс бар ===== */
     .progress-bar {
         display: flex;
         scroll-behavior: smooth;
@@ -601,77 +602,118 @@
             background-color: #2a3555;
         }
     }
-
-    @media (max-width: 600px) {
-        .progress-bar {
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            padding: 6px 4px;
-            gap: 2px;
-            justify-content: flex-start;
-            /* Чтобы блоки не растягивались */
-        }
-
-        .pr-bar-section {
-            font-size: 10px;
-            /* Меньше шрифт на телефонах */
-            padding: 4px 8px;
-            flex-shrink: 0;
-            /* Запрещаем сжатие, чтобы текст не переносился */
-        }
-
-        /* Убираем скроллбар (но скролл остаётся) */
-        .progress-bar::-webkit-scrollbar {
-            height: 2px;
-            background: transparent;
-        }
-
-        .progress-bar::-webkit-scrollbar-thumb {
-            background: #2a3555;
-            border-radius: 4px;
-        }
-
-        .container {
-            padding: 20px;
-        }
-
-        .result-card {
-            width: 45%;
-        }
-
-        .result-card:hover {
-            background: none !important;
-        }
-
-        .category-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .status-bar {
-            flex-direction: column;
-            align-items: stretch;
-            text-align: center;
-        }
-
-        .status-dot {
-            align-self: center;
-        }
-
-        .header h1 {
-            font-size: 22px;
-        }
-
-        .nav-bar {
-            width: 280px;
-            right: -300px;
-            padding: 25px 20px;
-        }
-
-        .full-nav-bar {
-            right: -500px;
-            width: 100%;
-        }
+    /* ===== сводка ===== */
+    .summary {
+        display:flex;
+        width:100%;
+        background-color:transparent;   
+        flex-direction:column;
+        text-align:center;
+        border-radius: 12px;
+        padding: 10px 20px 18px 20px;
+        border: 1px solid #2a3555;        
+        margin-bottom:10px;
+         }
+    .summary__wrapper{
+        display:flex;
+        flex-direction:row;
+        align-item:center;
+        
     }
+    .summary__left-col{
+        display:flex;
+        justify-content: space-between;
+        flex-direction:column;
+        padding:0;
+        border-right:1px solid #2a3555;
+        /*background-color:#2ed573;*/
+    }
+    .summary__right-col-today {
+        font-size:10px;
+    }
+    
+/* ===== адаптив ===== */
+    @media (max-width: 600px) {
+    .progress-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 6px 4px;
+        gap: 2px;
+        justify-content: flex-start;
+    }
+
+    .pr-bar-section {
+        font-size: 10px;
+        padding: 4px 8px;
+        flex-shrink: 0;
+    }
+
+    .progress-bar::-webkit-scrollbar {
+        height: 2px;
+        background: transparent;
+    }
+
+    .progress-bar::-webkit-scrollbar-thumb {
+        background: #2a3555;
+        border-radius: 4px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    /* ✅ ИСПРАВЛЕНО: карточки на всю ширину */
+    .displays {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .result-card {
+        width: 100% !important; /* Растягиваем на всю ячейку */
+        padding: 14px;
+    }
+
+    .result-card:hover {
+        background: none !important;
+    }
+
+    .category-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .status-bar {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .status-dot {
+        align-self: center;
+    }
+
+    .header h1 {
+        font-size: 22px;
+    }
+
+    .nav-bar {
+        width: 280px;
+        right: -300px;
+        padding: 25px 20px;
+    }
+
+    .full-nav-bar {
+        right: -500px;
+        width: 100%;
+    }
+
+    /* Дополнительно: подгоняем дисплеи внутри карточек */
+    .display {
+        width: 100%;
+        max-width: 75px;
+    }
+}
 </style>
 
 <body>
@@ -691,6 +733,9 @@
             </li>
             <li>
                 <div onclick="historyload()">История проверок</div>
+            </li>
+            <li>
+                <div onclick="summaryload()">Сводка данных</div>
             </li>
             <li>
                 <div onclick="openwiki()">Справка</div>
@@ -736,6 +781,21 @@
                 </div>
             </div>
 
+        </div>
+        <div class="summary">
+            <h3>Сводка</h3>
+            <div class="summary__wrapper">
+                <div class="summary__left-col">
+                    <p>Надёжность соединения</p>
+                    <h3 class="connect_index">——</h3>
+                </div>
+                <div class="summary__right-col">
+                    <p>Количество тестирований</p>
+                    <p class="summary__right-col-today">За сегодня</p>
+                    <h3 class="tests_counter">——</h3>
+                </div> 
+            </div>
+            <p class="summaryload()">Вся сводка</p>
         </div>
         <div class="results">
             <div class="displays">
@@ -925,6 +985,7 @@
         // ============================================================
         // ОБЫЧНЫЕ ФУНКЦИИ ИНТЕРФЕЙСА!!!!
         // ============================================================
+        let connect_index = document.querySelector(".connect_index")
         let app_ver = document.querySelectorAll('.app_ver')
         let progress_el_1 = document.querySelector('.pr-bar-1')
         let progress_el_2 = document.querySelector('.pr-bar-2')
@@ -1039,8 +1100,13 @@
             </li>
         </ul>`
         }
+        
         function ShowSettings(type) {
             probka_zaglushka()
+        }
+        function summaryload(){
+            probka_zaglushka()
+            //подробнее в заметках
         }
         function openwiki() {
             fullnavbar.classList.add('show-nav');
@@ -1980,6 +2046,8 @@
                 }
                 progress_el_4.classList.add('pr-bar-section--pass')
                 progress_el_4.classList.remove('pr-bar-section--active')
+                calcConnectIndex();
+                
 
                 // ============================================================
                 // ЭТАП 4: ОПРЕДЕЛЕНИЕ РЕЖИМА
@@ -1988,7 +2056,7 @@
                 document.getElementById('networkMode').textContent = mode.mode;
                 if (downloadResult.success) {
                     let speedHistory = JSON.parse(localStorage.getItem('speedHistory') || '[]');
-
+calcConnectIndex();
                     speedHistory.push({
                         timestamp: Date.now(),
                         downloadSpeed: Math.floor(downloadResult.speedBps / 1024 / 1024),
@@ -2114,6 +2182,88 @@
                 historyload();
             }
         }
+    // ============================================================
+// СВОДКА ДАННЫХ
+// ============================================================
+
+// 1. Функция для обновления индекса надёжности
+function updateConnectIndex() {
+    const history = JSON.parse(localStorage.getItem('speedHistory') || '[]');
+    const totalTests = history.length;
+    const connectIndexEl = document.querySelector('.connect_index');
+    const leftCol = document.querySelector('.summary__left-col');
+
+    if (totalTests === 0) {
+        connectIndexEl.textContent = '——';
+        leftCol.style.background = 'transparent';
+        return;
+    }
+
+    // Считаем успешные тесты
+    let successCount = 0;
+    history.forEach(item => {
+        if (item.success !== false && item.mode !== 'Нет интернета') {
+            successCount++;
+        }
+    });
+
+    // Индекс надёжности (0–10)
+    const successRate = Math.round((successCount / totalTests) * 100);
+    let index = Math.min(Math.round(successRate / 10), 10);
+    connectIndexEl.textContent = index;
+
+    // Цвет фона для левой колонки (индекс 0–10)
+    let bgColor = 'transparent';
+    if (index >= 5) {
+        bgColor = 'rgba(46, 213, 115, 0.15)'; // Зелёный
+    } else if (index === 4) {
+        bgColor = 'rgba(46, 213, 115, 0.10)'; // Светло-зелёный
+    } else if (index === 3) {
+        bgColor = 'rgba(255, 165, 2, 0.15)';   // Жёлтый
+    } else if (index === 2) {
+        bgColor = 'rgba(255, 165, 2, 0.10)';   // Светло-жёлтый
+    } else if (index === 1) {
+        bgColor = 'rgba(255, 71, 87, 0.15)';   // Красный
+    } else if (index === 0) {
+        bgColor = 'rgba(255, 71, 87, 0.10)';   // Светло-красный
+    }
+    leftCol.style.background = bgColor;
+}
+
+// 2. Функция для обновления количества тестов
+function updateTestsCounter() {
+    const history = JSON.parse(localStorage.getItem('speedHistory') || '[]');
+    const totalTests = history.length;
+    const testsCounterEl = document.querySelector('.tests_counter');
+    const rightCol = document.querySelector('.summary__right-col');
+
+    testsCounterEl.textContent = totalTests;
+
+    // Цвет фона для правой колонки (по количеству тестов: 1-5, 5+ = зелёный)
+    let bgColor = 'transparent';
+    if (totalTests === 0) {
+        bgColor = 'transparent';
+    } else if (totalTests >= 5) {
+        bgColor = 'rgba(46, 213, 115, 0.15)';   // Зелёный
+    } else if (totalTests === 4) {
+        bgColor = 'rgba(46, 213, 115, 0.10)';   // Светло-зелёный
+    } else if (totalTests === 3) {
+        bgColor = 'rgba(255, 165, 2, 0.15)';     // Жёлтый
+    } else if (totalTests === 2) {
+        bgColor = 'rgba(255, 165, 2, 0.10)';     // Светло-жёлтый
+    } else if (totalTests === 1) {
+        bgColor = 'rgba(255, 71, 87, 0.15)';     // Красный
+    }
+    rightCol.style.background = bgColor;
+}
+
+// 3. Функция-обёртка (вызывает обе функции)
+function calcConnectIndex() {
+    updateConnectIndex();
+    updateTestsCounter();
+}
+        
+        calcConnectIndex()
         // ============================================================
         // 10. ИНИЦИАЛИЗАЦИЯ
         // ============================================================
