@@ -918,6 +918,7 @@
     </div>
     <script>
         const CONFIG = {
+        express_test:["https://ya.ru"],
             // Сайты для проверки доступности по категориям
             categories: {
                 ru1: {
@@ -966,7 +967,7 @@
             // Настройки таймаутов
             timeout: 5000,
             quickCheckTimeout: 3000,
-            version: "1.1.1"
+            version: "1.2.1"
         };
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -1658,11 +1659,7 @@
         // 6. БЫСТРАЯ ПРОВЕРКА НАЛИЧИЯ ИНТЕРНЕТА
         // ============================================================
         async function quickInternetCheck() {
-            const testUrls = [
-                'https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico',
-                'https://yastatic.net/s3/home-static/_/nova/B5CxuyJ3.png',
-                'https://www.avito.st/dstatic/favicon.ico'
-            ];
+            const testUrls = CONFIG.express_test
 
             const results = await Promise.all(
                 testUrls.map(url => checkSiteAvailability(url, 2000))
@@ -1671,9 +1668,8 @@
             const successCount = results.filter(r => r.success).length;
             const total = results.length;
             const successRate = successCount / total;
-
             return {
-                hasInternet: successRate >= 0.5,
+                hasInternet: successRate >= 0.01,
                 successRate,
                 successCount,
                 total,
@@ -1922,9 +1918,26 @@
                     progress_el_2.classList.add('pr-bar-section--fail')
                     progress_el_3.classList.add('pr-bar-section--fail')
                     progress_el_4.classList.add('pr-bar-section--fail')
+                    const categoryResults = {};
+                    const categoryKeys = ['ru1', 'ru2', 'en1', 'en2'];
+                    for (const key of categoryKeys) {
+                        console.log(key);
+                        const icon = document.getElementById(`cat-${key}`);
+                        if (icon) {
+                            const threshold = 0.5;
+                            icon.className = 'status-icon';
+                            icon.classList.add('warning');
+                            icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2L2 21H22L12 2Z" stroke="#ffa502" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M12 9V14" stroke="#ffa502" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="12" cy="17" r="1" fill="#ffa502"/>
+</svg> `;
+                        
+                    }
                     progress_el_5.classList.add('pr-bar-section--fail')
                     progress_el_1.classList.remove('pr-bar-section--active')
-                    scrollToLast()
+                    scrollToLast() 
+                }
                     return;
                 }
                 progress_el_1.classList.remove('pr-bar-section--active')
@@ -1973,7 +1986,7 @@
                     progress_el_2.classList.remove('pr-bar-section--active')
 
                 } else {
-                    document.getElementById('uploadSpeed').innerHTML = '-- <span class="unit">Мбит/с</span>';
+                    document.getElementById('uploadSpeed').innerHTML = '-- <span class="unit">Мбит/с</span>';3
                     updateDisplay('up', 1);
                     progress_el_2.classList.add('pr-bar-section--fail')
                 }
@@ -2039,7 +2052,7 @@
     <path d="M12 9V14" stroke="#ffa502" stroke-width="2" stroke-linecap="round"/>
     <circle cx="12" cy="17" r="1" fill="#ffa502"/>
 </svg> `;
-                        }
+                        } 
                     }
 
                     await sleep(200);
