@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расширенный тест интернета</title>
+</head>
+<body>
+    <div class="nav-bar" id="navBar">
+        <div class="top-block">
+            <h2>Меню</h2>
+            <div class="close" onclick="closemenu()"><svg xmlns="http://www.w3.org/2000/svg" height="40px"
+                    viewBox="0 -960 960 960" width="40px" fill="#fff">
+                    <path
+                        d="M480-433.33 274.67-228q-9.67 9.67-23.34 9.67-13.66 0-23.33-9.67-9.67-9.67-9.67-23.33 0-13.67 9.67-23.34L433.33-480 228-685.33q-9.67-9.67-9.67-23.34 0-13.66 9.67-23.33 9.67-9.67 23.33-9.67 13.67 0 23.34 9.67L480-526.67 685.33-732q9.67-9.67 23.34-9.67 13.66 0 23.33 9.67 9.67 9.67 9.67 23.33 0 13.67-9.67 23.34L526.67-480 732-274.67q9.67 9.67 9.67 23.34 0 13.66-9.67 23.33-9.67 9.67-23.33 9.67-13.67 0-23.34-9.67L480-433.33Z" />
+                </svg>
+            </div>
+        </div>
+        <ul>
+            <li>
+                <div onclick="openSettings()">Настройки</div>
+            </li>
+            <li>
+                <div onclick="historyload()">История проверок</div>
+            </li>
+            <li>
+                <div onclick="summaryload()">Сводка данных</div>
+            </li>
+            <li>
+                <div onclick="openwiki()">Справка</div>
+            </li>
+            <li>
+                <div onclick="openlink()">Исходный код проекта</div>
+            </li>
+            <li>
+                <div onclick="openupdate()">Проверить обнавление</div>
+            </li>
+        </ul>
+        <p class="app_ver">Версия: ?.?.?</p>
+        <a href="https://github.com/Artemproector" target="_blank">By Artemproector</a>
+    </div>
+    <div class="full-nav-bar" id="navBar-full">
+        <div class="top-block">
+            <h2 class="labal-full-menu"></h2>
+            <div class="close" onclick="closefullmenu()"><svg xmlns="http://www.w3.org/2000/svg" height="40px"
+                    viewBox="0 -960 960 960" width="40px" fill="#fff">
+                    <path
+                        d="M287-446.67 503.67-230q10 10 9.83 23.33-.17 13.34-10.17 23.34-10 9.66-23.33 9.83-13.33.17-23.33-9.83L183.33-456.67q-5.33-5.33-7.5-11-2.16-5.66-2.16-12.33t2.16-12.33q2.17-5.67 7.5-11l273.34-273.34q9.66-9.66 23.16-9.66t23.5 9.66q10 10 10 23.5t-10 23.5L287-513.33h479.67q14.33 0 23.83 9.5 9.5 9.5 9.5 23.83 0 14.33-9.5 23.83-9.5 9.5-23.83 9.5H287Z" />
+                </svg>
+            </div>
+        </div>
+        <div class="area">
+            Наверное, разработчик забыл что-то написать. Например: текст этого меню (e404).
+        </div>
+
+    </div>
+    <div class="container">
+        <div class="container__wrapper">
+            <div class="summary fullsummary">
+                <h3>Сводка</h3>
+                <div class="summary__wrapper">
+                    <div class="summary__left-col">
+                        <p>Надёжность соединения</p>
+                        <h3 class="connect_index">——</h3>
+                    </div>
+                    <div class="summary__right-col">
+                        <p>Количество тестирований</p>
+                        <p class="summary__right-col-today">За сегодня</p>
+                        <h3 class="tests_counter">——</h3>
+                    </div>
+                </div>
+                <div class="summary__wrapper">
+                    <h4>Скоро тут появятся дополнительные данные.</h4>
+                    <p>Ждите в новых обновлениях</p>
+                </div>
+                <p class="summarybtn" onclick="summaryload()">Вся сводка</p>
+
+            </div>
+            <div class="main-contant">
+                <div class="header">
+                    <div class="header__right-col">
+                        <h1 class="header__right-col-title">Расширенный тест интернета</h1>
+                        <p class="header__right-col-text">Проверка скорости, доступности и режима работы сети</p>
+                    </div>
+                    <div class="header__left-col">
+                        <div class="header__left-col-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px"
+                                fill="#fff">
+                                <path
+                                    d="M153.33-240q-14.16 0-23.75-9.62-9.58-9.61-9.58-23.83 0-14.22 9.58-23.72 9.59-9.5 23.75-9.5h653.34q14.16 0 23.75 9.62 9.58 9.62 9.58 23.83 0 14.22-9.58 23.72-9.59 9.5-23.75 9.5H153.33Zm0-206.67q-14.16 0-23.75-9.61-9.58-9.62-9.58-23.84 0-14.21 9.58-23.71 9.59-9.5 23.75-9.5h653.34q14.16 0 23.75 9.61 9.58 9.62 9.58 23.84 0 14.21-9.58 23.71-9.59 9.5-23.75 9.5H153.33Zm0-206.66q-14.16 0-23.75-9.62-9.58-9.62-9.58-23.83 0-14.22 9.58-23.72 9.59-9.5 23.75-9.5h653.34q14.16 0 23.75 9.62 9.58 9.61 9.58 23.83 0 14.22-9.58 23.72-9.59 9.5-23.75 9.5H153.33Z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="summary phonesummary">
+                    <h3>Сводка</h3>
+                    <div class="summary__wrapper">
+                        <div class="summary__left-col">
+                            <p>Надёжность соединения</p>
+                            <h3 class="connect_index">——</h3>
+                        </div>
+                        <div class="summary__right-col">
+                            <p>Количество тестирований</p>
+                            <p class="summary__right-col-today">За сегодня</p>
+                            <h3 class="tests_counter">——</h3>
+                        </div>
+                    </div>
+                    <p class="summarybtn" onclick="summaryload()">Вся сводка</p>
+
+                </div>
+                <div class="results">
+                    <div class="displays">
+                        <div class="result-card">
+                            <div class="display">
+                                <div class="d-elem n-5 dwn"></div>
+                                <div class="d-elem n-4 dwn"></div>
+                                <div class="d-elem n-3 dwn"></div>
+                                <div class="d-elem n-2 dwn"></div>
+                                <div class="d-elem n-1 dwn"></div>
+                            </div>
+                            <div class="value" id="downloadSpeed">-- <span class="unit">Мбит/с</span></div>
+                            <div class="alert-block"
+                                onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                                <p>Входящая</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960"
+                                    width="40px" fill="#BB271A">
+                                    <path
+                                        d="m379.33-339.33 355-355q10-10 23.67-10 13.67 0 23.67 10 10 10 10 23.83 0 13.83-10 23.83l-379 379.34q-10 10-23.34 10-13.33 0-23.33-10L177.33-446q-10-10-9.5-23.83.5-13.84 10.5-23.84t23.84-10q13.83 0 23.83 10l153.33 154.34ZM584.83-97Q528-153.33 528-233.33q0-80.34 56.83-137.17 56.84-56.83 136.5-56.83 79.67 0 136.5 56.83 56.84 56.83 56.84 137.17 0 80-56.84 136.33Q801-40.67 721.33-40.67q-79.66 0-136.5-56.33Zm136.5-21q8.67 0 15-6 6.34-6 6.34-15.33 0-9.34-6.34-15.34-6.33-6-15-6-9.33 0-15.33 6t-6 15.34q0 9.33 6 15.33t15.33 6Zm0-83.33q8 0 13-5.34 5-5.33 5-13.33v-112q0-8-5.33-13t-13.33-5q-8 0-13 5.33-5 5.34-5 13.34v112q0 8 5.33 13t13.33 5Z" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <div class="display">
+                                <div class="d-elem n-5 up"></div>
+                                <div class="d-elem n-4 up"></div>
+                                <div class="d-elem n-3 up"></div>
+                                <div class="d-elem n-2 up"></div>
+                                <div class="d-elem n-1 up"></div>
+                            </div>
+                            <div class="value" id="uploadSpeed">-- <span class="unit">Мбит/с</span></div>
+                            <div class="alert-block"
+                                onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                                <p>Исходящая</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960"
+                                    width="40px" fill="#BB271A">
+                                    <path
+                                        d="m379.33-339.33 355-355q10-10 23.67-10 13.67 0 23.67 10 10 10 10 23.83 0 13.83-10 23.83l-379 379.34q-10 10-23.34 10-13.33 0-23.33-10L177.33-446q-10-10-9.5-23.83.5-13.84 10.5-23.84t23.84-10q13.83 0 23.83 10l153.33 154.34ZM584.83-97Q528-153.33 528-233.33q0-80.34 56.83-137.17 56.84-56.83 136.5-56.83 79.67 0 136.5 56.83 56.84 56.83 56.84 137.17 0 80-56.84 136.33Q801-40.67 721.33-40.67q-79.66 0-136.5-56.33Zm136.5-21q8.67 0 15-6 6.34-6 6.34-15.33 0-9.34-6.34-15.34-6.33-6-15-6-9.33 0-15.33 6t-6 15.34q0 9.33 6 15.33t15.33 6Zm0-83.33q8 0 13-5.34 5-5.33 5-13.33v-112q0-8-5.33-13t-13.33-5q-8 0-13 5.33-5 5.34-5 13.34v112q0 8 5.33 13t13.33 5Z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="result-card">
+                            <div class="display">
+                                <div class="d-elem n-5 ping"></div>
+                                <div class="d-elem n-4 ping"></div>
+                                <div class="d-elem n-3 ping"></div>
+                                <div class="d-elem n-2 ping"></div>
+                                <div class="d-elem n-1 ping"></div>
+                            </div>
+                            <div class="value" id="ping">-- <span class="unit">мс</span></div>
+                            <p>Пинг</p>
+                        </div>
+                        <div class="result-card">
+                            <div class="display">
+                                <div class="d-elem n-5-dis mode"></div>
+                                <div class="d-elem n-4 mode"></div>
+                                <div class="d-elem n-3 mode"></div>
+                                <div class="d-elem n-2 mode"></div>
+                                <div class="d-elem n-1 mode"></div>
+                            </div>
+                            <div class="value" id="networkMode" style="font-size: 18px;">--</div>
+                            <p>Режим сети</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="pr-bar-1" class="pr-bar-section pr-bar-1">Проверка интернета</div>
+                        <div id="pr-bar-2" class="pr-bar-section pr-bar-2">Измерение скорости</div>
+                        <div id="pr-bar-3" class="pr-bar-section pr-bar-3">Измерение пинга</div>
+                        <div id="pr-bar-4" class="pr-bar-section pr-bar-4">Проверка режима</div>
+                        <div id="pr-bar-5" class="pr-bar-section pr-bar-5">Конец</div>
+                    </div>
+                </div>
+                <!-- ===== КНОПКА ===== -->
+                <button class="test-button" id="testBtn">
+                    <span class="button-text">Запустить тест</span>
+                    <div class="spinner"></div>
+                </button>
+
+                <!-- ===== КАТЕГОРИИ САЙТОВ ===== -->
+                <div class="categories">
+                    <div class="categories-title">
+                        Доступность категорий:
+                    </div>
+                    <div class="category" id="categoryGrid">
+                        <div class="category-item" data-category="ru1">
+                            <div class="name">
+                                Отечественные 1
+                                <span class="sub">Сервисы чаще всего работующие без перебоев</span>
+                            </div>
+                            <div class="status-icon" id="cat-ru1"></div>
+                        </div>
+                        <div class="category-item" data-category="ru2">
+                            <div class="name">
+                                Отечественные 2
+                                <span class="sub">Сервисы, которые могут неработать при белых списках</span>
+                            </div>
+                            <div class="status-icon" id="cat-ru2"></div>
+                        </div>
+                        <div class="category-item" data-category="en1">
+                            <div class="name">
+                                Зарубежные 1
+                                <span class="sub">Сервисы, которые не заблокировали</span>
+                            </div>
+                            <div class="status-icon" id="cat-en1"></div>
+                        </div>
+                        <div class="category-item" data-category="en2">
+                            <div class="name">
+                                Зарубежные 2
+                                <span class="sub">Сервисы, которые заблокированны</span>
+                            </div>
+                            <div class="status-icon" id="cat-en2"></div>
+                        </div>
+                    </div>
+                </div>
+                <footer>
+                    <p class="app_ver">Версия: ?.?.?</p>
+                    <a href="https://github.com/Artemproector" target="_blank">By Artemproector</a>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
