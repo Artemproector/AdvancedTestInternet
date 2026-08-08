@@ -115,11 +115,6 @@ body {
     display: none;
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
 
 /* ===== РЕЗУЛЬТАТЫ ===== */
 .results {
@@ -582,21 +577,6 @@ footer a {
 .pr-bar-section--fail {
     color: #ff4757;
 }
-
-@keyframes noise {
-    0% {
-        background-color: #2a3555;
-    }
-
-    50% {
-        background-color: #2a355554;
-    }
-
-    100% {
-        background-color: #2a3555;
-    }
-}
-
 /* ===== сводка ===== */
 .fullsummary {
     display: block;
@@ -654,100 +634,3 @@ footer a {
     display: none;
 }
 
-/* ===== адаптив ===== */
-@media (max-width: 600px) {
-    .summarybtn {
-        display: block;
-    }
-
-    .fullsummary {
-        display: none;
-    }
-
-    .phonesummary {
-        display: block !important;
-    }
-
-    .progress-bar {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding: 6px 4px;
-        gap: 2px;
-        justify-content: flex-start;
-    }
-
-    .pr-bar-section {
-        font-size: 10px;
-        padding: 4px 8px;
-        flex-shrink: 0;
-    }
-
-    .progress-bar::-webkit-scrollbar {
-        height: 2px;
-        background: transparent;
-    }
-
-    .progress-bar::-webkit-scrollbar-thumb {
-        background: #2a3555;
-        border-radius: 4px;
-    }
-
-    .container {
-        padding: 20px;
-        max-width: 800px;
-    }
-
-    .container__wrapper {
-        display: block;
-    }
-
-    .displays {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        width: 100%;
-    }
-
-    .result-card {
-        width: 100% !important;
-        padding: 14px;
-    }
-
-    .result-card:hover {
-        background: none !important;
-    }
-
-    .category-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .status-bar {
-        flex-direction: column;
-        align-items: stretch;
-        text-align: center;
-    }
-
-    .status-dot {
-        align-self: center;
-    }
-
-    .header h1 {
-        font-size: 22px;
-    }
-
-    .nav-bar {
-        width: 280px;
-        right: -300px;
-        padding: 25px 20px;
-    }
-
-    .full-nav-bar {
-        right: -500px;
-        width: 100%;
-    }
-
-    .display {
-        width: 100%;
-        max-width: 75px;
-    }
-}
