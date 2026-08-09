@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Расширенный тест интернета</title>
 </head>
+
 <body>
     <div class="nav-bar" id="navBar">
         <div class="top-block">
@@ -121,7 +122,8 @@
                                 <div class="d-elem n-1 dwn"></div>
                             </div>
                             <div class="value" id="downloadSpeed">-- <span class="unit">Мбит/с</span></div>
-                            <div class="alert-block" onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                            <div class="alert-block"
+                                onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
                                 <p>Входящая</p>
                             </div>
                         </div>
@@ -175,13 +177,17 @@
                         <div id="pr-bar-4" class="pr-bar-section pr-bar-4">Проверка режима</div>
                         <div id="pr-bar-5" class="pr-bar-section pr-bar-5">Конец</div>
                     </div>
+                    <div class="timer-bar">
+                        <div id="tm-bar-1" class="tm-bar-section tm-bar-1">Начало: <span class="start-time">--:--:--</span></div>
+                        <div id="tm-bar-2" class="tm-bar-section tm-bar-2">Окончание: <span class="stop-time">--:--:--</span></div>
+                        <div id="tm-bar-3" class="tm-bar-section tm-bar-3">Длительность: <span class="test-time">--</span> сек</div>
+                    </div>
                 </div>
                 <!-- ===== КНОПКА ===== -->
                 <button class="test-button" id="testBtn">
                     <span class="button-text">Запустить тест</span>
                     <div class="spinner"></div>
                 </button>
-
                 <!-- ===== КАТЕГОРИИ САЙТОВ ===== -->
                 <div class="categories">
                     <div class="categories-title">
