@@ -35,6 +35,54 @@
         border-radius: 4px;
     }
 
+    .filter-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 6px 4px;
+        gap: 2px;
+        justify-content: flex-start;
+    }
+
+    .ft-bar-section {
+        font-size: 10px;
+        padding: 4px 8px;
+        flex-shrink: 0;
+    }
+
+    .filter-bar::-webkit-scrollbar {
+        height: 2px;
+        background: transparent;
+    }
+
+    .filter-bar::-webkit-scrollbar-thumb {
+        background: #2a3555;
+        border-radius: 4px;
+    }
+
+    .timer-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 6px 4px;
+        gap: 2px;
+        justify-content: flex-start;
+    }
+
+    .tm-bar-section {
+        font-size: 10px;
+        padding: 4px 8px;
+        flex-shrink: 0;
+    }
+
+    .timer-bar::-webkit-scrollbar {
+        height: 2px;
+        background: transparent;
+    }
+
+    .timer-bar::-webkit-scrollbar-thumb {
+        background: #2a3555;
+        border-radius: 4px;
+    }
+
     .container {
         padding: 20px;
         max-width: 800px;
