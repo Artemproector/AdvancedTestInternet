@@ -2,7 +2,7 @@
 // КОНФИГУРАЦИЯ ПРИЛОЖЕНИЯ
 // ============================================================
 const CONFIG = {
-    version: "1.1.2",
+    version: "1.2.0",
     express_test: [
         'https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico',
         'https://yastatic.net/s3/home-static/_/nova/B5CxuyJ3.png',
