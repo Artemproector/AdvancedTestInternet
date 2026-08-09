@@ -45,21 +45,22 @@ const CONFIG = {
     },
     speedTest: {
         download: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js',
-        upload: 'ПУСТО!',// -пустой адрес-зуглушка
+        upload: 'https://0.0.0.0/',// ПУСТОЙ АДРЕС-ЗАГЛУШКА
         uploadSize: 1 * 1024 * 1024, // 1 МБ
         attempts: 3,
         timeout: 5000
     },
     ping: {
         url: 'https://www.avito.st/dstatic/favicon.ico',
-        attempts: 3,
+        attempts: 5,
         timeout: 3000
     },
-    timeout: 5000,           
-    quickCheckTimeout: 3000, 
+    timeout: 5000,
+    quickCheckTimeout: 3000,
     history: {
-        maxRecords: 9999,
-        maxFailedRecords: 100
+        maxRecords: 50,
+        maxFailedRecords: 100,
+        failedTestInterval: 15 * 60 * 1000 
     },
     speedColors: {
         veryBad: 5,     // < 5 Мбит/с 
