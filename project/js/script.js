@@ -16,6 +16,23 @@ function formatPing(ms) {
 // ============================================================
 // ПРОВЕРКА ОБНОВЛЕНИЙ
 // ============================================================
+function compareVersions(v1, v2) {
+    // v1 и v2 в формате "1.2.3" или "1.2.3d"
+    const parts1 = v1.replace('d', '').split('.').map(Number);
+    const parts2 = v2.replace('d', '').split('.').map(Number);
+
+    for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+        const p1 = parts1[i] || 0;
+        const p2 = parts2[i] || 0;
+        if (p1 > p2) return 1;
+        if (p1 < p2) return -1;
+    }
+    return 0;
+}
+
+function isDevVersion(version) {
+    return version.includes('d');
+}
 
 async function checkupdate() {
     try {
@@ -25,52 +42,36 @@ async function checkupdate() {
         if (!response.ok) throw new Error('Ошибка загрузки');
         const data = await response.json();
         const latestVersion = data.tag_name.replace('v', '');
+        const isDev = isDevVersion(CONFIG.version);
+        const comparison = compareVersions(CONFIG.version, latestVersion);
+        if (comparison > 0) {
+            return {
+                status: 'developer',
+                version: CONFIG.version,
+                latestVersion: latestVersion,
+                isDev: isDev
+            };
+        }
+
         if (latestVersion === CONFIG.version) {
-            return { status: 'up_to_date', version: CONFIG.version };
+            return {
+                status: 'up_to_date',
+                version: CONFIG.version,
+                isDev: isDev
+            };
         } else {
             return {
                 status: 'outdated',
                 currentVersion: CONFIG.version,
                 latestVersion: latestVersion,
-                url: data.html_url
+                url: data.html_url,
+                isDev: isDev
             };
         }
     } catch (error) {
         return { status: 'error', message: 'Не удалось проверить обновления' };
     }
 }
-
-function openupdate() {
-    fullnavbar.classList.add('show-nav');
-    let fullLabel = document.querySelector('.labal-full-menu');
-    if (fullLabel) {
-        fullLabel.textContent = 'Проверка обновлений';
-    }
-    let area = document.querySelector('.area');
-    area.innerHTML = `<div style="text-align: center; padding: 40px 20px;"><p style="color: #8892b0;">⏳ Проверка обновлений...</p></div>`;
-    checkupdate().then(result => {
-        if (result.status === 'up_to_date') {
-            area.innerHTML = `<div style="text-align: center; padding: 40px 20px;">
-                <p style="color: #2ed573; font-size: 20px; font-weight: 600;">Установлена последняя версия</p>
-                <p style="color: #8892b0; margin-top: 10px;">Версия: ${result.version}</p>
-            </div>`;
-        } else if (result.status === 'outdated') {
-            area.innerHTML = `<div style="text-align: center; padding: 40px 20px;">
-                <p style="color: #ffa502; font-size: 20px; font-weight: 600;">Доступна новая версия!</p>
-                <p style="color: #8892b0; margin-top: 10px;">Текущая версия: ${result.currentVersion}</p>
-                <p style="color: #8892b0;">Последняя версия: ${result.latestVersion}</p>
-                <br><a href="${result.url}" target="_blank" style="display: inline-block; padding: 12px 30px; background: #4facfe; color: #0a0e1a; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 15px;">Перейти к загрузке</a>
-            </div>`;
-        } else {
-            area.innerHTML = `<div style="text-align: center; padding: 40px 20px;">
-                <p style="color: #ff4757; font-size: 18px; font-weight: 600;">${result.message}</p>
-                <p style="color: #8892b0; margin-top: 10px;">Проверьте подключение к интернету и повторите попытку.</p>
-                <button onclick="openupdate()" style="display: inline-block; padding: 10px 25px; background: #2a3555; color: #fff; border: none; border-radius: 8px; cursor: pointer; margin-top: 15px; font-size: 14px;">Повторить проверку</button>
-            </div>`;
-        }
-    });
-}
-
 // ============================================================
 // ПРОВЕРКА ДОСТУПНОСТИ САЙТОВ
 // ============================================================
@@ -245,19 +246,24 @@ async function testPing(url = CONFIG.ping.url, attempts = CONFIG.ping.attempts) 
 // ============================================================
 
 async function quickInternetCheck() {
-    const testUrls = CONFIG.express_test;
-    const results = await Promise.all(
-        testUrls.map(url => checkSiteAvailability(url, CONFIG.quickCheckTimeout))
-    );
-    const successCount = results.filter(r => r.success).length;
-    const total = results.length;
-    const successRate = successCount / total;
+    const connInfo = getConnectionType();
+    const hasInternet = connInfo.type !== 'none';
+    const typeMap = CONFIG.connectionTypes.labels || {
+        'wifi': 'Wi-Fi',
+        'cellular': 'Мобильный интернет',
+        'ethernet': 'Проводное',
+        'bluetooth': 'Bluetooth',
+        'none': 'Нет сети',
+        'unknown': 'Неизвестно (подробнее в справке)'
+    };
+
     return {
-        hasInternet: successRate >= 0.01,
-        successRate,
-        successCount,
-        total,
-        results
+        hasInternet: hasInternet,
+        connectionType: connInfo.type,
+        connectionLabel: typeMap[connInfo.type] || 'Неизвестно',
+        effectiveType: connInfo.effectiveType || 'unknown',
+        downlink: connInfo.downlink || 0,
+        rtt: connInfo.rtt || 0
     };
 }
 
@@ -329,69 +335,84 @@ function determineNetworkMode(categoryResults) {
         emoji: ''
     };
 }
-
 // ============================================================
-// ИСТОРИЯ
+// ПРОВЕРКА ТИПА СОЕДИНЕНИЯ
 // ============================================================
 
-function saveFailedTest() {
-    let speedHistory = JSON.parse(localStorage.getItem('speedHistory') || '[]');
-    const now = Date.now();
-    const thirtyMinutes = CONFIG.history.failedTestInterval;
-
-    const lastTest = speedHistory.length > 0 ? speedHistory[speedHistory.length - 1] : null;
-
-    let shouldSave = true;
-
-    if (lastTest) {
-        const lastMode = lastTest.mode;
-        const lastTime = lastTest.timestamp || new Date(lastTest.date).getTime();
-
-        if (lastMode === 'Нет интернета' && (now - lastTime) < thirtyMinutes) {
-            shouldSave = false;
-        }
+function getConnectionType() {
+    if ('connection' in navigator) {
+        const conn = navigator.connection;
+        return {
+            type: conn.type || 'unknown',
+            effectiveType: conn.effectiveType || 'unknown',
+            downlink: conn.downlink || 0,
+            rtt: conn.rtt || 0
+        };
     }
-
-    if (shouldSave) {
-        speedHistory.push({
-            timestamp: now,
-            downloadSpeed: '—',
-            uploadSpeed: '—',
-            ping: '—',
-            mode: 'Нет интернета',
-            date: new Date().toLocaleString(),
-            success: false
-        });
-
-        if (speedHistory.length > CONFIG.history.maxFailedRecords) {
-            speedHistory = speedHistory.slice(-CONFIG.history.maxFailedRecords);
-        }
-
-        localStorage.setItem('speedHistory', JSON.stringify(speedHistory));
-    } else {
-        console.log('⏳ Неудачный тест пропущен (менее 30 минут с предыдущего неудачного)');
-    }
-
-    calcConnectIndex();
+    return null;
 }
+// ============================================================
+// ПРОВЕРКА ПРОТОКОЛОВ
+// ============================================================
 
-function getSpeedHistory() {
-    const history = localStorage.getItem('speedHistory');
-    if (history === null) return [];
+async function testProtocols() {
+    const results = {
+        dns: { success: false, label: 'DNS' },
+        http: { success: false, label: 'HTTP' },
+        https: { success: false, label: 'HTTPS' }
+    };
+
+    // DNS
     try {
-        return JSON.parse(history);
+        const url = `${CONFIG.protocols.dns.url}?name=${CONFIG.protocols.dns.domain}&type=A`;
+        const resp = await fetch(url, {
+            headers: { 'Accept': 'application/dns-json' },
+            signal: AbortSignal.timeout(CONFIG.protocols.dns.timeout)
+        });
+        const data = await resp.json();
+        results.dns.success = data.Answer && data.Answer.length > 0;
     } catch (e) {
-        return [];
+        results.dns.success = false;
     }
-}
 
-function clearHistory() {
-    if (confirm('Удалить всю историю проверок?')) {
-        localStorage.removeItem('speedHistory');
-        historyload();
+    // HTTP
+    try {
+        const resp = await fetch(CONFIG.protocols.http.url, {
+            signal: AbortSignal.timeout(CONFIG.protocols.http.timeout)
+        });
+        results.http.success = resp.ok;
+    } catch (e) {
+        results.http.success = false;
     }
-}
 
+    // HTTPS
+    for (const url of CONFIG.protocols.https.urls) {
+        try {
+            const resp = await fetch(url, {
+                method: 'HEAD',
+                signal: AbortSignal.timeout(CONFIG.protocols.https.timeout)
+            });
+            if (resp.ok || resp.status === 418) {
+                results.https.success = true;
+                break;
+            }
+        } catch (e) { }
+    }
+
+    return results;
+}
+async function runProtocolTest() {
+    const protoItems = document.querySelectorAll('.proto-test');
+    protoItems.forEach(item => {
+        item.style.color = '#8892b0';
+        const label = item.textContent.replace(/[✅❌]\s*/, '');
+        item.textContent = label;
+    });
+
+    const results = await testProtocols();
+    updateProtocolUI(results);
+    return results;
+}
 // ============================================================
 // СВОДКА ДАННЫХ
 // ============================================================
@@ -487,8 +508,6 @@ function calcConnectIndex() {
 // ============================================================
 async function runFullTest() {
     const testBtn = document.getElementById('testBtn');
-
-    // Таймер
     let startTime = null;
     let endTime = null;
     const startTimeEl = document.querySelector('.start-time');
@@ -504,6 +523,17 @@ async function runFullTest() {
         const date = new Date(startTime);
         startTimeEl.textContent = date.toLocaleTimeString() + ' ' + date.toLocaleDateString();
     }
+    updateVisibilityByPreset()
+    if (currentPreset == 'kat') {
+        progress_el_2.style.display = 'none';
+        progress_el_3.style.display = 'none';
+        progress_el_6.style.display = 'none';
+    }
+    else{
+        progress_el_2.style.display = 'block';
+        progress_el_3.style.display = 'block';
+        progress_el_6.style.display = 'block';
+    }
     testBtn.classList.add('loading');
     testBtn.disabled = true;
     updateDisplay("all", 5);
@@ -511,6 +541,15 @@ async function runFullTest() {
     document.getElementById('uploadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
     document.getElementById('ping').innerHTML = '--<span class="unit">мс</span>';
     document.getElementById('networkMode').textContent = '--';
+
+    const protoItems = document.querySelectorAll('.proto-test');
+    protoItems.forEach(item => {
+        item.style.color = '#fff';
+        const label = item.textContent.replace(/[✅❌]\s*/, '');
+        item.textContent = label;
+    });
+    const valueEl = document.querySelector('#proto');
+    valueEl.innerHTML = `-- <span class="proto-static-test">доступно</span>`;
 
     const categoryKeys = ['ru1', 'ru2', 'en1', 'en2'];
     for (const key of categoryKeys) {
@@ -526,6 +565,7 @@ async function runFullTest() {
     progress_el_3.classList.remove('pr-bar-section--pass', 'pr-bar-section--fail', 'pr-bar-section--active');
     progress_el_4.classList.remove('pr-bar-section--pass', 'pr-bar-section--fail', 'pr-bar-section--active');
     progress_el_5.classList.remove('pr-bar-section--pass', 'pr-bar-section--fail', 'pr-bar-section--active');
+    progress_el_6.classList.remove('pr-bar-section--pass', 'pr-bar-section--fail', 'pr-bar-section--active');
     scrollToFirst();
 
     try {
@@ -533,7 +573,9 @@ async function runFullTest() {
         // ЭТАП 1: БЫСТРАЯ ПРОВЕРКА ИНТЕРНЕТА
         // ============================================================
         const quickCheck = await quickInternetCheck();
-        progress_el_1.classList.add('pr-bar-section--active');
+        progress_el_1.classList.add('pr-bar-section--pass');
+        updateConnectionInfo();
+
         if (!quickCheck.hasInternet) {
             document.getElementById('downloadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
             document.getElementById('uploadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
@@ -551,6 +593,7 @@ async function runFullTest() {
             progress_el_3.classList.add('pr-bar-section--fail');
             progress_el_4.classList.add('pr-bar-section--fail');
             progress_el_5.classList.add('pr-bar-section--fail');
+            progress_el_6.classList.add('pr-bar-section--fail');
             progress_el_1.classList.remove('pr-bar-section--active');
 
             for (const key of categoryKeys) {
@@ -569,11 +612,11 @@ async function runFullTest() {
             return;
         }
 
-        progress_el_1.classList.remove('pr-bar-section--active');
-        progress_el_1.classList.add('pr-bar-section--pass');
-        progress_el_2.classList.add('pr-bar-section--active');
-        await sleep(500);
-        scrollToActiveProgress();
+        // Если интернет есть — показываем тип соединения
+        if (quickCheck.connectionType) {
+            const typeLabel = quickCheck.connectionLabel || 'Подключено';
+            document.querySelector('.it-bar-1').textContent = typeLabel;
+        }
 
         // ============================================================
         // ЭТАП 2: ТЕСТ СКОРОСТИ
@@ -683,33 +726,61 @@ async function runFullTest() {
         progress_el_4.classList.add('pr-bar-section--pass');
         progress_el_4.classList.remove('pr-bar-section--active');
 
+        const prBar6 = document.querySelector('.pr-bar-6');
+        if (prBar6) {
+            prBar6.classList.add('pr-bar-section--active');
+            scrollToActiveProgress();
+        }
+
+        const protocolResults = await runProtocolTest();
+
+        if (prBar6) {
+            const allSuccess = Object.values(protocolResults).every(r => r.success);
+            if (allSuccess) {
+                prBar6.classList.add('pr-bar-section--pass');
+            } else {
+                prBar6.classList.add('pr-bar-section--fail');
+            }
+            prBar6.classList.remove('pr-bar-section--active');
+        }
+
         // ============================================================
         // ЭТАП 4: ОПРЕДЕЛЕНИЕ РЕЖИМА
         // ============================================================
         const mode = determineNetworkMode(categoryResults);
         document.getElementById('networkMode').textContent = mode.mode;
 
-        if (downloadResult.success) {
-            let speedHistory = JSON.parse(localStorage.getItem('speedHistory') || '[]');
-            speedHistory.push({
-                timestamp: Date.now(),
-                downloadSpeed: Math.floor(downloadResult.speedBps / 1024 / 1024),
-                uploadSpeed: uploadResult.success ? Math.floor(uploadResult.speedBps / 1024 / 1024) : null,
-                ping: pingResult.success ? Math.round(pingResult.average) : null,
-                mode: mode.mode,
-                date: new Date().toLocaleString()
-            });
-            if (speedHistory.length > CONFIG.history.maxRecords) {
-                speedHistory = speedHistory.slice(-CONFIG.history.maxRecords);
-            }
-            localStorage.setItem('speedHistory', JSON.stringify(speedHistory));
-            calcConnectIndex();
-        }
+        // ============================================================
+        // СОХРАНЕНИЕ В ИСТОРИЮ
+        // ============================================================
+        const protocolStatus = {
+            dns: protocolResults.dns?.success || false,
+            http: protocolResults.http?.success || false,
+            https: protocolResults.https?.success || false
+        };
+
+        const connInfo = getConnectionType();
+        endTime = Date.now();
+
+        addHistoryRecord({
+            timestamp: Date.now(),
+            downloadSpeed: downloadResult.success ? Math.floor(downloadResult.speedBps / 1024 / 1024) : '—',
+            uploadSpeed: uploadResult.success ? Math.floor(uploadResult.speedBps / 1024 / 1024) : '—',
+            ping: pingResult.success ? Math.round(pingResult.average) : '—',
+            mode: mode.mode,
+            date: new Date().toLocaleString(),
+            success: downloadResult.success,
+            duration: Math.floor((endTime - startTime) / 1000),
+            protocols: protocolStatus,
+            network: connInfo?.type || 'unknown'
+        });
+
+        calcConnectIndex();
 
     } catch (error) {
         console.error('Ошибка в тесте:', error);
     } finally {
-        endTime = Date.now();
+        endTime = endTime || Date.now();
         if (stopTimeEl) {
             const date = new Date(endTime);
             stopTimeEl.textContent = date.toLocaleTimeString() + ' ' + date.toLocaleDateString();
@@ -718,7 +789,7 @@ async function runFullTest() {
             const duration = Math.floor((endTime - startTime) / 1000);
             testTimeEl.textContent = duration;
         }
-
+        updateConnectionInfo();
         testBtn.classList.remove('loading');
         testBtn.disabled = false;
         await sleep(500);
@@ -734,4 +805,5 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('testBtn');
     btn.addEventListener('click', runFullTest);
     calcConnectIndex();
+    updateConnectionInfo();
 });

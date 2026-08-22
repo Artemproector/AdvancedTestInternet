@@ -9,6 +9,7 @@
 
     .phonesummary {
         display: block !important;
+        height: fit-content;
     }
 
     .progress-bar {
@@ -140,5 +141,13 @@
     .display {
         width: 100%;
         max-width: 75px;
+    }
+
+    .select {
+        width: 60%;
+    }
+
+    .settings_wrapper {
+        flex-wrap: wrap;
     }
 }

@@ -1,0 +1,10 @@
+.display--DSGN3 {
+    display: flex;
+    gap: 5px;
+    flex-direction: row-reverse;
+    align-items: center;
+    border: 2px solid #2a3555;
+    padding: 10px;
+    width: 75px;
+    background-color: var(--main-bg-color);
+}

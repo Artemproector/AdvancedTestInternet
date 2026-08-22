@@ -1,13 +1,8 @@
-// ============================================================
-// КОНФИГУРАЦИЯ ПРИЛОЖЕНИЯ
-// ============================================================
-const CONFIG = {
-    version: "1.2.0",
-    express_test: [
-        'https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico',
-        'https://yastatic.net/s3/home-static/_/nova/B5CxuyJ3.png',
-        'https://www.avito.st/dstatic/favicon.ico'
-    ],
+const CFG_default = {
+    description: 'Базовые настрйки теста',
+    // ============================================================
+    // КАТЕГОРИИ САЙТОВ
+    // ============================================================
     categories: {
         ru1: {
             name: 'Отечественные 1',
@@ -43,42 +38,44 @@ const CONFIG = {
             ]
         }
     },
+
+    // ============================================================
+    // ТЕСТ СКОРОСТИ
+    // ============================================================
     speedTest: {
         download: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js',
-        upload: 'https://0.0.0.0/',// ПУСТОЙ АДРЕС-ЗАГЛУШКА
-        uploadSize: 1 * 1024 * 1024, // 1 МБ
+        upload: 'https://0.0.0.0/',
+        uploadSize: 1 * 1024 * 1024,
         attempts: 3,
         timeout: 5000
     },
+
+    // ============================================================
+    // ТЕСТ ПИНГА
+    // ============================================================
     ping: {
-        url: 'https://www.avito.st/dstatic/favicon.ico',
+        url: 'https://web.max.ru/favicon.png?v=2026',
         attempts: 5,
         timeout: 3000
     },
-    timeout: 5000,
-    quickCheckTimeout: 3000,
-    history: {
-        maxRecords: 50,
-        maxFailedRecords: 100,
-        failedTestInterval: 15 * 60 * 1000 
-    },
-    speedColors: {
-        veryBad: 5,     // < 5 Мбит/с 
-        bad: 20,        // < 20 Мбит/с 
-        average: 50,    // < 50 Мбит/с
-        good: 100       // < 100 Мбит/с 
-    },
-    pingColors: {
-        excellent: 30,  // < 30 мс
-        good: 60,       // < 60 мс 
-        average: 100,   // < 100 мс 
-        bad: 200        // < 200 мс 
-    },
-    display: {
-        levels: 5
-    },
-    update: {
-        url: 'https://api.github.com/repos/Artemproector/AdvancedTestInternet/releases/latest',
-        timeout: 5000
+    // ============================================================
+    // ПРОВЕРКА ПРОТОКОЛОВ
+    // ============================================================
+    protocols: {
+        dns: {
+            url: 'https://cloudflare-dns.com/dns-query',
+            domain: 'cloudflare.com',
+            timeout: 5000
+        },
+        http: {
+            url: 'http://www.microsoft.com/favicon.ico',
+            timeout: 5000
+        },
+        https: {
+            urls: [
+                'https://www.microsoft.com/favicon.ico'
+            ],
+            timeout: 5000
+        }
     }
 };
