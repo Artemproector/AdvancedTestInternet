@@ -10,7 +10,9 @@
     padding: 0;
     box-sizing: border-box;
 }
-
+.dwn-card, .dwn-card--DSGN2{
+    display: none !important;
+}
 .header {
     display: flex;
     flex-direction: row;
@@ -411,32 +413,92 @@ footer a {
     flex-wrap: wrap;
 }
 
-.history-item {
-    background: #FFF;
-    color: #1a2238;
-    font-weight: bold;
-    border-radius: 10px;
-    padding: 14px 16px;
-    border: 1px solid #2a3555;
+.history-list {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.history-item {
+    color: #1a2238;
     transition: all 0.3s ease;
-    align-items: flex-start;
+    height: fit-content;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+.history-item--open {
+    height: fit-content !important;
+    transition: all 0.3s ease;
+
+}
+
+.history-item-info--show {
+    display: block !important;
+    transition: all 0.3s ease;
+    animation: show 0.3s ease forwards;
+}
+
+.history-item-label--open {
+    border-radius: 8px 8px 0px 0px !important;
+    transition: all 0.3s ease;
+    border-bottom: #2b3555 2px solid;
+    font-weight: 700 !important;
+    font-size: 15px;
+}
+
+.history-item-label {
+    background: #FFF;
+    border-radius: 8px;
+    padding: 10px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.history-item-info__wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.wrapper__left {
+    display: flex;
     flex-direction: column;
 }
 
-.history-item-row {
-    font-weight: 500;
+.wrapper__right {
     display: flex;
     flex-direction: row;
     gap: 10px;
+}
+
+.list_arr {
+    transition: all 0.3s ease;
+}
+
+.history-item-label--open .list_arr {
+    transform: rotate(180deg);
+    transition: all 0.3s ease;
+}
+
+.history-item-info {
+    font-weight: 500;
+    background: #FFF;
+    display: none;
+    padding: 10px;
 }
 
 .history-clear-btn {
     width: 100%;
     padding: 10px;
     font-weight: bold;
-    margin-top: 12px;
+    margin: 12px 0 12px 0;
     background: transparent;
     border: 1px solid #fff;
     color: #fff;

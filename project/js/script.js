@@ -285,8 +285,8 @@ function determineNetworkMode(categoryResults) {
     if (!ru1Ok && !ru2Ok && !en1Ok && !en2Ok) {
         updateDisplay("mode", '1');
         return {
-            mode: 'Нет интернета',
-            title: 'Нет интернета',
+            mode: 'Полная блокировка',
+            title: 'Полная блокировка',
             description: 'Проверьте доступ в интернет.',
             emoji: ''
         };
@@ -296,6 +296,15 @@ function determineNetworkMode(categoryResults) {
         return {
             mode: 'Полный доступ',
             title: 'Полный доступ',
+            description: 'Все сайты доступны.',
+            emoji: ''
+        };
+    }
+    if (!ruAvailable && enAvailable) {
+        updateDisplay("mode", '5');
+        return {
+            mode: 'VPN',
+            title: 'VPN',
             description: 'Все сайты доступны.',
             emoji: ''
         };
@@ -503,6 +512,31 @@ function calcConnectIndex() {
     updateConnectIndex();
     updateTestsCounter();
 }
+function getPingUrl(categoryResults) {
+    const ru1Ok = categoryResults['ru1']?.successRate > 0.5;
+    const ru2Ok = categoryResults['ru2']?.successRate > 0.5;
+    const en1Ok = categoryResults['en1']?.successRate > 0.5;
+    const en2Ok = categoryResults['en2']?.successRate > 0.5;
+
+    const ruAvailable = ru1Ok && ru2Ok;
+    const enAvailable = en1Ok && en2Ok;
+
+    // Если всё доступно — пингуем зарубежный (показывает реальную задержку)
+    if (ruAvailable && enAvailable) {
+        return 'https://www.google.com/favicon.ico'; // или другой зарубежный
+    }
+
+    // Если только RU — пингуем RU
+    if (ruAvailable && !enAvailable) {
+        return 'https://web.max.ru/favicon.png?v=2026';
+    }
+
+    // Если ничего не доступно — пробуем хоть что-то
+    return 'https://web.max.ru/favicon.png?v=2026';
+}
+// ============================================================
+// ОСНОВНОЙ ТЕСТ
+// ============================================================
 // ============================================================
 // ОСНОВНОЙ ТЕСТ
 // ============================================================
@@ -523,22 +557,27 @@ async function runFullTest() {
         const date = new Date(startTime);
         startTimeEl.textContent = date.toLocaleTimeString() + ' ' + date.toLocaleDateString();
     }
-    updateVisibilityByPreset()
+
+    updateVisibilityByPreset();
+
+    // Скрываем ненужные прогресс-бары
     if (currentPreset == 'kat') {
-        progress_el_2.style.display = 'none';
         progress_el_3.style.display = 'none';
         progress_el_6.style.display = 'none';
-    }
-    else{
-        progress_el_2.style.display = 'block';
+    } else {
         progress_el_3.style.display = 'block';
         progress_el_6.style.display = 'block';
     }
+
     testBtn.classList.add('loading');
     testBtn.disabled = true;
     updateDisplay("all", 5);
-    document.getElementById('downloadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
-    document.getElementById('uploadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
+
+    // Скрываем скорость
+    document.querySelector('.dwn-card')?.style?.setProperty('display', 'none');
+    document.querySelector('.dwn-card--DSGN2')?.style?.setProperty('display', 'none');
+    document.querySelector('.dwn-card--DSGN3')?.style?.setProperty('display', 'none');
+
     document.getElementById('ping').innerHTML = '--<span class="unit">мс</span>';
     document.getElementById('networkMode').textContent = '--';
 
@@ -577,17 +616,29 @@ async function runFullTest() {
         updateConnectionInfo();
 
         if (!quickCheck.hasInternet) {
-            document.getElementById('downloadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
-            document.getElementById('uploadSpeed').innerHTML = '--<span class="unit">Мбит/с</span>';
+            // Нет интернета — сразу завершаем
             document.getElementById('ping').innerHTML = '--<span class="unit">мс</span>';
             document.getElementById('networkMode').textContent = 'Нет сети';
-            updateDisplay('dwn', 1);
-            updateDisplay('up', 1);
             updateDisplay('ping', 1);
             updateDisplay('mode', 1);
-            saveFailedTest();
+
+            // Сохраняем неудачный тест
+            const endTime = Date.now();
+            addHistoryRecord({
+                timestamp: Date.now(),
+                ping: '—',
+                mode: 'Полная блокировка',
+                date: new Date().toLocaleString(),
+                success: false,
+                duration: Math.floor((endTime - startTime) / 1000),
+                protocols: { dns: false, http: false, https: false },
+                network: quickCheck.connectionType || 'unknown'
+            });
+
             testBtn.classList.remove('loading');
             testBtn.disabled = false;
+
+            // Все этапы провалены
             progress_el_1.classList.add('pr-bar-section--fail');
             progress_el_2.classList.add('pr-bar-section--fail');
             progress_el_3.classList.add('pr-bar-section--fail');
@@ -596,11 +647,11 @@ async function runFullTest() {
             progress_el_6.classList.add('pr-bar-section--fail');
             progress_el_1.classList.remove('pr-bar-section--active');
 
+            // Все категории — красные
             for (const key of categoryKeys) {
                 const icon = document.getElementById(`cat-${key}`);
                 if (icon) {
-                    icon.className = 'status-icon';
-                    icon.classList.add('warning');
+                    icon.className = 'status-icon error';
                     icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" stroke="#ff4757" stroke-width="2"/>
                         <path d="M8 8L16 16" stroke="#ff4757" stroke-width="2" stroke-linecap="round"/>
@@ -608,6 +659,8 @@ async function runFullTest() {
                     </svg>`;
                 }
             }
+
+            calcConnectIndex();
             scrollToLast();
             return;
         }
@@ -619,71 +672,13 @@ async function runFullTest() {
         }
 
         // ============================================================
-        // ЭТАП 2: ТЕСТ СКОРОСТИ
-        // ============================================================
-        const downloadResult = await testDownloadSpeed(CONFIG.speedTest.download, CONFIG.speedTest.attempts);
-        const uploadResult = await testUploadSpeed(CONFIG.speedTest.upload, CONFIG.speedTest.attempts);
-        const pingResult = await testPing(CONFIG.ping.url, CONFIG.ping.attempts);
-
-        progress_el_3.classList.add('pr-bar-section--active');
-        scrollToActiveProgress();
-
-        if (downloadResult.success) {
-            const speedMbps = downloadResult.speedBps / 1024 / 1024;
-            const dwnColor = getSpeedColor(speedMbps);
-            document.getElementById('downloadSpeed').innerHTML = `
-                <span style="color: ${dwnColor.color}">
-                    ${speedMbps.toFixed(2)}
-                </span>
-                <span class="unit">Мбит/с</span>
-            `;
-            updateDisplay('dwn', dwnColor.level);
-            progress_el_2.classList.add('pr-bar-section--pass');
-        } else {
-            document.getElementById('downloadSpeed').innerHTML = '-- <span class="unit">Мбит/с</span>';
-            updateDisplay('dwn', 1);
-            progress_el_2.classList.add('pr-bar-section--fail');
-        }
-        progress_el_2.classList.remove('pr-bar-section--active');
-
-        if (uploadResult.success) {
-            const speedMbps = uploadResult.speedBps / 1024 / 1024;
-            const upColor = getSpeedColor(speedMbps);
-            document.getElementById('uploadSpeed').innerHTML = `
-                <span style="color: ${upColor.color}">
-                    ${speedMbps.toFixed(2)}
-                </span>
-                <span class="unit">Мбит/с</span>
-            `;
-            updateDisplay('up', upColor.level);
-        } else {
-            document.getElementById('uploadSpeed').innerHTML = '-- <span class="unit">Мбит/с</span>';
-            updateDisplay('up', 1);
-        }
-
-        if (pingResult.success) {
-            const pingColor = getPingColor(pingResult.average);
-            document.getElementById('ping').innerHTML = `
-                <span style="color: ${pingColor.color}">
-                    ${Math.round(pingResult.average)}
-                </span>
-                <span class="unit">мс</span>
-            `;
-            updateDisplay('ping', pingColor.level);
-            progress_el_3.classList.add('pr-bar-section--pass');
-        } else {
-            document.getElementById('ping').innerHTML = '-- <span class="unit">мс</span>';
-            updateDisplay('ping', 1);
-            progress_el_3.classList.add('pr-bar-section--fail');
-        }
-        progress_el_3.classList.remove('pr-bar-section--active');
-
-        // ============================================================
-        // ЭТАП 3: ПРОВЕРКА КАТЕГОРИЙ
+        // ЭТАП 2: ПРОВЕРКА КАТЕГОРИЙ
         // ============================================================
         const categoryResults = {};
         progress_el_4.classList.add('pr-bar-section--active');
         scrollToActiveProgress();
+
+        let anyCategoryAvailable = false;
 
         for (const key of categoryKeys) {
             const sites = CONFIG.categories[key]?.sites || [];
@@ -693,6 +688,10 @@ async function runFullTest() {
             }
             const result = await checkCategory(key, sites);
             categoryResults[key] = result;
+
+            if (result.successRate > 0) {
+                anyCategoryAvailable = true;
+            }
 
             const icon = document.getElementById(`cat-${key}`);
             if (icon) {
@@ -726,32 +725,92 @@ async function runFullTest() {
         progress_el_4.classList.add('pr-bar-section--pass');
         progress_el_4.classList.remove('pr-bar-section--active');
 
-        const prBar6 = document.querySelector('.pr-bar-6');
-        if (prBar6) {
-            prBar6.classList.add('pr-bar-section--active');
-            scrollToActiveProgress();
-        }
-
-        const protocolResults = await runProtocolTest();
-
-        if (prBar6) {
-            const allSuccess = Object.values(protocolResults).every(r => r.success);
-            if (allSuccess) {
-                prBar6.classList.add('pr-bar-section--pass');
-            } else {
-                prBar6.classList.add('pr-bar-section--fail');
-            }
-            prBar6.classList.remove('pr-bar-section--active');
-        }
-
         // ============================================================
-        // ЭТАП 4: ОПРЕДЕЛЕНИЕ РЕЖИМА
+        // ЭТАП 3: ОПРЕДЕЛЕНИЕ РЕЖИМА (до пинга!)
         // ============================================================
         const mode = determineNetworkMode(categoryResults);
         document.getElementById('networkMode').textContent = mode.mode;
 
+        // Проверяем, есть ли смысл продолжать
+        const isFullBlock = mode.mode === 'Полная блокировка';
+        const isSuccess = !isFullBlock && anyCategoryAvailable;
+
         // ============================================================
-        // СОХРАНЕНИЕ В ИСТОРИЮ
+        // ЭТАП 4: ВЫБОР URL ДЛЯ ПИНГА И ТЕСТ ПИНГА
+        // ============================================================
+        let pingResult = { success: false, average: Infinity };
+
+        if (isSuccess) {
+            progress_el_3.classList.add('pr-bar-section--active');
+            const pingUrl = getPingUrl(categoryResults);
+            pingResult = await testPing(pingUrl, CONFIG.ping.attempts);
+            scrollToActiveProgress();
+
+            if (pingResult.success) {
+                const pingColor = getPingColor(pingResult.average);
+                document.getElementById('ping').innerHTML = `
+                    <span style="color: ${pingColor.color}">
+                        ${Math.round(pingResult.average)}
+                    </span>
+                    <span class="unit">мс</span>
+                `;
+                updateDisplay('ping', pingColor.level);
+                progress_el_3.classList.add('pr-bar-section--pass');
+            } else {
+                document.getElementById('ping').innerHTML = '-- <span class="unit">мс</span>';
+                updateDisplay('ping', 1);
+                progress_el_3.classList.add('pr-bar-section--fail');
+            }
+            progress_el_3.classList.remove('pr-bar-section--active');
+        } else {
+            // Полная блокировка — пинг не делаем
+            document.getElementById('ping').innerHTML = '-- <span class="unit">мс</span>';
+            updateDisplay('ping', 1);
+            progress_el_3.classList.add('pr-bar-section--fail');
+        }
+
+        // ============================================================
+        // ЭТАП 5: ПРОВЕРКА ПРОТОКОЛОВ
+        // ============================================================
+        let protocolResults = { dns: { success: false }, http: { success: false }, https: { success: false } };
+
+        if (isSuccess) {
+            const prBar6 = document.querySelector('.pr-bar-6');
+            if (prBar6) {
+                prBar6.classList.add('pr-bar-section--active');
+                scrollToActiveProgress();
+            }
+
+            protocolResults = await runProtocolTest();
+
+            if (prBar6) {
+                const allSuccess = Object.values(protocolResults).every(r => r.success);
+                if (allSuccess) {
+                    prBar6.classList.add('pr-bar-section--pass');
+                } else {
+                    prBar6.classList.add('pr-bar-section--fail');
+                }
+                prBar6.classList.remove('pr-bar-section--active');
+            }
+        } else {
+            // Полная блокировка — протоколы не проверяем
+            const prBar6 = document.querySelector('.pr-bar-6');
+            if (prBar6) {
+                prBar6.classList.add('pr-bar-section--fail');
+            }
+            // Обновляем UI протоколов как недоступные
+            const protoItems = document.querySelectorAll('.proto-test');
+            protoItems.forEach((item, index) => {
+                const labels = ['DNS', 'HTTP', 'HTTPS'];
+                item.style.color = '#ff4757';
+                item.textContent = labels[index] || '—';
+            });
+            const valueEl = document.querySelector('#proto');
+            valueEl.innerHTML = `0/3 <span class="proto-static-test">доступно</span>`;
+        }
+
+        // ============================================================
+        // ЭТАП 6: СОХРАНЕНИЕ В ИСТОРИЮ
         // ============================================================
         const protocolStatus = {
             dns: protocolResults.dns?.success || false,
@@ -762,20 +821,33 @@ async function runFullTest() {
         const connInfo = getConnectionType();
         endTime = Date.now();
 
+        // Успешность теста определяется по категориям (не полная блокировка)
         addHistoryRecord({
             timestamp: Date.now(),
-            downloadSpeed: downloadResult.success ? Math.floor(downloadResult.speedBps / 1024 / 1024) : '—',
-            uploadSpeed: uploadResult.success ? Math.floor(uploadResult.speedBps / 1024 / 1024) : '—',
             ping: pingResult.success ? Math.round(pingResult.average) : '—',
             mode: mode.mode,
             date: new Date().toLocaleString(),
-            success: downloadResult.success,
-            duration: Math.floor((endTime - startTime) / 1000),
+            success: isSuccess, 
+            duration:((endTime - startTime) / 1000).toFixed(1),
             protocols: protocolStatus,
             network: connInfo?.type || 'unknown'
         });
 
         calcConnectIndex();
+
+        // Если полная блокировка — подсвечиваем всё красным
+        if (!isSuccess) {
+            progress_el_1.classList.add('pr-bar-section--fail');
+            progress_el_2.classList.add('pr-bar-section--fail');
+            progress_el_3.classList.add('pr-bar-section--fail');
+            progress_el_4.classList.add('pr-bar-section--fail');
+            progress_el_5.classList.add('pr-bar-section--fail');
+            progress_el_6.classList.add('pr-bar-section--fail');
+
+            // Обновляем режим
+            document.getElementById('networkMode').textContent = 'Полная блокировка';
+            updateDisplay('mode', 1);
+        }
 
     } catch (error) {
         console.error('Ошибка в тесте:', error);

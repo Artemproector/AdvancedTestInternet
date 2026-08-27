@@ -43,7 +43,7 @@ const CFG_default = {
     // ТЕСТ СКОРОСТИ
     // ============================================================
     speedTest: {
-        download: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js',
+        download: 'https://0.0.0.0/',
         upload: 'https://0.0.0.0/',
         uploadSize: 1 * 1024 * 1024,
         attempts: 3,

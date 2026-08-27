@@ -1,5 +1,5 @@
 const CFG_common = {
-    version: "1.3.0",
+    version: "1.4.0",
     expressTest: {
         enabled: true,
         showDetails: true

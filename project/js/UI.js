@@ -115,7 +115,8 @@ function summaryload() {
     //    fullLabel.textContent = 'Сводка данных';
     //}
     //let area = document.querySelector('.area');
-    //area.innerHTML = buildSummaryContent();
+    //area.innerHTML = '<p>Данная функция пока находиться на стадии разработки! </p>';
+    //area.innerHTML += buildSummaryContent();
     //НА ДОРАБОТКЕ!!!!
     probka_zaglushka()
 }
@@ -130,7 +131,6 @@ function openupdate() {
 
     checkupdate().then(result => {
         if (result.status === 'developer') {
-            // 🎉 Пасхалка для разработчиков
             const devMessage = result.isDev
                 ? 'Ты используешь dev-версию! Не забудь выкатить релиз, когда всё будет готово.'
                 : 'Ты впереди всех! Видимо, ты разработчик, который ещё не выложил релиз.';
@@ -365,7 +365,7 @@ function historyload() {
             <div id="ft-bar-4" class="ft-bar-section ft-bar-4 ${currentFilter === 'black' ? 'ft-bar-section--active' : ''}" data-filter="black">Черные списки</div>
             <div id="ft-bar-5" class="ft-bar-section ft-bar-5 ${currentFilter === 'full' ? 'ft-bar-section--active' : ''}" data-filter="full">Полный доступ</div>
         </div>
-                <button onclick="clearHistory()" class="history-clear-btn">
+        <button onclick="clearHistory()" class="history-clear-btn">
             Очистить историю
         </button>
     `;
@@ -390,33 +390,65 @@ function historyload() {
 
     let listHtml = '<div class="history-list">';
     const reversed = [...filteredData].reverse();
+
     try {
+        let historyID = 0;
         reversed.forEach((item) => {
+            historyID += 1;
+
             const download = item.downloadSpeed !== undefined && item.downloadSpeed !== null ? item.downloadSpeed : '—';
             const upload = item.uploadSpeed !== undefined && item.uploadSpeed !== null ? item.uploadSpeed : '—';
             const ping = item.ping !== undefined && item.ping !== null ? item.ping : '—';
             const mode = item.mode || 'Неизвестно';
             const date = item.date || new Date(item.timestamp).toLocaleString() || 'Дата неизвестна';
-            const network = item.network || ''
-            const duration = item.duration || '--'
-            const proto = (Object.values(item.protocols)).length || '--'
-            console.log(item.protocols);
+            const network = item.network || 'unknown';
+            const duration = item.duration || '--';
+            const protocols = item.protocols || { dns: false, http: false, https: false };
+            const available = Object.values(protocols).filter(v => v === true).length;
+            const total = Object.keys(protocols).length;
+
+            // Формируем данные для кнопки "Поделиться"
+            const shareData = {
+                download: download,
+                upload: upload,
+                ping: ping,
+                mode: mode,
+                date: date,
+                network: network,
+                protocols: protocols,
+                duration: duration
+            };
+
             listHtml += `
-            <div class="history-item">
-                <div class="history-item-date">${date} ${network != 'unknown' ? showNetIkon(network) : '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M584-637q0-43-28.5-69T480-732q-29 0-52.5 12.5T387-683q-16 23-43.5 26.5T296-671q-14-13-15.5-32t9.5-36q32-48 81.5-74.5T480-840q97 0 157.5 55T698-641q0 45-19 81t-70 85q-37 35-50 54.5T542-376q-4 24-20.5 40T482-320q-23 0-39.5-15.5T426-374q0-39 17-71.5t57-68.5q51-45 67.5-69.5T584-637ZM480-80q-33 0-56.5-23.5T400-160q0-33 23.5-56.5T480-240q33 0 56.5 23.5T560-160q0 33-23.5 56.5T480-80Z"/></svg>'}</div>
-                <div class="history-item-row">
-                    <span class="history-speed-down">↓ ${download} Мбит/с</span>
-                    <!--<span class="history-speed-up">↑ ${upload} Мбит/с</span>-->
-                    <span class="history-ping">${ping} мс</span>
-                    <span class="history-mode-tag">${mode}</span>
-                    <span class="history-test-duration">${duration} сек</span>
-                    <span class="history-proto">${proto}/3</span>
+                <div class="history-item hisID-${historyID}">
+                    <div class="history-item-label" onclick="openFullHistory(${historyID})">
+                        ${date} ${mode}
+                        <svg class='list_arr' xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M459-381 314-526q-3-3-4.5-6.5T308-540q0-8 5.5-14t14.5-6h304q9 0 14.5 6t5.5 14q0 2-6 14L501-381q-5 5-10 7t-11 2q-6 0-11-2t-10-7Z"/></svg>
+                    </div>
+                    <div class="history-item-info" id="historyInfo-${historyID}">
+                        <div class='history-item-info__wrapper'>
+                            <div class='wrapper__left'>
+                                <pre class="history-ping">Пинг: ${ping} мс</pre>
+                                <pre class="history-mode-tag">Режим сети: ${mode}</pre>
+                                <pre class="history-test-duration">Длительность: ${duration} сек</pre>
+                                <pre class="history-proto">Протоколы: ${available}/${total}</pre>
+                                <pre class='history-type-net'>Тип соединения: ${network !== 'unknown' ? showNetIkon(network) : 'Неизвестно'}</pre>
+                            </div>
+                            <div class='wrapper__right'>
+                                <div onclick='shareHistoryResult(${JSON.stringify(shareData).replace(/"/g, '&quot;')})' class="share-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T720-200q0-17-11.5-28.5T680-240q-17 0-28.5 11.5T640-200q0 17 11.5 28.5T680-160ZM200-440q17 0 28.5-11.5T240-480q0-17-11.5-28.5T200-520q-17 0-28.5 11.5T160-480q0 17 11.5 28.5T200-440Zm508.5-291.5Q720-743 720-760t-11.5-28.5Q697-800 680-800t-28.5 11.5Q640-777 640-760t11.5 28.5Q663-720 680-720t28.5-11.5ZM680-200ZM200-480Zm480-280Z"/></svg>
+                                </div>
+                                <div onclick='copyResult(${JSON.stringify(shareData).replace(/"/g, '&quot;')})' class="share-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-520q0-17 11.5-28.5T160-720q17 0 28.5 11.5T200-680v520h400q17 0 28.5 11.5T640-120q0 17-11.5 28.5T600-80H200Zm160-240v-480 480Z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
         });
-    }
-    catch {
+    } catch (error) {
+        // fallback для старых записей
         reversed.forEach((item) => {
             const download = item.downloadSpeed !== undefined && item.downloadSpeed !== null ? item.downloadSpeed : '—';
             const upload = item.uploadSpeed !== undefined && item.uploadSpeed !== null ? item.uploadSpeed : '—';
@@ -425,21 +457,20 @@ function historyload() {
             const date = item.date || new Date(item.timestamp).toLocaleString() || 'Дата неизвестна';
 
             listHtml += `
-            <div class="history-item">
-                <div class="history-item-date">${date}</div>
-                <div class="history-item-row">
-                    <span class="history-speed-down">↓ ${download} Мбит/с</span>
-                    <span class="history-speed-up">↑ ${upload} Мбит/с</span>
-                    <span class="history-ping">${ping} мс</span>
-                    <span class="history-mode-tag">${mode}</span>
+                <div class="history-item">
+                    <div class="history-item-date">${date}</div>
+                    <div class="history-item-row">
+                        <span class="history-speed-down">↓ ${download} Мбит/с</span>
+                        <span class="history-speed-up">↑ ${upload} Мбит/с</span>
+                        <span class="history-ping">${ping} мс</span>
+                        <span class="history-mode-tag">${mode}</span>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
         });
     }
-    listHtml += `
-        </div>
-    `;
+
+    listHtml += `</div>`;
     html += listHtml;
     area.innerHTML = html;
 
@@ -450,10 +481,10 @@ function historyload() {
 }
 function showNetIkon(net_type) {
     if (net_type == 'cellular') {
-        return '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M60-220v-200q0-25 17.5-42.5T120-480q25 0 42.5 17.5T180-420v200q0 25-17.5 42.5T120-160q-25 0-42.5-17.5T60-220Zm240 0v-300q0-25 17.5-42.5T360-580q25 0 42.5 17.5T420-520v300q0 25-17.5 42.5T360-160q-25 0-42.5-17.5T300-220Zm240 0v-400q0-25 17.5-42.5T600-680q25 0 42.5 17.5T660-620v400q0 25-17.5 42.5T600-160q-25 0-42.5-17.5T540-220Zm240 0v-520q0-25 17.5-42.5T840-800q25 0 42.5 17.5T900-740v520q0 25-17.5 42.5T840-160q-25 0-42.5-17.5T780-220Z" /></svg>'
+        return 'Мобильный интернет'
     }
     else {
-        return '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-380q-38 0-74 10t-68 30q-18 11-39 10.5T263-345q-15-15-14-35t18-32q47-33 101-50.5T480-480q58 0 112 17.5T693-412q17 12 18 32t-14 35q-15 15-36 15.5T622-340q-32-20-68-30t-74-10ZM283.5-666Q189-632 111-569q-17 14-37.5 13.5T38-571q-15-15-14.5-35.5T40-641q93-78 206-118.5T480-800q121 0 234 40.5T920-641q16 14 16.5 34.5T922-571q-15 15-35.5 15.5T849-569q-78-63-172.5-97T480-700q-102 0-196.5 34ZM480-540q-70 0-135 21.5T224-455q-17 13-37.5 12.5T151-458q-14-15-13.5-35t16.5-33q70-56 153.5-85T481-640q90 0 173 29t153 84q16 13 17 33.5T810-458q-15 15-36 15.5T736-455q-56-42-121.5-63.5T480-540Zm-56.5 356.5Q400-207 400-240t23.5-56.5Q447-320 480-320t56.5 23.5Q560-273 560-240t-23.5 56.5Q513-160 480-160t-56.5-23.5Z"/></svg>'
+        return 'WIFI'
     }
 }
 function updateProtocolUI(results) {
@@ -524,7 +555,34 @@ function updateVisibilityByPreset() {
 // ============================================================
 // СПРАВКА (openwiki) — ВСЕГДА В КОНЦЕ!
 // ============================================================
+function checkNetworkAPI() {
+    let message = 'Состояние модуля определения сети:\n\n';
+    let hasInfo = false;
 
+    if ('connection' in navigator) {
+        hasInfo = true;
+        const conn = navigator.connection;
+        message += '✅ Network Information API доступен\n';
+        message += `   Тип: ${conn.type || 'не определён'}\n`;
+        message += `   Эффективный тип: ${conn.effectiveType || 'не определён'}\n`;
+        message += `   Скорость: ${conn.downlink || 'не определена'} Мбит/с\n`;
+        message += `   RTT: ${conn.rtt || 'не определён'} мс\n`;
+        message += `   Сохранение данных: ${conn.saveData ? 'включено' : 'выключено'}\n`;
+    } else {
+        message += '❌ Network Information API НЕ доступен\n';
+        message += '   Ваш браузер не поддерживает эту функцию.\n';
+        message += '   Возможные причины:\n';
+        message += '   • Старая версия браузера\n';
+        message += '   • Браузер на базе WebKit (Safari)\n';
+        message += '   • Отключено в настройках безопасности\n';
+    }
+
+    message += '\n─────────────────────────────\n';
+    message += `Тип сети: ${getConnectionType()?.type || 'Неизвестно'}`;
+    message += `\nUser Agent: ${navigator.userAgent.substring(0, 60)}...`;
+
+    alert(message);
+}
 function openwiki() {
     fullnavbar.classList.add('show-nav');
     let fullLabel = document.querySelector('.labal-full-menu');
@@ -534,33 +592,39 @@ function openwiki() {
     let area = document.querySelector('.area');
     area.innerHTML = `
         <div class="help-container">
-            <div class="help-section">
-                <h3>Что такое скорость интернета?</h3>
-                <p>Скорость интернета — это объём данных, который ваше устройство может получить (скачать) или отправить (загрузить) за единицу времени. Измеряется в <strong>Мбит/с</strong> (мегабитах в секунду).</p>
-                <ul>
-                    <li><strong>Входящая скорость</strong> — скорость скачивания. Важно для просмотра видео, игр и загрузки файлов.</li>
-                    <li><strong>Исходящая скорость</strong> — скорость отправки. Важно для видеозвонков, отправки фото и стримов.</li>
-                </ul>
+         <div class="help-section">
+                <h3>Как пользоваться тестом?</h3>
+                <ol>
+                    <li>Нажмите кнопку <strong>"Запустить тест"</strong></li>
+                    <li>Дождитесь завершения проверки (обычно 5-10 секунд)</li>
+                    <li>Посмотрите результаты:</li>
+                    <p>Пинг (задержка)</p>
+                    <p>Протоколы</p>
+                    <li>Проверьте доступность категорий сайтов (отечественные и зарубежные)</li>
+                </ol>
                 <div class="tip">
-                    Чем выше скорость — тем быстрее грузятся сайты и видео. Для 4K нужно от 30 Мбит/с.
+                    Если тест показал "Белые списки" — скорее всего, ваш провайдер блокирует зарубежные сайты.
                 </div>
             </div>
-
-            <div class="help-section">
-                <h3>Что такое пинг?</h3>
-                <p><strong>Пинг</strong> — это время, за которое сигнал доходит от вашего устройства до сервера и обратно. Измеряется в <strong>мс</strong> (миллисекундах).</p>
-                <ul>
-                    <li><strong>0-30 мс</strong> — отлично, идеально для игр и звонков</li>
-                    <li><strong>30-60 мс</strong> — хорошо, комфортный серфинг</li>
-                    <li><strong>60-100 мс</strong> — средне, заметные задержки</li>
-                    <li><strong>100-200 мс</strong> — плохо, видео тормозит, игры некомфортны</li>
-                    <li><strong>200+ мс</strong> — очень плохо, сайты грузятся долго</li>
-                </ul>
-                <div class="tip">
-                    Низкий пинг важен для онлайн-игр. Чем меньше пинг — тем быстрее реакция.
-                </div>
-            </div>
-
+        </div>
+<div class="help-section">
+    <h3>Тип соединения: "Неизвестно"</h3>
+    <p>Иногда тест показывает тип соединения как <strong>"Неизвестно"</strong>. Это не ошибка, а особенность работы браузера. Вот что это может означать:</p>
+    <ul>
+        <li><strong>Включён VPN или прокси</strong> — некоторые VPN-сервисы маскируют тип сети, поэтому браузер не может определить его корректно.</li>
+        <li><strong>Проводное соединение (Ethernet)</strong> — в отличие от Wi-Fi, проводное подключение не всегда передаёт информацию о типе сети.</li>
+        <li><strong>Браузер не поддерживает Модуль Определения Типа Сети</strong> — старые версии браузеров или некоторые мобильные браузеры могут не иметь доступа к этой информации.</li>
+        <li><strong>Соединение через Bluetooth или USB-модем</strong> — эти типы подключений часто определяются как "Неизвестно".</li>
+    </ul>
+    <div class="tip">
+        Вы можете выполнить проверку работы модуля, нажав на кнопку ниже. Если появилась галочка,а тип сети все равно "Неизвестно", вероятнее всего, это особенность вашего браузера!
+    </div>
+    <div style="margin-top: 12px;">
+        <button onclick="checkNetworkAPI()" style="padding: 10px 20px; background: #2a3555; border: 1px solid #4facfe; border-radius: 8px; color: #fff; cursor: pointer; font-family: Pliant, sans-serif; font-size: 14px; transition: all 0.3s;">
+            Проверить доступность модуля
+        </button>
+    </div>
+</div>
             <div class="help-section">
                 <h3>Что такое ТСПУ?</h3>
                 <p><strong>ТСПУ</strong> (Технические средства противодействия угрозам) — это оборудование, которое устанавливается на сетях российских операторов по закону «Яровой» (ФЗ-374). Оно анализирует весь трафик и может:</p>
@@ -606,8 +670,8 @@ function openwiki() {
                     <p>Доступны все сайты, кроме конкретных заблокированных. Например, работает Google, но заблокирован YouTube.</p>
                 </div>
                 <div class="mode-item">
-                    <strong>Нет интернета</strong>
-                    <p>Ни один сайт не доступен.</p>
+                    <strong>Полная блокировка</strong>
+                    <p>Ни один сайт не доступен, хотя доступ в интернет есть.</p>
                 </div>
             </div>
 
@@ -654,23 +718,6 @@ function openwiki() {
             Если у вас красный круг в категории "Зарубежные 1" и "Зарубежные 2", это часто означает, что провайдер или администратор сети применяет "белые списки" (О режимах сети читайте в справке).
         </div>
 </div>
-
-            <div class="help-section">
-                <h3>Как пользоваться тестом?</h3>
-                <ol>
-                    <li>Нажмите кнопку <strong>"Запустить тест"</strong></li>
-                    <li>Дождитесь завершения проверки (обычно 5-10 секунд)</li>
-                    <li>Посмотрите результаты:</li>
-                    <p>Скорость скачивания (входящая)</p>
-                    <p>Скорость отправки (исходящая)</p>
-                    <p>Пинг (задержка)</p>
-                    <li>Проверьте доступность категорий сайтов (отечественные и зарубежные)</li>
-                </ol>
-                <div class="tip">
-                    Если тест показал "Белые списки" — скорее всего, ваш провайдер блокирует зарубежные сайты.
-                </div>
-            </div>
-        </div>
     `;
 }
 // ============================================================

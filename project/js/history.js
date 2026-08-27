@@ -29,14 +29,22 @@ function addHistoryRecord(data) {
     let history = getSpeedHistory();
 
     // Проверяем, нужно ли сохранять неудачный тест
-    if (data.mode === 'Нет интернета' || data.success === false) {
+    // Теперь проверяем все режимы, которые считаются "неудачными"
+    const failedModes = ['Нет интернета', 'Полная блокировка'];
+    const isFailed = data.mode === 'Нет интернета' ||
+        data.mode === 'Полная блокировка' ||
+        data.success === false;
+
+    if (isFailed) {
         const lastTest = history.length > 0 ? history[history.length - 1] : null;
         if (lastTest) {
             const lastMode = lastTest.mode;
             const lastTime = lastTest.timestamp || new Date(lastTest.date).getTime();
             const now = Date.now();
-            if (lastMode === 'Нет интернета' && (now - lastTime) < CONFIG.history.failedTestInterval) {
-                console.log('Неудачный тест пропущен (менее 15 минут с предыдущего)');
+            // Проверяем, был ли предыдущий тест тоже неудачным
+            const lastWasFailed = lastMode === 'Нет интернета' || lastMode === 'Полная блокировка';
+            if (lastWasFailed && (now - lastTime) < CONFIG.history.failedTestInterval) {
+                console.log(`Неудачный тест пропущен (менее ${CONFIG.history.failedTestInterval / 60000} минут с предыдущего)`);
                 return;
             }
         }
@@ -65,7 +73,6 @@ function addHistoryRecord(data) {
     saveHistory(history);
     return history;
 }
-
 // ============================================================
 // ПОЛУЧЕНИЕ ТОЛЬКО СЕГОДНЯШНИХ ЗАПИСЕЙ
 // ============================================================
@@ -148,7 +155,20 @@ function filterHistoryByMode(history, mode) {
 // ============================================================
 
 function clearHistory() {
-    localStorage.removeItem(HISTORY_KEY);
+    // Проверяем, есть ли вообще записи
+    const history = getSpeedHistory();
+    if (history.length === 0) {
+        alert('История уже пуста.');
+        return;
+    }
+
+    // Запрашиваем подтверждение
+    if (confirm('Вы уверены, что хотите удалить всю историю проверок?\nЭто действие нельзя отменить.')) {
+        localStorage.removeItem('speedHistory');
+        historyload();
+        calcConnectIndex();
+        updateConnectionInfo();
+    }
 }
 
 // ============================================================
@@ -176,4 +196,12 @@ function importHistory(jsonData) {
         console.error('Ошибка импорта:', e);
         return null;
     }
+}
+function openFullHistory(historyID) {
+    let historyelement = document.querySelector(`.hisID-${historyID}`);
+    let infohistoryelement = historyelement.querySelector('.history-item-info');
+    let labelhistoryelement = historyelement.querySelector('.history-item-label');
+    historyelement.classList.toggle('history-item--open');
+    labelhistoryelement.classList.toggle('history-item-label--open');
+    infohistoryelement.classList.toggle('history-item-info--show');
 }
