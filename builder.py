@@ -57,13 +57,19 @@ def get_js_files():
         if name == 'config_mgr.js':
             return 50
         if name == 'design_mgr.js':
-            return 51
+            return 51        
+        if name == 'confirm_mgr.js':
+            return 52
         
         # UI и скрипты
         if name == 'UI.js':
-            return 60
-        if name == 'history.js':
+            return 60        
+        if name == 'wiki.js':
             return 61
+        if name == 'history.js':
+            return 62
+        if name == '__dev.logger.js':
+            return 63
         if name == 'script.js':
             return 70
         

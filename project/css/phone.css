@@ -150,4 +150,9 @@
     .settings_wrapper {
         flex-wrap: wrap;
     }
+
+    .info-modal__wrapper {
+        min-width: 95%;
+    }
+
 }

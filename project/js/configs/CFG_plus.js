@@ -7,12 +7,7 @@ const CFG_plus = {
         ru1: {
             name: 'Отечественные 1',
             sites: [
-                'https://home.imgsmail.ru/resplash/816229/i/meta/favicon.ico',
-                "https://web.max.ru/favicon.png?v=2026",
-                "https://yandex.ru/maps/android-chrome-192x192.png",
-                'https://yastatic.net/s3/home-static/_/nova/B5CxuyJ3.png',
-                "https://msk.rt.ru/themes/rt_ru/icons/favicon.ico",
-                "https://ok.ru/favicon.svg"
+                "https://web.max.ru/favicon.png?v=2026"
             ]
         },
         ru2: {

@@ -7,7 +7,6 @@ const CFG_kategoryOnly = {
         ru1: {
             name: 'Отечественные 1',
             sites: [
-                'https://home.imgsmail.ru/resplash/816229/i/meta/favicon.ico',
                 "https://web.max.ru/favicon.png?v=2026"
             ]
         },

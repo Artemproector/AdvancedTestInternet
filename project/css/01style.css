@@ -10,9 +10,12 @@
     padding: 0;
     box-sizing: border-box;
 }
-.dwn-card, .dwn-card--DSGN2{
+
+.dwn-card,
+.dwn-card--DSGN2 {
     display: none !important;
 }
+
 .header {
     display: flex;
     flex-direction: row;
@@ -249,6 +252,7 @@ body {
     justify-content: space-between;
     transition: all 0.3s ease;
     align-items: flex-end;
+    height: 75px;
 }
 
 .category-item .name {
@@ -465,6 +469,8 @@ footer a {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .wrapper__left {
@@ -855,13 +861,13 @@ footer a {
 
 .setting_name {
     text-align: center;
+    padding: 15px 0;
 }
 
 .settings_wrapper {
     display: flex;
     align-items: flex-start;
     gap: 15px;
-    padding: 15px 0 0 0;
 }
 
 .desclabel {
@@ -915,4 +921,169 @@ footer a {
 
 .chart_hour_data:hover .chart_value {
     opacity: 1;
+}
+
+.info-modal--show {
+    display: flex !important;
+    z-index: 9999 !important;
+    opacity: 1 !important;
+    visibility: visible;
+    animation: modalFadeIn 1s ease forwards;
+}
+
+/* Исчезание */
+.info-modal--hide {
+    visibility: hidden;
+    animation: modalFadeOut 0.3s ease forwards;
+}
+
+.info-modal {
+    position: absolute;
+    background-color: #00000087;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    display: none;
+    z-index: -999;
+    opacity: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.info-modal--show .info-modal__wrapper {
+    animation: modalFadeIn 1s;
+}
+
+.info-modal__wrapper {
+    background-color: #FFF;
+    border-radius: 10px;
+    width: fit-content;
+    color: black;
+    padding: 15px;
+    min-width: 30%;
+    min-height: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.modal-label {
+    text-align: center;
+}
+
+.button {
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #2a3555;
+    text-align: center;
+    width: 100%;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    position: relative;
+    overflow: hidden;
+    background-color: transparent;
+    border: 1px solid #2a3555;
+    color: #8892b0;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.btn-cancel:hover {
+    background-color: #8892b0;
+    color: #FFF;
+}
+
+/* Прогресс-бар внутри кнопки */
+.btn-cancel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: #2a3555;
+    transition: width 7s linear;
+    z-index: -1;
+    opacity: 0.2;
+}
+
+/* Активная анимация */
+.btn-cancel.active::before {
+    width: 100%;
+}
+
+/* Текст поверх прогресс-бара */
+.btn-cancel span {
+    position: relative;
+    z-index: 2;
+}
+
+.btn-cancel--hide {
+    display: none;
+}
+
+.btn-ok {
+    background-color: #2a3555;
+    color: #fff;
+}
+
+.btn-ok:hover {
+    background-color: #fff;
+    color: #2a3555;
+    font-weight: 500;
+}
+
+.buttons_grp {
+    display: flex;
+    gap: 10px;
+}
+
+.info-modal__wrapper .area {
+    width: 500px;
+}
+
+.close:hover {
+    transform: translateX(-5px);
+    transition: all 0.5s;
+}
+
+.close {
+    transform: translateX(0);
+    transition: all 0.3s;
+}
+
+.max-category {
+    position: relative;
+    overflow: hidden;
+    align-items: center !important;
+}
+
+.max-logo {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    transform: rotate(15deg);
+    top: -4px;
+    left: 0px;
+    opacity: 0.3;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.max-category .name,
+.max-category .status-icon {
+    position: relative;
+    z-index: 1;
 }

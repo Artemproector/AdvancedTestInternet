@@ -154,20 +154,19 @@ function filterHistoryByMode(history, mode) {
 // ОЧИСТКА
 // ============================================================
 
-function clearHistory() {
-    // Проверяем, есть ли вообще записи
-    const history = getSpeedHistory();
-    if (history.length === 0) {
-        alert('История уже пуста.');
-        return;
-    }
+async function clearHistory() {
+    const confirmed = await showConfirm(
+        'Очистка истории',
+        'Вы уверены, что хотите удалить все записи?<br>Это действие нельзя отменить.'
+    );
 
-    // Запрашиваем подтверждение
-    if (confirm('Вы уверены, что хотите удалить всю историю проверок?\nЭто действие нельзя отменить.')) {
+    if (confirmed) {
         localStorage.removeItem('speedHistory');
         historyload();
         calcConnectIndex();
         updateConnectionInfo();
+    } else {
+        console.log('Очистка отменена');
     }
 }
 

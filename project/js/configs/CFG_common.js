@@ -1,5 +1,5 @@
 const CFG_common = {
-    version: "1.4.0",
+    version: "1.5.0",
     expressTest: {
         enabled: true,
         showDetails: true
@@ -39,5 +39,6 @@ const CFG_common = {
             'none': 'Нет сети',
             'unknown': 'Неизвестно (Подробнее в справке)'
         }
-    }
+    },
+    autoCloseModal: 7000
 };
