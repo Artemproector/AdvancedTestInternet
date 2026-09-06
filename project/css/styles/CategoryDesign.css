@@ -1,0 +1,185 @@
+/* ============================================================
+   КАТЕГОРИИ
+   ============================================================ */
+.categories {
+    margin-top: 25px;
+}
+
+.categories-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ccd6f6;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ----- ОСНОВНАЯ КАРТОЧКА ----- */
+.category-item {
+    background: #FFF;
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid #2a3555;
+    transition: all 0.3s ease;
+    height: fit-content;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    margin-bottom: 8px;
+    color: #0a0e1a;
+}
+
+/* ----- ОСНОВНАЯ ИНФОРМАЦИЯ (всегда видна) ----- */
+.main-info-category {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.main-info-category .name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a2238;
+    flex: 1;
+}
+
+.main-info-category .name .sub {
+    font-size: 11px;
+    font-weight: 400;
+    color: #8892b0;
+    display: block;
+    margin-top: 2px;
+}
+
+/* ----- СТАТУС (иконка) ----- */
+.status-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.status-icon.success {
+    color: #2ed573;
+}
+
+.status-icon.error {
+    color: #ff4757;
+}
+
+.status-icon.warning {
+    color: #ffa502;
+}
+
+/* ----- СТРЕЛКА РАСКРЫТИЯ ----- */
+.category-arrow {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+.category-item--open .category-arrow {
+    transform: rotate(180deg);
+}
+
+/* ----- СКРЫТАЯ ИНФОРМАЦИЯ (появляется при клике) ----- */
+.hide-info-category {
+    display: none;
+    padding-top: 12px;
+    margin-top: 12px;
+    border-top: 1px solid #e8eaed;
+    font-size: 13px;
+    color: #1a2238;
+
+}
+
+.hide-info-category--show {
+    display: block;
+    animation: slideDown 0.3s ease forwards;
+}
+
+.hide-info-category .sub {
+    display: block;
+    font-size: 12px;
+    color: #8892b0;
+    margin-bottom: 8px;
+}
+
+.hide-info-category .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.hide-info-category .detail-row:last-child {
+    border-bottom: none;
+}
+
+.hide-info-category .detail-label {
+    color: #0a0e1a;
+    font-weight: 400;
+}
+
+.hide-info-category .detail-value {
+    font-weight: 600;
+    color: #1a2238;
+}
+
+.hide-info-category .detail-value.success {
+    color: #2ed573;
+}
+
+.hide-info-category .detail-value.error {
+    color: #ff4757;
+}
+
+.hide-info-category .detail-value.warning {
+    color: #ffa502;
+}
+
+/* ----- АНИМАЦИЯ ПОЯВЛЕНИЯ ----- */
+
+/* ============================================================
+   МАКС - ЛОГОТИП НА ФОНЕ
+   ============================================================ */
+.max-category {
+    position: relative;
+    overflow: hidden;
+}
+
+.max-logo {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    top: -5px;
+    left: 0px;
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+}
+
+.max-logo--big {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    left: 0px;
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
+    top: 60px;
+    transition: all 0.3s;
+}
+
+.max-category .main-info-category,
+.max-category .hide-info-category {
+    position: relative;
+    z-index: 1;
+}

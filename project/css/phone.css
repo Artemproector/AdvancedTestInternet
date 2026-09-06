@@ -155,4 +155,19 @@
         min-width: 95%;
     }
 
+    .category-item {
+        padding: 12px 14px;
+    }
+
+    .main-info-category .name {
+        font-size: 13px;
+    }
+
+    .hide-info-category {
+        font-size: 12px;
+    }
+
+    .hide-info-category .detail-row {
+        font-size: 12px;
+    }
 }
