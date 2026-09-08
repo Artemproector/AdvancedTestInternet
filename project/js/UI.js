@@ -510,6 +510,26 @@ function historyload() {
         el.addEventListener('click', handleFilterClick);
     });
 }
+function openFullHistory(historyID) {
+    let historyelement = document.querySelector(`.hisID-${historyID}`);
+    let infohistoryelement = historyelement.querySelector('.history-item-info');
+    let labelhistoryelement = historyelement.querySelector('.history-item-label');
+    historyelement.classList.toggle('history-item--open');
+    labelhistoryelement.classList.toggle('history-item-label--open');
+    infohistoryelement.classList.toggle('history-item-info--show');
+}
+function openCategory(category) {
+    let categoryelement = document.querySelector(`.cat-${category}`);
+    let maincategoryelement = categoryelement.querySelector('.main-info-category');
+    let hidecategoryelement = categoryelement.querySelector('.hide-info-category');
+    if (category == 'ru1') {
+        let max_logo = categoryelement.querySelector('.max-logo')
+        max_logo.classList.toggle('max-logo--big')
+    }
+    categoryelement.classList.toggle('category-item--open');
+    maincategoryelement.classList.toggle('main-info-category--open');
+    hidecategoryelement.classList.toggle('hide-info-category--show');
+}
 function showNetIkon(net_type) {
     if (net_type == 'cellular') {
         return 'Мобильный интернет'

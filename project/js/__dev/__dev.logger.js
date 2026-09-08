@@ -1,3 +1,4 @@
+//АКТИВАЦИЯ DEV-РЕЖИМА ПРОИСХОДИТ ПУТЕМ НАЖАТИЯ КНОПКИ В МЕНЮ ПРОВЕРКИ ОБНОВЛЕНИЯ ПРИ ИСПОЛЬЗОВАНИИ ВЕРСИИ ВЫШЕ, ЧЕМ В GITHUB
 const LOG_KEY = 'devLog';
 async function changeLogPolicy() {
     let logger = document.querySelector('.logger_btn');
@@ -35,39 +36,20 @@ function checkLog() {
     }
 }
 checkLog()
-function openlog() {
-    fullnavbar.classList.add('show-nav');
-    let fullLabel = document.querySelector('.labal-full-menu');
-    if (fullLabel) {
-        fullLabel.textContent = 'DEV-MENU_log';
-    }
-    let area = document.querySelector('.area');
-
-    // Очищаем область
-    area.innerHTML = '';
-
-    // Создаём контейнер для кнопок
+function __showLog(area) {
     const btnGrp = document.createElement('div');
     btnGrp.className = 'log_btn_grp';
-
-    // Кнопка "Скачать"
     const downloadBtn = document.createElement('button');
     downloadBtn.className = 'download_btn';
     downloadBtn.textContent = 'Скачать лог';
     downloadBtn.addEventListener('click', downloadLog);
-
-    // Кнопка "Очистить"
     const clearBtn = document.createElement('button');
     clearBtn.className = 'clear_btn';
     clearBtn.textContent = 'Очистить лог';
     clearBtn.addEventListener('click', clearLog);
-
-    // Собираем кнопки
     btnGrp.appendChild(downloadBtn);
     btnGrp.appendChild(clearBtn);
     area.appendChild(btnGrp);
-
-    // Добавляем лог
     const logContainer = document.createElement('p');
     logContainer.className = 'log_container';
     logContainer.innerHTML = localStorage.getItem(LOG_KEY) || 'Лог пуст';
@@ -94,7 +76,7 @@ async function clearLog() {
 
     if (confirmed) {
         localStorage.removeItem(LOG_KEY);
-        openlog()
+        __showLog()
     }
 }
 

@@ -196,11 +196,3 @@ function importHistory(jsonData) {
         return null;
     }
 }
-function openFullHistory(historyID) {
-    let historyelement = document.querySelector(`.hisID-${historyID}`);
-    let infohistoryelement = historyelement.querySelector('.history-item-info');
-    let labelhistoryelement = historyelement.querySelector('.history-item-label');
-    historyelement.classList.toggle('history-item--open');
-    labelhistoryelement.classList.toggle('history-item-label--open');
-    infohistoryelement.classList.toggle('history-item-info--show');
-}
