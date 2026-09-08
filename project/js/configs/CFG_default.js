@@ -5,13 +5,18 @@ const CFG_default = {
     // ============================================================
     categories: {
         ru1: {
-            name: 'Отечественные 1',
+            name: 'Мессенджер Макс',
+            description:'ru1',
             sites: [
                 "https://web.max.ru/favicon.png?v=2026"
+            ],
+            shortDomain:[
+                'Макс'
             ]
         },
         ru2: {
-            name: 'Отечественные 2',
+            name: 'Отечественные',
+            description: 'ru2',
             sites: [
                 'https://yastatic.net/s3/home-static/_/nova/B5CxuyJ3.png',
                 'https://gosuslugi.ru/favicon.ico',
