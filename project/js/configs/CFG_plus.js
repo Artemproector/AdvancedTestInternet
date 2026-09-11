@@ -8,10 +8,16 @@ const CFG_plus = {
             name: 'Отечественные 1',
             sites: [
                 "https://web.max.ru/favicon.png?v=2026"
+            ],
+            name: 'Мессенджер Макс',
+            shortName: 'ru1',
+            description: 'Проверка доступности мессенджера',
+            shortDomains: [
+                'max.ru'
             ]
         },
         ru2: {
-            name: 'Отечественные 2',
+            name: 'Отечественные',
             sites: [
                 'https://dzen.ru/logo-redesign-48.ico',
                 'https://gosuslugi.ru/favicon.ico',
@@ -19,6 +25,11 @@ const CFG_plus = {
                 'https://www.kinopoisk.ru/favicon.ico',
                 'https://www.tbank.ru/favicon.ico',
                 'https://a.dns-shop.ru/web-files/manifest/favicon.ico',
+            ],
+            shortName: 'ru2',
+            description: 'Проверка доступности популярных российских сервисов',
+            shortDomains: [
+                'dzen.ru', 'gosuslugi.ru', 'ozon.ru', 'kinopoisk.ru', 'tbank.ru', 'dns-shop.ru'
             ]
         },
         en1: {
@@ -30,6 +41,11 @@ const CFG_plus = {
                 'https://www.wikipedia.org/static/favicon/wikipedia.ico',
                 'https://www.bing.com/sa/simg/favicon-trans-bg-blue-mg-png.png',
                 'https://github.githubassets.com/favicons/favicon-dark.png',
+            ],
+            shortName: 'en1',
+            description: 'Проверка доступности популярных зарубежных сервисов',
+            shortDomains: [
+                'google.com', 'deepseek.com', 'mail.google.com', 'wikipedia.org', 'bing.com', 'github.com'
             ]
         },
         en2: {
@@ -39,6 +55,13 @@ const CFG_plus = {
                 'https://soundcloud.com/favicon.ico',
                 "https://web.telegram.org/favicon.ico",
                 "https://static.whatsapp.net/rsrc.php/y1/r/FJbTMJqMap7.svg",
+                'https://discord.com/favicon.ico',
+                "https://instagram.com/favicon.ico"
+            ],
+            shortName: 'en2',
+            description: 'Проверка доступности популярных заблокированных сервисов',
+            shortDomains: [
+                'youtube.com', 'soundcloud.com', 'telegram.org', 'whatsapp.com', 'discord.com', 'instagram.com'
             ]
         }
     },

@@ -241,30 +241,4 @@ const DSGN3_html = `<div class="results">
                             </div>
                         </div>
                     </div>`
-function selectDSGN(dsgnID) {
-    if (dsgnID == 'dsgn2') {
-        displays.innerHTML = DSGN2_html
-        localStorage.setItem("theme", dsgnID);
-        currentdsgn = 'dsgn2'
-    }
-    else {
-        if (dsgnID == 'dsgn3') {
-            displays.innerHTML = DSGN3_html
-            localStorage.setItem("theme", dsgnID);
-            currentdsgn = 'dsgn3'
-        }
-        else {
-            displays.innerHTML = DSGN1_html
-            localStorage.setItem("theme", dsgnID);
-            currentdsgn = 'dsgn1'
-        }
-    }
-    updateVisibilityByPreset()
-}
-let theme = localStorage.getItem("theme");
-if (theme) {
-    selectDSGN(theme);
-}
-else {
-    selectDSGN('dsgn1');
-}
+

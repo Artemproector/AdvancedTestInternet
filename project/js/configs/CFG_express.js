@@ -5,16 +5,26 @@ const CFG_express = {
     // ============================================================
     categories: {
         ru1: {
-            name: 'Отечественные 1',
             sites: [
                 "https://web.max.ru/favicon.png?v=2026"
+            ],
+            name: 'Мессенджер Макс',
+            shortName: 'ru1',
+            description: 'Проверка доступности мессенджера',
+            shortDomains: [
+                'max.ru'
             ]
         },
         ru2: {
-            name: 'Отечественные 2',
+            name: 'Отечественные',
             sites: [
                 'https://yastatic.net/s3/home-static/_/nova/B5CxuyJ3.png',
                 'https://gosuslugi.ru/favicon.ico'
+            ],
+            shortName: 'ru2',
+            description: 'Проверка популярных российских сервисов',
+            shortDomains: [
+                'ya.ru','gosuslugi.ru'
             ]
         },
         en1: {
@@ -22,6 +32,11 @@ const CFG_express = {
             sites: [
                 'https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico',
                 'https://fe-static.deepseek.com/chat/favicon.svg',
+            ],
+            shortName: 'en1',
+            description: 'Проверка популярных зарубежых сервисов',
+            shortDomains: [
+                'google.com', 'deepseek.ru'
             ]
         },
         en2: {
@@ -29,6 +44,11 @@ const CFG_express = {
             sites: [
                 'https://www.youtube.com/yts/img/favicon-vfl8qSV2F.ico',
                 "https://static.whatsapp.net/rsrc.php/y1/r/FJbTMJqMap7.svg"
+            ],
+            shortName: 'en2',
+            description: 'Проверка популярных заблокированых сервисов',
+            shortDomains: [
+                'youtube.com', 'whatapp.com'
             ]
         }
     },
@@ -62,12 +82,12 @@ const CFG_express = {
             timeout: 3000
         },
         http: {
-            url: 'http://www.microsoft.com/favicon.ico',
+            url: 'http://web.max.ru/favicon.png',
             timeout: 3000
         },
         https: {
             urls: [
-                'https://www.microsoft.com/favicon.ico'
+                'https://web.max.ru/favicon.png'
             ],
             timeout: 3000
         }

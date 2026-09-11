@@ -4,8 +4,6 @@ const CFG_common = {
         enabled: true,
         showDetails: true
     },
-    timeout: 5000,
-    quickCheckTimeout: 3000,
     history: {
         maxRecords: 999,
         maxFailedRecords: 999,
@@ -27,8 +25,7 @@ const CFG_common = {
         levels: 5
     },
     update: {
-        url: 'https://api.github.com/repos/Artemproector/AdvancedTestInternet/releases/latest',
-        timeout: 5000
+        url: 'https://api.github.com/repos/Artemproector/AdvancedTestInternet/releases/latest'
     },
     connectionTypes: {
         labels: {

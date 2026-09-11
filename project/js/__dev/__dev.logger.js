@@ -76,7 +76,6 @@ async function clearLog() {
 
     if (confirmed) {
         localStorage.removeItem(LOG_KEY);
-        __showLog()
     }
 }
 

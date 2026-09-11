@@ -13,7 +13,8 @@ let progress_el_6 = document.querySelector('.pr-bar-6');
 let navbar = document.querySelector('.nav-bar');
 let fullnavbar = document.querySelector('.full-nav-bar');
 let header__left_col_btn = document.querySelector('.header__left-col-btn');
-// Устанавливаем версию из конфига
+let categories = document.querySelector('.categories');
+let isMSGR_MAXLOGO = true
 app_ver.forEach(e => {
     e.textContent = `Версия: ${CONFIG.version}`;
 });
@@ -32,7 +33,22 @@ function scrollToActiveProgress() {
         progressBar.scrollLeft = elementOffset - (containerWidth / 2) + (elementWidth / 2);
     }
 }
+function scrollToOpenCategory(category) {
+    let categoryelement = document.querySelector(`.cat-${category}`);
+    let maincategoryelement = categoryelement.querySelector('.main-info-category');
+    let hidecategoryelement = categoryelement.querySelector('.hide-info-category');
 
+    // Скроллим к конкретной категории
+    setTimeout(() => {
+        const targetElement = document.querySelector(`.cat-${category}`);
+        if (targetElement) {
+            targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    }, 100);
+}
 function scrollToLast() {
     const progressBar = document.querySelector('.progress-bar');
     const element = progressBar.querySelectorAll('.pr-bar-section');
@@ -108,16 +124,13 @@ function probka_zaglushka() {
     </pre> А пока просто пользуйся тестом. Он и без этого не плохой (наверное)`;
 }
 function summaryload() {
-    //fullnavbar.classList.add('show-nav');
-    //let fullLabel = document.querySelector('.labal-full-menu');
-    //if (fullLabel) {
-    //    fullLabel.textContent = 'Сводка данных';
-    //}
-    //let area = document.querySelector('.area');
-    //area.innerHTML = '<p>Данная функция пока находиться на стадии разработки! </p>';
-    //area.innerHTML += buildSummaryContent();
-    //НА ДОРАБОТКЕ!!!!
-    probka_zaglushka()
+    fullnavbar.classList.add('show-nav');
+    let fullLabel = document.querySelector('.labal-full-menu');
+    if (fullLabel) {
+        fullLabel.textContent = 'Сводка данных';
+    }
+    let area = document.querySelector('.area');
+    area.innerHTML = buildSummaryContent();
 }
 function openupdate() {
     fullnavbar.classList.add('show-nav');
@@ -208,6 +221,13 @@ function openSettings() {
             <li class="select cfg cfg_pls ${currentPreset === 'pls' ? 'selected' : ''}" data-preset="pls">Расширенная</li>
         </ol>
         <p id="configDescription"><span class='desclabel'>Описание конфигурации:</span><br> ${loadDescConfigs()}</p></div>
+        <h3 class='setting_name'>Таймауты:</h3>
+        <ol class='selecter'>
+            <li class="select timeout tmout1 ${currentTime === 'tmout1' ? 'selected' : ''}" data-timeout="tmout1">Стандартный</li>
+            <li class="select timeout tmout2 ${currentTime === 'tmout2' ? 'selected' : ''}" data-timeout="tmout2">Расширенный</li>
+            <li class="select timeout tmout3 ${currentTime === 'tmout3' ? 'selected' : ''}" data-timeout="tmout3">Бесконечный</li>
+        </ol>
+        <p id="timeoutDescription"><span class='desclabel'>Описание таймаута:</span><br> ${loadDescTimeout()}</p></div>
         <h3 class='setting_name'>Дизайн:</h3>
         <ol class='selecter'>
             <li class="select dsgn dsgn1 ${currentdsgn === 'dsgn1' ? 'selected' : ''}" data-dsgn="dsgn1">Стандартный</li>
@@ -237,10 +257,25 @@ function openSettings() {
             }
         });
     });
+    document.querySelectorAll('.timeout').forEach(el => {
+        el.addEventListener('click', function () {
+            const timeoutName = this.dataset.timeout;
+            applyTimeout(timeoutName);
+            document.querySelectorAll('.timeout').forEach(item => {
+                item.classList.remove('selected');
+            });
+            this.classList.add('selected');
+
+            // Обновляем описание
+            const descEl = document.getElementById('timeoutDescription');
+            if (descEl) {
+                descEl.innerHTML = `<span class='desclabel'>Описание таймаута:</span><br> ${loadDescTimeout()}`;
+            }
+        });
+    });
     document.querySelectorAll('.dsgn').forEach(el => {
         el.addEventListener('click', function () {
             const dsgnName = this.dataset.dsgn;
-            console.log(dsgnName);
             selectDSGN(dsgnName);
             document.querySelectorAll('.dsgn').forEach(item => {
                 item.classList.remove('selected');
@@ -251,7 +286,6 @@ function openSettings() {
     document.querySelectorAll('.blocking').forEach(el => {
         el.addEventListener('click', function () {
             const blockingName = this.dataset.blocking;
-            console.log(blockingName);
             selectblocking(blockingName);
             document.querySelectorAll('.blocking').forEach(item => {
                 item.classList.remove('selected');
@@ -519,6 +553,7 @@ function openFullHistory(historyID) {
     infohistoryelement.classList.toggle('history-item-info--show');
 }
 function openCategory(category) {
+    scrollToOpenCategory(category)
     let categoryelement = document.querySelector(`.cat-${category}`);
     let maincategoryelement = categoryelement.querySelector('.main-info-category');
     let hidecategoryelement = categoryelement.querySelector('.hide-info-category');
@@ -587,7 +622,6 @@ function updateConnectionInfo() {
 function updateVisibilityByPreset() {
     const allCards = document.querySelectorAll('.dwn-card, .ping-card, .proto-card, .dwn-card--DSGN2, .ping-card--DSGN2, .proto-card--DSGN2, .dwn-card--DSGN3, .ping-card--DSGN3, .proto-card--DSGN3');
     allCards.forEach(el => el.style.display = '');
-    console.log(currentdsgn);
     // 2. Если пресет "kat" — скрываем нужные
     if (currentPreset === 'kat') {
         // Для DSGN2
@@ -631,3 +665,108 @@ function checkNetworkAPI() {
 
     showConfirm("Проверка модуля", message, false)
 }
+function showcategories() {
+    const categoryKeys = Object.keys(CONFIG.categories);
+    // ['ru1', 'ru2', 'en1', 'en2']
+    const categoryObjects = categoryKeys.map(key => CONFIG.categories[key]);
+    // [obj1, obj2, obj3, obj4]
+
+    // Очищаем контейнер (чтобы не дублировать)
+    categories.innerHTML = '';
+
+    // Проходим по всем категориям
+    categoryObjects.forEach((obj, index) => {
+        const isFirst = index === 0;
+        const isMax = isFirst && isMSGR_MAXLOGO; // только для первой категории (ru1)
+
+        let html = '';
+
+        if (isMax) {
+            // Карточка с логотипом Макса (только для ru1)
+            html = `
+            <div class="category-item max-category cat-${obj.shortName}" data-category="${obj.shortName}" onclick='openCategory("${obj.shortName}")'>
+                <svg class="max-logo" version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" width="80" height="80">
+                    <g transform="translate(0.000000,250.000000) scale(0.100000,-0.100000)" fill="#2a3555" stroke="none">
+                        <path d="M1104 2196 c-300 -49 -553 -222 -687 -468 -95 -174 -134 -348 -124 -552 8 -146 22 -229 76 -446 23 -91 47 -210 52 -265 13 -117 22 -140 60 -156 79 -32 210 2 316 82 l52 39 70 -44 c112 -69 167 -81 361 -80 149 1 173 3 253 27 153 47 270 119 398 247 350 349 373 900 52 1292 -118 145 -307 266 -483 308 -110 26 -290 34 -396 16z m295 -497 c205 -71 331 -241 331 -448 0 -155 -63 -277 -188 -368 -160 -115 -330 -133 -491 -53 l-55 27 -57 -44 c-33 -26 -65 -43 -76 -41 -39 7 -93 220 -93 371 0 247 113 453 295 538 110 52 218 58 334 18z"/>
+                    </g>
+                </svg>
+                <div class="main-info-category">
+                    <div class="name">
+                        ${obj.name}
+                        <span class="sub">Нажмите для деталей</span>
+                    </div>
+                    <div class="status-icon" id="cat-${obj.shortName}"></div>
+                    <svg class="category-arrow" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#2a3555">
+                        <path d="M459-381 314-526q-3-3-4.5-6.5T308-540q0-8 5.5-14t14.5-6h304q9 0 14.5 6t5.5 14q0 2-6 14L501-381q-5 5-10 7t-11 2q-6 0-11-2t-10-7Z"/>
+                    </svg>
+                </div>
+                <div class="hide-info-category">
+                    <span class="sub">${obj.description || ''}</span>
+                    <div class="detail-row">
+                        <span class="detail-label">Результат:</span>
+                        <span class="detail-value" id="detail-${obj.shortName}">—</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Доступно:</span>
+                        <span class="detail-value" id="count-${obj.shortName}">—</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Время ответа:</span>
+                        <span class="detail-value" id="time-${obj.shortName}">—</span>
+                    </div>
+                </div>
+            </div>`;
+        } else {
+            // Обычная карточка (без логотипа)
+            html = `
+            <div class="category-item cat-${obj.shortName}" data-category="${obj.shortName}" onclick='openCategory("${obj.shortName}")'>
+                <div class="main-info-category">
+                    <div class="name">
+                        ${obj.name}
+                        <span class="sub">Нажмите для деталей</span>
+                    </div>
+                    <div class="status-icon" id="cat-${obj.shortName}"></div>
+                    <svg class="category-arrow" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#2a3555">
+                        <path d="M459-381 314-526q-3-3-4.5-6.5T308-540q0-8 5.5-14t14.5-6h304q9 0 14.5 6t5.5 14q0 2-6 14L501-381q-5 5-10 7t-11 2q-6 0-11-2t-10-7Z"/>
+                    </svg>
+                </div>
+                <div class="hide-info-category">
+                    <span class="sub">${obj.description || ''}</span>
+                    <div class="detail-row">
+                        <span class="detail-label">Результат:</span>
+                        <span class="detail-value" id="detail-${obj.shortName}">—</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Доступно:</span>
+                        <span class="detail-value" id="count-${obj.shortName}">0/0</span>
+                    </div>
+                    ${domainListGenerate(obj)}
+                    <span class="sub">Подробнее с ошибками можно ознакомиться в справке</span>
+                </div>
+            </div>`;
+        }
+
+        categories.innerHTML += html;
+    });
+}
+
+function domainListGenerate(obj) {
+    // Проверяем, есть ли shortDomains и это массив
+    if (!obj.shortDomains || !Array.isArray(obj.shortDomains)) {
+        return '';
+    }
+
+    let result = '';
+    result += `<div class="detail-row">`;
+    result += `<span class="detail-label">Сайты:</span>`;
+    result += `<span class="detail-value">`;
+    result += `<ol class='category-list-elem'>`;
+    obj.shortDomains.forEach((element, index) => {
+        result += `<li class='category-list-elem elem-${index}'><span class='site-domain'>${element}</span></li>`;
+    });
+    result += `</ol>`;
+    result += `</span>`;
+    result += `</div>`;
+    return result;
+}
+showcategories()

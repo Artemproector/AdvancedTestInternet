@@ -113,9 +113,10 @@
 .hide-info-category .detail-row {
     display: flex;
     justify-content: space-between;
-    padding: 4px 0;
     font-size: 13px;
     border-bottom: 1px solid #f0f0f0;
+    flex-direction: column;
+    padding: 5px;
 }
 
 .hide-info-category .detail-row:last-child {
@@ -174,7 +175,7 @@
     opacity: 0.15;
     z-index: 0;
     pointer-events: none;
-    top: 60px;
+    top: 35%;
     transition: all 0.3s;
 }
 
@@ -182,4 +183,14 @@
 .max-category .hide-info-category {
     position: relative;
     z-index: 1;
+}
+
+.category-list-elem {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    list-style: none;
+}
+.site-domain{
+    color: #1a2238;
 }

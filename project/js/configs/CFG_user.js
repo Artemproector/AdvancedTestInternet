@@ -7,24 +7,32 @@ const CFG_templates = {
     categories: {
         ru1: {
             name: '',
-            sites: [
-            ]
+            sites: [],
+            shortName: 'ru1',
+            description: '',
+            shortDomains: []
         },
         ru2: {
             name: '',
-            sites: [
-            ]
+            sites: [],
+            shortName: 'ru2',
+            description: '',
+            shortDomains: []
         },
         en1: {
             name: '',
-            sites: [
-            ]
+            sites: [],
+            shortName: 'en1',
+            description: '',
+            shortDomains: []
         },
         en2: {
             name: '',
             sites: [
-
-            ]
+            ],
+            shortName: 'en2',
+            description: '',
+            shortDomains: []
         }
     },
 
@@ -32,39 +40,39 @@ const CFG_templates = {
     // ТЕСТ СКОРОСТИ
     // ============================================================
     speedTest: {
-        download: "" || 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js',
-        upload: "" || 'https://0.0.0.0/',
+        download: "",
+        upload: "",
         uploadSize: 1 * 1024 * 1024,
-        attempts: '' || 5,
-        timeout: '' || 3000
+        attempts: '',
+        timeout: ''
     },
 
     // ============================================================
     // ТЕСТ ПИНГА
     // ============================================================
     ping: {
-        url: "" || 'https://web.max.ru/favicon.png?v=2026',
-        attempts: "" || 5,
-        timeout: "" || 3000
+        url: "",
+        attempts: "",
+        timeout: ""
     },
     // ============================================================
     // ПРОВЕРКА ПРОТОКОЛОВ
     // ============================================================
     protocols: {
         dns: {
-            url: "" || 'https://cloudflare-dns.com/dns-query',
-            domain: "" || 'cloudflare.com',
-            timeout: "" || 5000
+            url: "",
+            domain: "",
+            timeout: ""
         },
         http: {
-            url: "" || 'http://www.microsoft.com/favicon.ico',
-            timeout: "" || 5000
+            url: "",
+            timeout: ""
         },
         https: {
             urls: [
-                "" || 'https://www.microsoft.com/favicon.ico'
+                ""
             ],
-            timeout: "" || 5000
+            timeout: ""
         }
     }
 };

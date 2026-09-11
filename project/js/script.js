@@ -1,4 +1,6 @@
-addToLog("Вход в приложение")
+// ============================================================
+// УТИЛИТЫ
+// ============================================================
 
 function formatSpeed(bitsPerSecond) {
     if (bitsPerSecond === 0 || !isFinite(bitsPerSecond)) return '0';
@@ -15,7 +17,6 @@ function formatPing(ms) {
 // ПРОВЕРКА ОБНОВЛЕНИЙ
 // ============================================================
 function compareVersions(v1, v2) {
-    // v1 и v2 в формате "1.2.3" или "1.2.3d"
     const parts1 = v1.replace('d', '').split('.').map(Number);
     const parts2 = v2.replace('d', '').split('.').map(Number);
 
@@ -42,6 +43,7 @@ async function checkupdate() {
         const latestVersion = data.tag_name.replace('v', '');
         const isDev = isDevVersion(CONFIG.version);
         const comparison = compareVersions(CONFIG.version, latestVersion);
+
         if (comparison > 0) {
             return {
                 status: 'developer',
@@ -70,15 +72,16 @@ async function checkupdate() {
         return { status: 'error', message: 'Не удалось проверить обновления' };
     }
 }
+
 // ============================================================
 // ПРОВЕРКА ДОСТУПНОСТИ САЙТОВ
 // ============================================================
-
-async function checkSiteAvailability(url, timeout = CONFIG.timeout) {
+async function checkSiteAvailability(url, timeout = CONFIG.TIMEOUT_quickCheck) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const start = performance.now();
+
     try {
-        const start = performance.now();
         const response = await fetch(url, {
             method: 'HEAD',
             signal: controller.signal,
@@ -88,14 +91,23 @@ async function checkSiteAvailability(url, timeout = CONFIG.timeout) {
         clearTimeout(timeoutId);
         return { success: true, time: end - start };
     } catch (error) {
+        const end = performance.now();
         clearTimeout(timeoutId);
-        return { success: false, time: timeout };
+
+        // Определяем причину ошибки
+        let reason = 'ошибка';
+            reason = error.message;
+        return {
+            success: false,
+            time: end - start,
+            error: reason  // ← сохраняем причину
+        };
     }
 }
 
 async function checkCategory(categoryKey, sites) {
     const results = await Promise.all(
-        sites.map(url => checkSiteAvailability(url, CONFIG.quickCheckTimeout))
+        sites.map(url => checkSiteAvailability(url, CONFIG.TIMEOUT_quickCheck))
     );
     const successful = results.filter(r => r.success).length;
     const total = results.length;
@@ -109,120 +121,13 @@ async function checkCategory(categoryKey, sites) {
 }
 
 // ============================================================
-// ТЕСТ СКОРОСТИ
-// ============================================================
-
-async function testDownloadSpeed(url = CONFIG.speedTest.download, attempts = CONFIG.speedTest.attempts) {
-    const results = [];
-    let totalBytes = 0;
-    let successfulAttempts = 0;
-    try {
-        for (let i = 0; i < attempts; i++) {
-            try {
-                const start = performance.now();
-                const response = await fetch(url, {
-                    signal: AbortSignal.timeout(CONFIG.speedTest.timeout)
-                });
-                if (!response.ok) throw new Error(`Download failed: ${response.status}`);
-                const data = await response.arrayBuffer();
-                const end = performance.now();
-                const durationSeconds = (end - start) / 1000;
-                const bitsLoaded = data.byteLength * 8;
-                const speedBps = bitsLoaded / durationSeconds;
-                results.push({ success: true, speedBps, bytes: data.byteLength, time: durationSeconds });
-                totalBytes += data.byteLength;
-                successfulAttempts++;
-                await sleep(300);
-            } catch (error) {
-                results.push({ success: false, speedBps: 0, error: error.message });
-            }
-        }
-        if (successfulAttempts === 0) {
-            return { success: false, speedBps: 0, error: 'Все попытки загрузки провалились', results };
-        }
-        const successfulResults = results.filter(r => r.success);
-        const totalSpeed = successfulResults.reduce((sum, r) => sum + r.speedBps, 0);
-        const averageSpeedBps = totalSpeed / successfulResults.length;
-        const speeds = successfulResults.map(r => r.speedBps).sort((a, b) => a - b);
-        const medianSpeed = speeds[Math.floor(speeds.length / 2)];
-        const variance = speeds.reduce((sum, speed) => sum + Math.pow(speed - averageSpeedBps, 2), 0) / speeds.length;
-        const stdDev = Math.sqrt(variance);
-        const stability = Math.max(0, 1 - (stdDev / averageSpeedBps));
-        return {
-            success: true,
-            speedBps: averageSpeedBps,
-            medianSpeed,
-            bytes: totalBytes,
-            attempts,
-            successfulAttempts,
-            results,
-            stability,
-            quality: stability > 0.8 ? 'Стабильно' : stability > 0.5 ? 'Нестабильно' : 'Очень нестабильно',
-            stdDev
-        };
-    } catch (error) {
-        return { success: false, speedBps: 0, error: error.message };
-    }
-}
-
-async function testUploadSpeed(url = CONFIG.speedTest.upload, attempts = CONFIG.speedTest.attempts) {
-    const results = [];
-    let successfulAttempts = 0;
-    const testDataSize = CONFIG.speedTest.uploadSize;
-    try {
-        for (let i = 0; i < attempts; i++) {
-            try {
-                const testData = new Uint8Array(testDataSize);
-                for (let j = 0; j < testData.length; j++) {
-                    testData[j] = Math.floor(Math.random() * 256);
-                }
-                const formData = new FormData();
-                formData.append('file', new Blob([testData]), 'test.bin');
-                const start = performance.now();
-                const response = await fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                    signal: AbortSignal.timeout(CONFIG.speedTest.timeout * 2)
-                });
-                const end = performance.now();
-                if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
-                const durationSeconds = (end - start) / 1000;
-                const bitsLoaded = testDataSize * 8;
-                const speedBps = bitsLoaded / durationSeconds;
-                results.push({ success: true, speedBps, bytes: testDataSize, time: durationSeconds });
-                successfulAttempts++;
-                await sleep(300);
-            } catch (error) {
-                results.push({ success: false, speedBps: 0, error: error.message });
-            }
-        }
-        if (successfulAttempts === 0) {
-            return { success: false, speedBps: 0, error: 'Все попытки загрузки провалились', results };
-        }
-        const successfulResults = results.filter(r => r.success);
-        const totalSpeed = successfulResults.reduce((sum, r) => sum + r.speedBps, 0);
-        const averageSpeedBps = totalSpeed / successfulResults.length;
-        return {
-            success: true,
-            speedBps: averageSpeedBps,
-            bytes: testDataSize * successfulAttempts,
-            attempts,
-            successfulAttempts,
-            results
-        };
-    } catch (error) {
-        return { success: false, speedBps: 0, error: error.message };
-    }
-}
-
-// ============================================================
 // ТЕСТ ПИНГА
 // ============================================================
 
 async function testPing(url = CONFIG.ping.url, attempts = CONFIG.ping.attempts) {
     const pings = [];
     for (let i = 0; i < attempts; i++) {
-        const result = await checkSiteAvailability(url, CONFIG.ping.timeout);
+        const result = await checkSiteAvailability(url, CONFIG.TIMEOUT_ping);
         if (result.success) {
             pings.push(result.time);
         }
@@ -266,6 +171,160 @@ async function quickInternetCheck() {
 }
 
 // ============================================================
+// ОБНОВЛЕНИЕ ДАННЫХ В КАТЕГОРИЯХ
+// ============================================================
+
+function updateCategoryUI(categoryResults) {
+    const categoryKeys = Object.keys(categoryResults);
+
+    categoryKeys.forEach(key => {
+        const result = categoryResults[key];
+        if (!result) return;
+
+        const categoryEl = document.querySelector(`.cat-${key}`);
+        if (!categoryEl) return;
+
+        // Обновляем статус-иконку
+        const icon = categoryEl.querySelector('.status-icon');
+        if (icon) {
+            icon.className = 'status-icon';
+            if (result.successRate >= 0.5) {
+                icon.classList.add('success');
+                icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="#2ed573" stroke-width="2"/>
+                    <path d="M7 12L10.5 15.5L17 9" stroke="#2ed573" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>`;
+            } else if (result.successRate > 0) {
+                icon.classList.add('warning');
+                icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 21H22L12 2Z" stroke="#ffa502" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M12 9V14" stroke="#ffa502" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="12" cy="17" r="1" fill="#ffa502"/>
+                </svg>`;
+            } else {
+                icon.classList.add('error');
+                icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="#ff4757" stroke-width="2"/>
+                    <path d="M8 8L16 16" stroke="#ff4757" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M16 8L8 16" stroke="#ff4757" stroke-width="2" stroke-linecap="round"/>
+                </svg>`;
+            }
+        }
+
+        // Детали
+        const detailEl = categoryEl.querySelector(`#detail-${key}`);
+        const reasonEl = categoryEl.querySelector(`#reason-${key}`);
+        const countEl = categoryEl.querySelector(`#count-${key}`);
+        const timeEl = categoryEl.querySelector(`#time-${key}`);
+        const sitesListEl = categoryEl.querySelector('.category-list-elem');
+
+        // Для Макса (ru1) — показываем причину в detail
+        if (key === 'ru1' && result.results.length > 0) {
+            const r = result.results[0];
+            if (detailEl) {
+                if (r.success) {
+                    detailEl.textContent = 'OK';
+                    detailEl.className = 'detail-value success';
+                } else {
+                    let reason = '';
+                    if (r.time >= CONFIG.TIMEOUT_quickCheck || r.time >= CONFIG.TIMEOUT_default) {
+                        reason = 'таймаут';
+                    } else if (r.error === 'AbortError' || r.error === 'The user aborted a request') {
+                        reason = 'соединение прервано';
+                    } else if (r.error === 'TypeError' || r.error?.includes('NetworkError')) {
+                        reason = 'сетевая ошибка';
+                    } else if (r.error === 'Failed to fetch') {
+                        reason = 'не удалось подключиться';
+                    } else if (r.error) {
+                        reason = r.error;
+                    } else {
+                        reason = 'ошибка';
+                    }
+                    detailEl.textContent = reason;
+                    detailEl.className = 'detail-value error';
+                }
+            }
+            if (countEl) countEl.textContent = r.success ? 'Да' : 'Нет';
+            if (timeEl) timeEl.textContent = r.success ? Math.round(r.time) + 'мс' : '—';
+            return;
+        }
+
+        // Для остальных категорий
+        if (detailEl) {
+            if (result.successRate >= 0.5) {
+                detailEl.textContent = 'Доступен';
+                detailEl.className = 'detail-value success';
+            } else if (result.successRate > 0) {
+                detailEl.textContent = 'Частично доступен';
+                detailEl.className = 'detail-value warning';
+            } else {
+                detailEl.textContent = 'Недоступен';
+                detailEl.className = 'detail-value error';
+            }
+        }
+
+        if (reasonEl) {
+            reasonEl.textContent = '';
+            reasonEl.style.display = 'none';
+        }
+
+        if (countEl) {
+            countEl.textContent = result.successful + '/' + result.total;
+        }
+
+        if (timeEl) {
+            const avgTime = result.results
+                .filter(r => r.success)
+                .reduce((sum, r) => sum + r.time, 0);
+            const count = result.results.filter(r => r.success).length;
+            if (count > 0) {
+                timeEl.textContent = Math.round(avgTime / count) + 'мс';
+            } else {
+                timeEl.textContent = '—';
+            }
+        }
+
+        // Список сайтов с причинами
+        if (sitesListEl) {
+            const items = sitesListEl.querySelectorAll('.category-list-elem');
+            const shortDomains = CONFIG.categories[key]?.shortDomains || [];
+
+            result.results.forEach((r, index) => {
+                if (items[index]) {
+                    let reason = '';
+                    if (r.success) {
+                        reason = 'OK';
+                    } else {
+                        if (r.time >= CONFIG.TIMEOUT_quickCheck || r.time >= CONFIG.TIMEOUT_default) {
+                            reason = 'таймаут';
+                        } else if (r.error === 'AbortError' || r.error === 'The user aborted a request') {
+                            reason = 'соединение прервано';
+                        } else if (r.error === 'TypeError' || r.error?.includes('NetworkError')) {
+                            reason = 'сетевая ошибка';
+                        } else if (r.error === 'Failed to fetch') {
+                            reason = 'не удалось подключиться';
+                        } else if (r.error) {
+                            reason = r.error;
+                        } else {
+                            reason = 'ошибка';
+                        }
+                    }
+
+                    const domain = shortDomains[index] || 'сайт ' + (index + 1);
+                    items[index].innerHTML = `<div class='site_wrapper'><span class='site-domain'>` + domain + `</span>` + ' — ' + reason + '</div>';
+
+                    if (r.success) {
+                        items[index].style.color = '#2ed573';
+                    } else {
+                        items[index].style.color = '#ff4757';
+                    }
+                }
+            });
+        }
+    });
+}
+
+// ============================================================
 // ОПРЕДЕЛЕНИЕ РЕЖИМА РАБОТЫ СЕТИ
 // ============================================================
 
@@ -282,7 +341,7 @@ function determineNetworkMode(categoryResults) {
 
     if (!ru1 && !ru2 && !en1 && !en2) {
         updateDisplay("mode", '1');
-        return { mode: 'total' };  // ← только ключ
+        return { mode: 'total' };
     }
     if (en1Ok != en2Ok) {
         updateDisplay("mode", '3');
@@ -307,6 +366,7 @@ function determineNetworkMode(categoryResults) {
     updateDisplay("mode", '0');
     return { mode: 'error' };
 }
+
 // ============================================================
 // ПРОВЕРКА ТИПА СОЕДИНЕНИЯ
 // ============================================================
@@ -323,6 +383,7 @@ function getConnectionType() {
     }
     return null;
 }
+
 // ============================================================
 // ПРОВЕРКА ПРОТОКОЛОВ
 // ============================================================
@@ -339,7 +400,7 @@ async function testProtocols() {
         const url = `${CONFIG.protocols.dns.url}?name=${CONFIG.protocols.dns.domain}&type=A`;
         const resp = await fetch(url, {
             headers: { 'Accept': 'application/dns-json' },
-            signal: AbortSignal.timeout(CONFIG.protocols.dns.timeout)
+            signal: AbortSignal.timeout(CONFIG.TIMEOUT_protocols)
         });
         const data = await resp.json();
         results.dns.success = data.Answer && data.Answer.length > 0;
@@ -350,7 +411,7 @@ async function testProtocols() {
     // HTTP
     try {
         const resp = await fetch(CONFIG.protocols.http.url, {
-            signal: AbortSignal.timeout(CONFIG.protocols.http.timeout)
+            signal: AbortSignal.timeout(CONFIG.TIMEOUT_protocols)
         });
         results.http.success = resp.ok;
     } catch (e) {
@@ -362,7 +423,7 @@ async function testProtocols() {
         try {
             const resp = await fetch(url, {
                 method: 'HEAD',
-                signal: AbortSignal.timeout(CONFIG.protocols.https.timeout)
+                signal: AbortSignal.timeout(CONFIG.TIMEOUT_protocols)
             });
             if (resp.ok || resp.status === 418) {
                 results.https.success = true;
@@ -373,6 +434,7 @@ async function testProtocols() {
 
     return results;
 }
+
 async function runProtocolTest() {
     const protoItems = document.querySelectorAll('.proto-test');
     protoItems.forEach(item => {
@@ -385,8 +447,9 @@ async function runProtocolTest() {
     updateProtocolUI(results);
     return results;
 }
+
 // ============================================================
-// СВОДКА ДАННЫХ
+// СВОДКА ДАННЫХ (главная страница)
 // ============================================================
 
 function getTodayHistory() {
@@ -475,6 +538,7 @@ function calcConnectIndex() {
     updateConnectIndex();
     updateTestsCounter();
 }
+
 function getPingUrl(categoryResults) {
     const ru1Ok = categoryResults['ru1']?.successRate > 0.5;
     const ru2Ok = categoryResults['ru2']?.successRate > 0.5;
@@ -482,22 +546,30 @@ function getPingUrl(categoryResults) {
     const en2Ok = categoryResults['en2']?.successRate > 0.5;
     const ruAvailable = ru1Ok && ru2Ok;
     const enAvailable = en1Ok && en2Ok;
-    if (ruAvailable && enAvailable || !ruAvailable && enAvailable || !ruAvailable && !en1Ok || !en2Ok) {
-        console.log('EN PING');
-        return 'https://www.google.com/favicon.ico';
 
-    }
-    if (ruAvailable && !enAvailable) {
-        console.log('RU PING');
+    if (ruAvailable) {
+        addToLog("Пинг: RU (Макс)");
         return 'https://web.max.ru/favicon.png?v=2026';
     }
+    if (enAvailable) {
+        addToLog("Пинг: EN (Google)");
+        return 'https://www.google.com/favicon.ico';
+    }
+    addToLog("Пинг: fallback на Макс");
     return 'https://web.max.ru/favicon.png?v=2026';
 }
+
 // ============================================================
 // ОСНОВНОЙ ТЕСТ
 // ============================================================
+
 async function runFullTest() {
-    addToLog("Начало теста");
+    addToLog("═══════════════════════════════════════════════════");
+    addToLog("НАЧАЛО ТЕСТА");
+    addToLog("Пресет: " + currentPreset);
+    addToLog("Таймаут: " + currentTime + " (" + CONFIG.TIMEOUT_description + ")");
+    addToLog("Блокировка: " + currentblock);
+    addToLog("Дизайн: " + currentdsgn);
 
     const testBtn = document.getElementById('testBtn');
     let startTime = null;
@@ -569,15 +641,19 @@ async function runFullTest() {
         // ============================================================
         // ЭТАП 1: БЫСТРАЯ ПРОВЕРКА ИНТЕРНЕТА
         // ============================================================
+        addToLog("ЭТАП 1: Проверка интернета");
         const quickCheck = await quickInternetCheck();
         progress_el_1.classList.add('pr-bar-section--pass');
         updateConnectionInfo();
 
         addToLog("Интернет: " + (quickCheck.hasInternet ? "есть" : "нет"));
         addToLog("Тип сети: " + (quickCheck.connectionLabel || 'Неизвестно'));
+        addToLog("Эффективный тип: " + (quickCheck.effectiveType || 'unknown'));
+        addToLog("Downlink: " + (quickCheck.downlink || 'N/A') + " Мбит/с");
+        addToLog("RTT: " + (quickCheck.rtt || 'N/A') + " мс");
 
         if (!quickCheck.hasInternet) {
-            addToLog("Тест прерван (нет интернета)");
+            addToLog("ИНТЕРНЕТ ОТСУТСТВУЕТ — тест прерван");
 
             document.getElementById('ping').innerHTML = '--<span class="unit">мс</span>';
             document.getElementById('networkMode').textContent = 'Нет сети';
@@ -621,8 +697,8 @@ async function runFullTest() {
 
             calcConnectIndex();
             scrollToLast();
-            addToLog("Тест завершён (нет интернета)");
-            addToLog("----------------------------------------");
+            addToLog("ТЕСТ ПРЕРВАН (нет интернета)");
+            addToLog("═══════════════════════════════════════════════════");
             return;
         }
 
@@ -634,7 +710,7 @@ async function runFullTest() {
         // ============================================================
         // ЭТАП 2: ПРОВЕРКА КАТЕГОРИЙ
         // ============================================================
-        addToLog("Проверка категорий");
+        addToLog("ЭТАП 2: Проверка категорий");
         const categoryResults = {};
         progress_el_4.classList.add('pr-bar-section--active');
         scrollToActiveProgress();
@@ -647,6 +723,7 @@ async function runFullTest() {
                 categoryResults[key] = { successRate: 0, successful: 0, total: 0 };
                 continue;
             }
+            addToLog(`Проверка категории ${key} (${sites.length} сайтов)...`);
             const result = await checkCategory(key, sites);
             categoryResults[key] = result;
 
@@ -695,6 +772,7 @@ async function runFullTest() {
         // ============================================================
         // ЭТАП 3: ОПРЕДЕЛЕНИЕ РЕЖИМА
         // ============================================================
+        addToLog("ЭТАП 3: Определение режима сети");
         const mode = determineNetworkMode(categoryResults);
         const modeText = getBlockingText(mode.mode);
         document.getElementById('networkMode').textContent = modeText;
@@ -702,6 +780,7 @@ async function runFullTest() {
 
         const isFullBlock = mode.title === 'Полная блокировка';
         const isSuccess = !isFullBlock && anyCategoryAvailable;
+        updateCategoryUI(categoryResults);
 
         // ============================================================
         // ЭТАП 4: ПИНГ
@@ -709,7 +788,7 @@ async function runFullTest() {
         let pingResult = { success: false, average: Infinity };
 
         if (isSuccess) {
-            addToLog("Пинг");
+            addToLog("ЭТАП 4: Тест пинга");
             progress_el_3.classList.add('pr-bar-section--active');
             const pingUrl = getPingUrl(categoryResults);
             addToLog("URL: " + pingUrl);
@@ -735,7 +814,7 @@ async function runFullTest() {
             }
             progress_el_3.classList.remove('pr-bar-section--active');
         } else {
-            addToLog("Пинг: пропущен (полная блокировка)");
+            addToLog("ЭТАП 4: Пинг пропущен (полная блокировка)");
             document.getElementById('ping').innerHTML = '-- <span class="unit">мс</span>';
             updateDisplay('ping', 1);
             progress_el_3.classList.add('pr-bar-section--fail');
@@ -747,7 +826,7 @@ async function runFullTest() {
         let protocolResults = { dns: { success: false }, http: { success: false }, https: { success: false } };
 
         if (isSuccess) {
-            addToLog("Протоколы");
+            addToLog("ЭТАП 5: Проверка протоколов");
             const prBar6 = document.querySelector('.pr-bar-6');
             if (prBar6) {
                 prBar6.classList.add('pr-bar-section--active');
@@ -769,7 +848,7 @@ async function runFullTest() {
                 prBar6.classList.remove('pr-bar-section--active');
             }
         } else {
-            addToLog("Протоколы: пропущены (полная блокировка)");
+            addToLog("ЭТАП 5: Протоколы пропущены (полная блокировка)");
             const prBar6 = document.querySelector('.pr-bar-6');
             if (prBar6) {
                 prBar6.classList.add('pr-bar-section--fail');
@@ -787,6 +866,7 @@ async function runFullTest() {
         // ============================================================
         // ЭТАП 6: СОХРАНЕНИЕ В ИСТОРИЮ
         // ============================================================
+        addToLog("💾 ЭТАП 6: Сохранение в историю");
         const protocolStatus = {
             dns: protocolResults.dns?.success || false,
             http: protocolResults.http?.success || false,
@@ -808,7 +888,8 @@ async function runFullTest() {
             network: connInfo?.type || 'unknown'
         });
 
-        addToLog("Сохранено: " + duration + "s");
+        addToLog(`   Длительность: ${duration} сек`);
+        addToLog(`   Успешность: ${isSuccess ? 'УСПЕШНО' : 'НЕУДАЧНО'}`);
 
         calcConnectIndex();
 
@@ -824,7 +905,7 @@ async function runFullTest() {
         }
 
     } catch (error) {
-        addToLog("Ошибка: " + error.message);
+        addToLog("ОШИБКА: " + error.message);
         console.error('Ошибка в тесте:', error);
     } finally {
         endTime = endTime || Date.now();
@@ -842,10 +923,11 @@ async function runFullTest() {
         await sleep(500);
         progress_el_5.classList.add('pr-bar-section--pass');
         scrollToLast();
-        addToLog("Тест завершён");
-        addToLog("----------------------------------------");
+        addToLog("ТЕСТ ЗАВЕРШЁН");
+        addToLog("═══════════════════════════════════════════════════");
     }
 }
+
 // ============================================================
 // ИНИЦИАЛИЗАЦИЯ
 // ============================================================

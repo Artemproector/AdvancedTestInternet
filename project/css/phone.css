@@ -1,4 +1,7 @@
 @media (max-width: 600px) {
+    .header__right-col{
+        text-align: left;
+    }
     .summarybtn {
         display: block;
     }

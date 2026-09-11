@@ -53,11 +53,11 @@ def get_js_files():
         if name.startswith('DSGN_'):
             return 20
         
-        # Менеджеры
-        if name == 'config_mgr.js':
-            return 50
+        # Менеджеры        
         if name == 'design_mgr.js':
-            return 51        
+            return 50     
+        if name == 'config_mgr.js':
+            return 51
         if name == 'confirm_mgr.js':
             return 52
         

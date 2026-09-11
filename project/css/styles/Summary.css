@@ -1,0 +1,323 @@
+/* ===== СВОДКА ===== */
+.summary-container {
+    padding: 10px 0;
+}
+
+.summary-title {
+    text-align: center;
+    color: #ccd6f6;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+.summary-filter-info {
+    text-align: center;
+    color: #8892b0;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+/* Кнопки выбора типа сети */
+.network-type-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.network-type-btn {
+    padding: 6px 14px;
+    background: #0a0e1a;
+    border: 1px solid #2a3555;
+    border-radius: 20px;
+    color: #8892b0;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: Pliant, sans-serif;
+    transition: all 0.3s;
+}
+
+.network-type-btn:hover {
+    border-color: #4facfe;
+    color: #ccd6f6;
+}
+
+.network-type-btn.active {
+    background: #2a3555;
+    color: #fff;
+    border-color: #4facfe;
+}
+
+/* Карточки */
+.summary-cards {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex-direction: row;
+}
+
+.summary-card {
+    border: 1px solid #2a3555;
+    border-radius: 7px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.summary-card-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ccd6f6;
+}
+
+.summary-card-label {
+    font-size: 12px;
+    color: #8892b0;
+    margin-top: 4px;
+}
+
+/* Секции */
+.ping-summary {
+    background: #ffffff !important;
+    color: #0a0e1a !important;
+    border: none !important;
+}
+
+.summary-section {
+    background: #0a0e1a;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    color: #fff;
+    border: #2a3555 1px solid;
+}
+
+.summary-section-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+/* Пинг */
+.summary-ping-large {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.summary-ping-value {
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.summary-ping-unit {
+    font-size: 20px;
+    color: #8892b0;
+    margin-left: 4px;
+}
+
+/* Режимы сети */
+.summary-mode-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #0a0e1a;
+}
+
+.summary-mode-item:last-child {
+    border-bottom: none;
+}
+
+.summary-mode-name {
+    color: #ccd6f6;
+    font-size: 13px;
+    flex: 0 0 auto;
+}
+
+.summary-mode-count {
+    color: #8892b0;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-left: 10px;
+}
+
+.summary-mode-bar {
+    flex: 1;
+    height: 4px;
+    background: #2a3555;
+    border-radius: 2px;
+    margin: 2px 0px;
+    width: 130px;
+}
+
+.summary-mode-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+}
+
+/* Протоколы */
+.protocol-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.protocol-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.protocol-label {
+    color: #8892b0;
+    font-size: 13px;
+    width: 40px;
+    flex-shrink: 0;
+}
+
+.protocol-bar {
+    flex: 1;
+    height: 6px;
+    background: #2a3555;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.protocol-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+
+.protocol-value {
+    font-weight: 600;
+    font-size: 14px;
+    width: 40px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.protocol-count {
+    color: #8892b0;
+    font-size: 11px;
+    width: 50px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* График */
+.chart-container {
+    padding: 10px 0;
+}
+
+.chart-area {
+    display: flex;
+    align-items: flex-end;
+    height: 120px;
+    gap: 2px;
+    padding: 0 2px;
+    border-bottom: 1px solid #2a3555;
+}
+
+.chart-bar-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.chart-bar {
+    width: 100%;
+    min-height: 2px;
+    position: relative;
+    transition: height 0.6s ease;
+    cursor: pointer;
+}
+
+.chart-bar-value {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    color: #ccd6f6;
+    background: #0a0e1a;
+    padding: 1px 4px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+}
+
+.chart-bar:hover .chart-bar-value {
+    opacity: 1;
+}
+
+.chart-bar-label {
+    font-size: 8px;
+    color: #8892b0;
+    margin-top: 4px;
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2px;
+    margin-bottom: 4px;
+}
+
+.chart-label {
+    font-size: 9px;
+    color: #8892b0;
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #8892b0;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+/* Адаптив */
+@media (max-width: 600px) {
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .summary-ping-value {
+        font-size: 36px;
+    }
+
+    .network-type-buttons {
+        gap: 5px;
+    }
+
+    .network-type-btn {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+
+    .chart-area {
+        height: 80px;
+    }
+}
