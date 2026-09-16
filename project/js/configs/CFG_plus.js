@@ -5,15 +5,17 @@ const CFG_plus = {
     // ============================================================
     categories: {
         ru1: {
-            name: 'Отечественные 1',
             sites: [
-                "https://web.max.ru/favicon.png?v=2026"
+                "https://web.max.ru/favicon.png?v=2026",
+                "https://calls.okcdn.ru",
+                'https://i.oneme.ru',
+                "https://sdk-api.apptracer.ru"
             ],
             name: 'Мессенджер Макс',
             shortName: 'ru1',
             description: 'Проверка доступности мессенджера',
             shortDomains: [
-                'max.ru'
+                'Сайт', 'API звонков', 'API картинок', 'Служебные адреса'
             ]
         },
         ru2: {

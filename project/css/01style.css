@@ -990,3 +990,32 @@ footer a {
     height: 0;
     background: transparent;
 }
+
+.__btn {
+    padding: 10px 16px;
+    background: rgb(26, 34, 56);
+    border: 1px solid rgb(42, 53, 85);
+    border-radius: 8px;
+    color: rgb(204, 214, 246);
+    cursor: pointer;
+    font-family: Pliant, sans-serif;
+    font-size: 14px;
+    transition: 0.3s;
+    text-align: left;
+    margin: 10px 0;
+}
+
+.__area {
+    padding: 12px;
+    background: #0a0e1a;
+    border: 1px solid #2a3555;
+    border-radius: 8px;
+    color: #8892b0;
+    font-size: 13px;
+    font-family: monospace;
+    min-height: 60px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 300px;
+    overflow-y: auto;
+}

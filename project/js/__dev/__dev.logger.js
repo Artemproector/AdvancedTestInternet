@@ -30,9 +30,11 @@ function checkLog() {
     let openlog_btn = document.querySelector('.openlog_btn')
     if (localStorage.getItem('logger')) {
         openlog_btn.style.display = 'block'
+        openlog_btn.style.opacity = '1'
     }
     else {
         openlog_btn.style.display = 'none'
+        openlog_btn.style.opacity = '0'
     }
 }
 checkLog()

@@ -404,32 +404,21 @@ function summaryload() {
     // Показываем сводку без фильтра
     area.innerHTML = buildSummaryContent();
 
-    // Вешаем обработчики на кнопки выбора типа сети (если они есть)
-    document.querySelectorAll('.network-type-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const network = this.dataset.network || null;
+    // Делегирование событий — ОДИН обработчик
+    // Используем именованную функцию, чтобы можно было удалить при повторном вызове
+    if (window._summaryClickHandler) {
+        area.removeEventListener('click', window._summaryClickHandler);
+    }
 
-            // Обновляем активную кнопку
-            document.querySelectorAll('.network-type-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
+    window._summaryClickHandler = function (e) {
+        const btn = e.target.closest('.network-type-btn');
+        if (!btn) return;
 
-            // Перестраиваем сводку с фильтром
-            area.innerHTML = buildSummaryContent(network);
+        const network = btn.dataset.network || null;
 
-            // Перевешиваем обработчики на новые кнопки
-            document.querySelectorAll('.network-type-btn').forEach(b => {
-                b.addEventListener('click', function () {
-                    const net = this.dataset.network || null;
-                    document.querySelectorAll('.network-type-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    area.innerHTML = buildSummaryContent(net);
-                    // Рекурсивно перевешиваем
-                    document.querySelectorAll('.network-type-btn').forEach(b => {
-                        b.replaceWith(b.cloneNode(true));
-                    });
-                    summaryload();
-                });
-            });
-        });
-    });
+        // Перестраиваем сводку с фильтром
+        area.innerHTML = buildSummaryContent(network);
+    };
+
+    area.addEventListener('click', window._summaryClickHandler);
 }

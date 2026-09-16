@@ -132,78 +132,6 @@ function summaryload() {
     let area = document.querySelector('.area');
     area.innerHTML = buildSummaryContent();
 }
-function openupdate() {
-    fullnavbar.classList.add('show-nav');
-    let fullLabel = document.querySelector('.labal-full-menu');
-    if (fullLabel) {
-        fullLabel.textContent = 'Проверка обновлений';
-    }
-    let area = document.querySelector('.area');
-    area.innerHTML = `<div style="text-align: center; padding: 40px 20px;"><p style="color: #8892b0;">⏳ Проверка обновлений...</p></div>`;
-
-    checkupdate().then(result => {
-        if (result.status === 'developer') {
-            const devMessage = result.isDev
-                ? 'Ты используешь dev-версию! Не забудь выкатить релиз, когда всё будет готово.'
-                : 'Ты впереди всех! Видимо, ты разработчик, который ещё не выложил релиз.';
-            area.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px;">
-                    <p style="font-size: 48px; margin-bottom: 10px;"></p>
-                    <p style="color: #4facfe; font-size: 24px; font-weight: 700;">Ты разработчик!</p>
-                    <p style="color: #8892b0; margin-top: 10px;">${devMessage}</p>
-                    <p style="color: #8892b0; margin-top: 10px;">
-                        Твоя версия: <strong style="color: #ccd6f6;">${result.version}</strong>
-                        ${result.latestVersion ? `| Последняя на GitHub: <strong style="color: #8892b0;">${result.latestVersion}</strong>` : ''}
-                    </p>
-                    <p style="color: #5a6a8a; font-size: 12px; margin-top: 15px;">
-                        Эта страница видна только разработчикам
-                    </p>
-                    <div class='button logger_btn'>Включить логирование</div>
-                </div>
-            `;
-            let logger = document.querySelector('.logger_btn');
-            logger.addEventListener('click', changeLogPolicy)
-            if (localStorage.getItem('logger')) {
-                logger.classList.add('logger--on')
-                logger.textContent = 'Выключить логирование'
-                checkLog()
-            }
-            else {
-                localStorage.removeItem('logger');
-                localStorage.removeItem('logInfo');
-                logger.classList.remove('logger--on')
-                logger.textContent = 'Включить логирование'
-                checkLog()
-            }
-        } else if (result.status === 'up_to_date') {
-            area.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px;">
-                    <p style="color: #2ed573; font-size: 20px; font-weight: 600;">Установлена последняя версия</p>
-                    <p style="color: #8892b0; margin-top: 10px;">Версия: ${result.version}</p>
-                    ${result.isDev ? '<p style="color: #ffa502; font-size: 14px; margin-top: 10px;">📌 dev-версия</p>' : ''}
-                </div>
-            `;
-        } else if (result.status === 'outdated') {
-            area.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px;">
-                    <p style="color: #ffa502; font-size: 20px; font-weight: 600;">Доступна новая версия!</p>
-                    <p style="color: #8892b0; margin-top: 10px;">Текущая версия: ${result.currentVersion}</p>
-                    <p style="color: #8892b0;">Последняя версия: ${result.latestVersion}</p>
-                    <br>
-                    <a href="${result.url}" target="_blank" style="display: inline-block; padding: 12px 30px; background: #4facfe; color: #0a0e1a; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 15px;">Перейти к загрузке</a>
-                </div>
-            `;
-        } else {
-            area.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px;">
-                    <p style="color: #ff4757; font-size: 18px; font-weight: 600;">${result.message}</p>
-                    <p style="color: #8892b0; margin-top: 10px;">Проверьте подключение к интернету и повторите попытку.</p>
-                    <button onclick="openupdate()" style="display: inline-block; padding: 10px 25px; background: #2a3555; color: #fff; border: none; border-radius: 8px; cursor: pointer; margin-top: 15px; font-size: 14px;">Повторить проверку</button>
-                </div>
-            `;
-        }
-    });
-}
 function openSettings() {
     fullnavbar.classList.add('show-nav');
     let fullLabel = document.querySelector('.labal-full-menu');
@@ -714,6 +642,7 @@ function showcategories() {
                         <span class="detail-label">Время ответа:</span>
                         <span class="detail-value" id="time-${obj.shortName}">—</span>
                     </div>
+                    ${domainListGenerate(obj)}
                 </div>
             </div>`;
         } else {
@@ -758,7 +687,7 @@ function domainListGenerate(obj) {
 
     let result = '';
     result += `<div class="detail-row">`;
-    result += `<span class="detail-label">Сайты:</span>`;
+    result += `<span class="detail-label">Адреса:</span>`;
     result += `<span class="detail-value">`;
     result += `<ol class='category-list-elem'>`;
     obj.shortDomains.forEach((element, index) => {

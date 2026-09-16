@@ -63,13 +63,15 @@ def get_js_files():
         
         # UI и скрипты
         if name == 'UI.js':
-            return 60        
+            return 60         
+        if name == 'checkUpdate.js':
+            return 61        
         if name == 'wiki.js':
-            return 61
-        if name == 'history.js':
             return 62
-        if name == '__dev.logger.js':
+        if name == 'history.js':
             return 63
+        if name == '__dev.logger.js':
+            return 64
         if name == 'script.js':
             return 70
         

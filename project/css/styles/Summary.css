@@ -11,9 +11,7 @@
 }
 
 .summary-filter-info {
-    text-align: center;
     color: #8892b0;
-    font-size: 13px;
     margin-bottom: 15px;
 }
 
@@ -27,26 +25,22 @@
 }
 
 .network-type-btn {
-    padding: 6px 14px;
+    padding: 7px 10px;
     background: #0a0e1a;
     border: 1px solid #2a3555;
-    border-radius: 20px;
-    color: #8892b0;
+    border-radius: 8px;
+    color: #fff;
     cursor: pointer;
     font-size: 12px;
     font-family: Pliant, sans-serif;
     transition: all 0.3s;
-}
-
-.network-type-btn:hover {
-    border-color: #4facfe;
-    color: #ccd6f6;
+    width: 45%;
 }
 
 .network-type-btn.active {
     background: #2a3555;
     color: #fff;
-    border-color: #4facfe;
+    transition: all 0.3s;
 }
 
 /* Карточки */
@@ -296,28 +290,4 @@
     width: 12px;
     height: 12px;
     border-radius: 3px;
-}
-
-/* Адаптив */
-@media (max-width: 600px) {
-    .summary-cards {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .summary-ping-value {
-        font-size: 36px;
-    }
-
-    .network-type-buttons {
-        gap: 5px;
-    }
-
-    .network-type-btn {
-        font-size: 11px;
-        padding: 4px 10px;
-    }
-
-    .chart-area {
-        height: 80px;
-    }
 }

@@ -14,66 +14,6 @@ function formatPing(ms) {
 }
 
 // ============================================================
-// ПРОВЕРКА ОБНОВЛЕНИЙ
-// ============================================================
-function compareVersions(v1, v2) {
-    const parts1 = v1.replace('d', '').split('.').map(Number);
-    const parts2 = v2.replace('d', '').split('.').map(Number);
-
-    for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
-        const p1 = parts1[i] || 0;
-        const p2 = parts2[i] || 0;
-        if (p1 > p2) return 1;
-        if (p1 < p2) return -1;
-    }
-    return 0;
-}
-
-function isDevVersion(version) {
-    return version.includes('d');
-}
-
-async function checkupdate() {
-    try {
-        const response = await fetch(CONFIG.update.url, {
-            signal: AbortSignal.timeout(CONFIG.update.timeout)
-        });
-        if (!response.ok) throw new Error('Ошибка загрузки');
-        const data = await response.json();
-        const latestVersion = data.tag_name.replace('v', '');
-        const isDev = isDevVersion(CONFIG.version);
-        const comparison = compareVersions(CONFIG.version, latestVersion);
-
-        if (comparison > 0) {
-            return {
-                status: 'developer',
-                version: CONFIG.version,
-                latestVersion: latestVersion,
-                isDev: isDev
-            };
-        }
-
-        if (latestVersion === CONFIG.version) {
-            return {
-                status: 'up_to_date',
-                version: CONFIG.version,
-                isDev: isDev
-            };
-        } else {
-            return {
-                status: 'outdated',
-                currentVersion: CONFIG.version,
-                latestVersion: latestVersion,
-                url: data.html_url,
-                isDev: isDev
-            };
-        }
-    } catch (error) {
-        return { status: 'error', message: 'Не удалось проверить обновления' };
-    }
-}
-
-// ============================================================
 // ПРОВЕРКА ДОСТУПНОСТИ САЙТОВ
 // ============================================================
 async function checkSiteAvailability(url, timeout = CONFIG.TIMEOUT_quickCheck) {
@@ -218,38 +158,7 @@ function updateCategoryUI(categoryResults) {
         const timeEl = categoryEl.querySelector(`#time-${key}`);
         const sitesListEl = categoryEl.querySelector('.category-list-elem');
 
-        // Для Макса (ru1) — показываем причину в detail
-        if (key === 'ru1' && result.results.length > 0) {
-            const r = result.results[0];
-            if (detailEl) {
-                if (r.success) {
-                    detailEl.textContent = 'OK';
-                    detailEl.className = 'detail-value success';
-                } else {
-                    let reason = '';
-                    if (r.time >= CONFIG.TIMEOUT_quickCheck || r.time >= CONFIG.TIMEOUT_default) {
-                        reason = 'таймаут';
-                    } else if (r.error === 'AbortError' || r.error === 'The user aborted a request') {
-                        reason = 'соединение прервано';
-                    } else if (r.error === 'TypeError' || r.error?.includes('NetworkError')) {
-                        reason = 'сетевая ошибка';
-                    } else if (r.error === 'Failed to fetch') {
-                        reason = 'не удалось подключиться';
-                    } else if (r.error) {
-                        reason = r.error;
-                    } else {
-                        reason = 'ошибка';
-                    }
-                    detailEl.textContent = reason;
-                    detailEl.className = 'detail-value error';
-                }
-            }
-            if (countEl) countEl.textContent = r.success ? 'Да' : 'Нет';
-            if (timeEl) timeEl.textContent = r.success ? Math.round(r.time) + 'мс' : '—';
-            return;
-        }
-
-        // Для остальных категорий
+        // Общий результат
         if (detailEl) {
             if (result.successRate >= 0.5) {
                 detailEl.textContent = 'Доступен';
@@ -283,41 +192,16 @@ function updateCategoryUI(categoryResults) {
                 timeEl.textContent = '—';
             }
         }
-
-        // Список сайтов с причинами
         if (sitesListEl) {
             const items = sitesListEl.querySelectorAll('.category-list-elem');
             const shortDomains = CONFIG.categories[key]?.shortDomains || [];
 
             result.results.forEach((r, index) => {
                 if (items[index]) {
-                    let reason = '';
-                    if (r.success) {
-                        reason = 'OK';
-                    } else {
-                        if (r.time >= CONFIG.TIMEOUT_quickCheck || r.time >= CONFIG.TIMEOUT_default) {
-                            reason = 'таймаут';
-                        } else if (r.error === 'AbortError' || r.error === 'The user aborted a request') {
-                            reason = 'соединение прервано';
-                        } else if (r.error === 'TypeError' || r.error?.includes('NetworkError')) {
-                            reason = 'сетевая ошибка';
-                        } else if (r.error === 'Failed to fetch') {
-                            reason = 'не удалось подключиться';
-                        } else if (r.error) {
-                            reason = r.error;
-                        } else {
-                            reason = 'ошибка';
-                        }
-                    }
-
+                    const reason = r.success ? 'OK' : (r.error || 'ошибка');
                     const domain = shortDomains[index] || 'сайт ' + (index + 1);
                     items[index].innerHTML = `<div class='site_wrapper'><span class='site-domain'>` + domain + `</span>` + ' — ' + reason + '</div>';
-
-                    if (r.success) {
-                        items[index].style.color = '#2ed573';
-                    } else {
-                        items[index].style.color = '#ff4757';
-                    }
+                    items[index].style.color = r.success ? '#2ed573' : '#ff4757';
                 }
             });
         }
@@ -866,7 +750,7 @@ async function runFullTest() {
         // ============================================================
         // ЭТАП 6: СОХРАНЕНИЕ В ИСТОРИЮ
         // ============================================================
-        addToLog("💾 ЭТАП 6: Сохранение в историю");
+        addToLog("ЭТАП 6: Сохранение в историю");
         const protocolStatus = {
             dns: protocolResults.dns?.success || false,
             http: protocolResults.http?.success || false,
