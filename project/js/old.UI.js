@@ -4,12 +4,6 @@
 
 let connect_index = document.querySelector(".connect_index");
 let app_ver = document.querySelectorAll('.app_ver');
-let progress_el_1 = document.querySelector('.pr-bar-1');
-let progress_el_2 = document.querySelector('.pr-bar-2');
-let progress_el_3 = document.querySelector('.pr-bar-3');
-let progress_el_4 = document.querySelector('.pr-bar-4');
-let progress_el_5 = document.querySelector('.pr-bar-5');
-let progress_el_6 = document.querySelector('.pr-bar-6');
 let navbar = document.querySelector('.nav-bar');
 let fullnavbar = document.querySelector('.full-nav-bar');
 let header__left_col_btn = document.querySelector('.header__left-col-btn');
@@ -22,22 +16,8 @@ app_ver.forEach(e => {
 // ============================================================
 // ПРОКРУТКА ПРОГРЕСС-БАРА
 // ============================================================
-
-function scrollToActiveProgress() {
-    const progressBar = document.querySelector('.progress-bar');
-    const activeElement = progressBar.querySelector('.pr-bar-section--active');
-    if (activeElement) {
-        const containerWidth = progressBar.offsetWidth;
-        const elementOffset = activeElement.offsetLeft;
-        const elementWidth = activeElement.offsetWidth;
-        progressBar.scrollLeft = elementOffset - (containerWidth / 2) + (elementWidth / 2);
-    }
-}
 function scrollToOpenCategory(category) {
     let categoryelement = document.querySelector(`.cat-${category}`);
-    let maincategoryelement = categoryelement.querySelector('.main-info-category');
-    let hidecategoryelement = categoryelement.querySelector('.hide-info-category');
-
     // Скроллим к конкретной категории
     setTimeout(() => {
         const targetElement = document.querySelector(`.cat-${category}`);
@@ -49,28 +29,6 @@ function scrollToOpenCategory(category) {
         }
     }, 100);
 }
-function scrollToLast() {
-    const progressBar = document.querySelector('.progress-bar');
-    const element = progressBar.querySelectorAll('.pr-bar-section');
-    if (element.length) {
-        const containerWidth = progressBar.offsetWidth;
-        const elementOffset = element[element.length - 1].offsetLeft;
-        const elementWidth = element[element.length - 1].offsetWidth;
-        progressBar.scrollLeft = elementOffset - (containerWidth / 2) + (elementWidth / 2);
-    }
-}
-
-function scrollToFirst() {
-    const progressBar = document.querySelector('.progress-bar');
-    const element = progressBar.querySelectorAll('.pr-bar-section');
-    if (element.length) {
-        const containerWidth = progressBar.offsetWidth;
-        const elementOffset = element[0].offsetLeft;
-        const elementWidth = element[0].offsetWidth;
-        progressBar.scrollLeft = elementOffset - (containerWidth / 2) + (elementWidth / 2);
-    }
-}
-
 // ============================================================
 // МЕНЮ И НАВИГАЦИЯ
 // ============================================================
