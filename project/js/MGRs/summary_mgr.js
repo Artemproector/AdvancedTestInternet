@@ -1,7 +1,16 @@
 // ============================================================
 // Менеджер сводки
 // ============================================================
-
+let connect_index = document.querySelector(".connect_index");
+function summaryload() {
+    fullnavbar.classList.add('show-nav');
+    let fullLabel = document.querySelector('.labal-full-menu');
+    if (fullLabel) {
+        fullLabel.textContent = 'Сводка данных';
+    }
+    let area = document.querySelector('.area');
+    area.innerHTML = buildSummaryContent();
+}
 // НОРМАЛИЗАЦИЯ РЕЖИМОВ СЕТИ 
 function normalizeMode(modeText) {
     // Карта соответствия: режим из истории → нормализованный режим

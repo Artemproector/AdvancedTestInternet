@@ -16,8 +16,7 @@ const DSGN1_html = `<div class="results">
                                 <div class="d-elem n-1 dwn"></div>
                             </div>
                             <div class="value" id="downloadSpeed">-- <span class="unit">Мбит/с</span></div>
-                            <div class="alert-block"
-                                onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                            <div class="alert-block">
                                 <p>Входящая</p>
                             </div>
                         </div>
@@ -68,8 +67,7 @@ const DSGN1_html = `<div class="results">
                                 <div class="d-elem n-1 up"></div>
                             </div>
                             <div class="value" id="uploadSpeed">-- <span class="unit">Мбит/с</span></div>
-                            <div class="alert-block"
-                                onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                            <div class="alert-block">
                                 <p>Исходящая</p>
                                 <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960"
                                     width="40px" fill="#BB271A">
@@ -151,8 +149,7 @@ const DSGN2_html = `                    <div class="results">
                                     <div class="d-elem n-1 up"></div>
                                 </div>
                                 <div class="value" id="uploadSpeed">-- <span class="unit">Мбит/с</span></div>
-                                <div class="alert-block"
-                                    onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                                <div class="alert-block">
                                     <p>Исходящая</p>
                                     <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960"
                                         width="40px" fill="#BB271A">
@@ -178,8 +175,7 @@ const DSGN3_html = `<div class="results">
                                 <div class="d-elem n-1 dwn"></div>
                             </div>
                             <div class="value" id="downloadSpeed">-- <span class="unit">Мбит/с</span></div>
-                            <div class="alert-block"
-                                onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                            <div class="alert-block">
                                 <p>Входящая</p>
                             </div>
                         </div>
@@ -230,8 +226,7 @@ const DSGN3_html = `<div class="results">
                                 <div class="d-elem n-1 up"></div>
                             </div>
                             <div class="value" id="uploadSpeed">-- <span class="unit">Мбит/с</span></div>
-                            <div class="alert-block"
-                                onclick="alert('Данная функция в разработке! Результат может быть не точным!')">
+                            <div class="alert-block">
                                 <p>Исходящая</p>
                                 <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960"
                                     width="40px" fill="#BB271A">

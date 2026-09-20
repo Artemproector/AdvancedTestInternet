@@ -37,7 +37,6 @@ function checkLog() {
         openlog_btn.style.opacity = '0'
     }
 }
-checkLog()
 function __showLog(area) {
     const btnGrp = document.createElement('div');
     btnGrp.className = 'log_btn_grp';

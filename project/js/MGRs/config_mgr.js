@@ -88,27 +88,9 @@ function getBlockingText(modeKey) {
 function selectblocking(number) {
     currentblock = number
     localStorage.setItem("block", number);
-    consoleAllSettings()
-}
-function consoleAllSettings() {
-    let localtheme = localStorage.getItem("theme");
-    let localtimeout = localStorage.getItem("timeout");
-    let localblock = localStorage.getItem("block");
-    let localCFG = localStorage.getItem("CFG");
-    console.log("=================================");
-    console.log("ТЕКУЩИЕ НАСТРОЙКИ:");
-    console.log(`Пресет:${currentPreset}`);
-    console.log(`Блок:${currentblock}`);
-    console.log(`Таймаут:${currentTime}`);
-    console.log(`Дизайн:${currentdsgn}`);
-    console.log("ЛОКАЛЬНЫЕ НАСТРОЙКИ:");
-    console.log(`Пресет:${localCFG}`);
-    console.log(`Блок:${localblock}`);
-    console.log(`Таймаут:${localtimeout}`);
-    console.log(`Дизайн:${localtheme}`);
-    console.log("=================================");
 }
 function selectDSGN(dsgnID) {
+    let displays = document.querySelector('.styles_wrapper');
     if (dsgnID == 'dsgn2') {
         displays.innerHTML = DSGN2_html
         localStorage.setItem("theme", dsgnID);
@@ -128,38 +110,6 @@ function selectDSGN(dsgnID) {
     }
     updateVisibilityByPreset()
 }
-// ============================================================
-// ИНИЦИАЛИЗАЦИЯ
-// ============================================================
-let localCFG = localStorage.getItem("CFG");
-if (localCFG) {
-    applyPreset(localCFG);
+function consoleAllSettings(){
+    
 }
-else {
-    applyPreset('base');
-}
-// ============================================================
-let localblock = localStorage.getItem("block");
-if (localblock) {
-    selectblocking(localblock);
-}
-else {
-    selectblocking('block1');
-}
-// ============================================================
-let localtimeout = localStorage.getItem("timeout");
-if (localtimeout) {
-    applyTimeout(localtimeout);
-}
-else {
-    applyTimeout('tmout1');
-}
-// ============================================================
-let localtheme = localStorage.getItem("theme");
-if (localtheme) {
-    selectDSGN(localtheme);
-}
-else {
-    selectDSGN('dsgn1');
-}
-consoleAllSettings()

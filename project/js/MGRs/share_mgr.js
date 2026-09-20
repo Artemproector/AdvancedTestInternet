@@ -202,7 +202,7 @@ function getProtocolsCount(protocols) {
 
 async function shareHistoryResult(shareData) {
     if (!shareData) {
-        alert('Нет данных для отправки');
+        notifyError('Нет данных для отправки');
         return;
     }
 
@@ -239,7 +239,7 @@ async function shareHistoryResult(shareData) {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        alert('Картинка сохранена!');
+        notifySuccess('Картинка сохранена!');
     }
 }
 function getProtocolsStatus() {
@@ -260,7 +260,7 @@ function copyResult(shareData) {
             shareData = JSON.parse(shareData);
         } catch (e) {
             console.error('Ошибка парсинга данных:', e);
-            alert('Не удалось скопировать результат');
+            notifyError("Не удалось скопировать")
             return;
         }
     }
@@ -290,7 +290,7 @@ function copyResult(shareData) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(resultText)
             .then(() => {
-                alert('Успешно!');
+                notifySuccess("Скопировано!")
             })
             .catch(() => {
                 fallbackCopy(resultText);
@@ -316,9 +316,9 @@ function fallbackCopy(text) {
     try {
         textarea.select();
         document.execCommand('copy');
-        alert('Успешно!');
+        notifySuccess('Успешно!');
     } catch (e) {
-        alert('Не удалось скопировать результат.');
+        notifyError('Не удалось скопировать.');
     } finally {
         document.body.removeChild(textarea);
     }

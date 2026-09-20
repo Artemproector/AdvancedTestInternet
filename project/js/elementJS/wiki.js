@@ -197,3 +197,31 @@ function openwiki() {
 </div>
     `;
 }
+function checkNetworkAPI() {
+    let message = 'Состояние модуля определения сети:<br>';
+    let hasInfo = false;
+
+    if ('connection' in navigator) {
+        hasInfo = true;
+        const conn = navigator.connection;
+        message += '✅ Network Information API доступен<br>';
+        message += `   Тип: ${conn.type || 'не определён'}<br>`;
+        message += `   Эффективный тип: ${conn.effectiveType || 'не определён'}<br>`;
+        message += `   Скорость: ${conn.downlink || 'не определена'} Мбит/с<br>`;
+        message += `   RTT: ${conn.rtt || 'не определён'} мс<br>`;
+        message += `   Сохранение данных: ${conn.saveData ? 'включено' : 'выключено'}<br>`;
+    } else {
+        message += '❌ Network Information API НЕ доступен<br>';
+        message += '   Ваш браузер не поддерживает эту функцию.<br>';
+        message += '   Возможные причины:<br>';
+        message += '   • Старая версия браузера<br>';
+        message += '   • Браузер на базе WebKit (Safari)<br>';
+        message += '   • Отключено в настройках безопасности<br>';
+    }
+
+    message += '<br>─────────────────────────────<br>';
+    message += `Тип сети: ${getConnectionType()?.type || 'Неизвестно'}`;
+    message += `<br>User Agent: ${navigator.userAgent.substring(0, 60)}...`;
+
+    showConfirm("Проверка модуля", message, false)
+}

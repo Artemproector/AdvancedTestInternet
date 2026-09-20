@@ -25,60 +25,60 @@ def read_file(filepath):
         return None
 
 def get_js_files():
-    """Возвращает все JS-файлы из папки js и подпапок"""
+    """Возвращает все JS-файлы из папки js и подпапок в правильном порядке загрузки"""
     if not JS_DIR.exists():
         return []
     
     all_files = list(JS_DIR.glob('**/*.js'))
     
+    # Точный порядок загрузки по имени файла
+    ORDER = {
+        # ── 1. КОНФИГИ ──────────────────────────────────────────
+        'CFG_user.js': 1,
+        'CFG_default.js': 2,
+        'CFG_common.js': 3,
+        'CFG_express.js': 4,
+        'CFG_kategoryOnly.js': 5,
+        'CFG_plus.js': 6,
+        'CFG_lock.js': 7,
+        'CFG_timeouts.js': 8,
+        
+        # ── 2. МЕНЕДЖЕРЫ КОНФИГА И ДИЗАЙНА ─────────────────────
+        'config_mgr.js': 20,
+        'design_mgr.js': 21,
+        
+        # ── 3. UI-ЭЛЕМЕНТЫ ─────────────────────────────────────
+        'progressbar.js': 30,
+        'displays.js': 31,
+        'menu.js': 32,
+        'settings.js': 33,
+        'wiki.js': 34,
+        'category.js': 35,
+        'dynamic.interface.js': 36,
+        'interface.js': 37,
+        
+        # ── 4. МЕНЕДЖЕРЫ ЛОГИКИ ─────────────────────────────────
+        'confirm_mgr.js': 50,
+        'notification_mgr.js': 51,
+        'update_mgr.js': 52,
+        'history_mgr.js': 53,
+        'share_mgr.js': 54,
+        'summary_mgr.js': 55,
+        'test_mgr.js': 56,
+        
+        # ── 5. DEV ──────────────────────────────────────────────
+        '__dev.logger.js': 70,
+        '__dev.index.js': 71,
+        '__dev.newOptions.js': 72,
+        
+        # ── 6. ИНИЦИАЛИЗАЦИЯ ───────────────────────────────────
+        'init.js': 90,
+    }
+    
     def get_priority(path):
-        name = path.name
-        rel_path = str(path.relative_to(JS_DIR)).replace('\\', '/')
-        
-        # Конфиги
-        if name.startswith('CFG_'):
-            cfg_order = {
-                'CFG_user.js': 0,
-                'CFG_default.js': 1,
-                'CFG_common.js': 2,
-                'CFG_express.js': 3,
-                'CFG_categoryOnly.js': 4,
-                'CFG_plus.js': 5,
-            }
-            if name in cfg_order:
-                return cfg_order[name]
-            return 10
-        
-        # Дизайны
-        if name.startswith('DSGN_'):
-            return 20
-        
-        # Менеджеры        
-        if name == 'design_mgr.js':
-            return 50     
-        if name == 'config_mgr.js':
-            return 51
-        if name == 'confirm_mgr.js':
-            return 52
-        
-        # UI и скрипты
-        if name == 'UI.js':
-            return 60         
-        if name == 'checkUpdate.js':
-            return 61        
-        if name == 'wiki.js':
-            return 62
-        if name == 'history.js':
-            return 63
-        if name == '__dev.logger.js':
-            return 64
-        if name == 'script.js':
-            return 70
-        
-        return 80
+        return ORDER.get(path.name, 100)  # всё неизвестное — в конец
     
     return sorted(all_files, key=get_priority)
-
 def get_css_files():
     """Возвращает все CSS-файлы из папки css и подпапок"""
     if not CSS_DIR.exists():
