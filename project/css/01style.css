@@ -604,65 +604,6 @@ footer a {
     color: #fff;
     font-weight: 700;
 }
-
-/* ===== сводка ===== */
-.fullsummary {
-    display: block;
-}
-
-.phonesummary {
-    display: none !important;
-}
-
-.summary {
-    display: flex;
-    width: 100%;
-    background-color: transparent;
-    flex-direction: column;
-    text-align: center;
-    border-radius: 12px;
-    padding: 10px 20px 18px 20px;
-    border: 1px solid #2a3555;
-    margin-bottom: 10px;
-    height: 230px;
-}
-
-.summary__wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-
-}
-
-.summary__left-col {
-    background: rgba(46, 213, 115, 0.15);
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    padding: 15px;
-    border-right: 2px solid #2a3555;
-    width: 50%;
-}
-
-.summary__right-col {
-    background: rgba(46, 213, 115, 0.15);
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    padding: 15px;
-    width: 50%;
-}
-
-.summary__right-col-today {
-    font-size: 10px;
-}
-
-.summarybtn {
-    cursor: pointer;
-    text-decoration: underline;
-    display: none;
-}
-
 /* ===== таймер бар ===== */
 .timer-bar {
     display: flex;
