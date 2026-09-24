@@ -62,11 +62,8 @@ function showcategories() {
     const categoryObjects = categoryKeys.map(key => CONFIG.categories[key]);
     categories.innerHTML = '';
     categoryObjects.forEach((obj, index) => {
-        const isFirst = index === 0;
-        const isMax = isFirst && (obj.name == 'Мессенджер Макс');
-
+        const isMax = obj.name == 'Мессенджер Макс'
         let html = '';
-
         if (isMax) {
             html = `
             <div class="category-item max-category cat-${obj.shortName}" data-category="${obj.shortName}" onclick='openCategory("${obj.shortName}")'>
@@ -100,6 +97,7 @@ function showcategories() {
                         <span class="detail-value" id="time-${obj.shortName}">—</span>
                     </div>
                     ${domainListGenerate(obj)}
+                    <span class="sub-link" onclick='wikiLink(4)'>Узнать подробнее об ошибках</span>
                 </div>
             </div>`;
         } else {
@@ -126,7 +124,8 @@ function showcategories() {
                         <span class="detail-value" id="count-${obj.shortName}">0/0</span>
                     </div>
                     ${domainListGenerate(obj)}
-                    <span class="sub">Подробнее с ошибками можно ознакомиться в справке</span>
+                                        <span class="sub-link" onclick='wikiLink(4)'>Узнать подробнее об ошибках</span>
+
                 </div>
             </div>`;
         }
@@ -173,7 +172,7 @@ async function checkSiteAvailability(url, timeout = CONFIG.TIMEOUT_quickCheck) {
 
         // Определяем причину ошибки
         let reason = 'ошибка';
-            reason = error.message;
+        reason = error.message;
         return {
             success: false,
             time: end - start,
@@ -294,6 +293,36 @@ function updateCategoryUI(categoryResults) {
 // ============================================================
 
 function determineNetworkMode(categoryResults) {
+    if (currentPreset === 'usr') {
+        const categoryKeys = Object.keys(categoryResults);
+        if (categoryKeys.length === 0) {
+            updateDisplay("mode", '0');
+            return { mode: 'error', percent: 0 };
+        }
+
+        let totalSites = 0;
+        let availableSites = 0;
+
+        categoryKeys.forEach(key => {
+            const result = categoryResults[key];
+            if (!result) return;
+            totalSites += result.total || 0;
+            availableSites += result.successful || 0;
+        });
+
+        if (totalSites === 0) {
+            updateDisplay("mode", '0');
+            return { mode: 'error', percent: 0 };
+        }
+
+        const percent = Math.round((availableSites / totalSites) * 100);
+
+        // Визуальная шкала: 0% → 1 деление, 100% → 5 делений
+        const level = Math.max(1, Math.round(percent / 20));
+        updateDisplay("mode", level);
+
+        return { mode: 'percent', percent: percent };
+    }
     const ru1 = categoryResults['ru1']?.successRate || 0;
     const ru2 = categoryResults['ru2']?.successRate || 0;
     const en1 = categoryResults['en1']?.successRate || 0;

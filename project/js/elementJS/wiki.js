@@ -10,7 +10,7 @@ function openwiki() {
     let area = document.querySelector('.area');
     area.innerHTML = `
         <div class="help-container">
-         <div class="help-section">
+         <div class="help-section id-1">
                 <h3>Как пользоваться тестом?</h3>
                 <ol>
                     <li>Нажмите кнопку <strong>"Запустить тест"</strong></li>
@@ -24,9 +24,8 @@ function openwiki() {
                     Если тест показал "Белые списки" — скорее всего, ваш провайдер блокирует зарубежные сайты.
                 </div>
             </div>
-        </div>
         <!-- Пинг -->
-<div class="help-section">
+<div class="help-section id-2">
     <h3>Что такое пинг?</h3>
     <p><strong>Пинг</strong> — это время, за которое сигнал доходит от вашего устройства до сервера и обратно. Измеряется в <strong>мс</strong> (миллисекундах).</p>
     <ul>
@@ -42,7 +41,7 @@ function openwiki() {
 </div>
 
 <!-- Протоколы -->
-<div class="help-section">
+<div class="help-section id-3">
     <h3>Что такое протоколы?</h3>
     <p>Тест проверяет доступность трёх основных протоколов:</p>
     <ul>
@@ -56,7 +55,7 @@ function openwiki() {
 </div>
 
 <!-- Ошибки в категориях -->
-<div class="help-section">
+<div class="help-section id-4">
     <h3>Что означают ошибки в категориях?</h3>
     <p>Когда вы раскрываете категорию, вы видите список сайтов и результат проверки каждого. Вот что означают возможные статусы:</p>
 
@@ -84,7 +83,7 @@ function openwiki() {
         Если один сайт в категории недоступен, а остальные работают — это нормально, может быть временный сбой на сервере. Если все сайты в категории недоступны — скорее всего, категория заблокирована провайдером.
     </div>
 </div>
-<div class="help-section">
+<div class="help-section id-5">
     <h3>Тип соединения: "Неизвестно"</h3>
     <p>Иногда тест показывает тип соединения как <strong>"Неизвестно"</strong>. Это не ошибка, а особенность работы браузера. Вот что это может означать:</p>
     <ul>
@@ -102,7 +101,7 @@ function openwiki() {
         </button>
     </div>
 </div>
-            <div class="help-section">
+            <div class="help-section id-6">
                 <h3>Что такое ТСПУ?</h3>
                 <p><strong>ТСПУ</strong> (Технические средства противодействия угрозам) — это оборудование, которое устанавливается на сетях российских операторов по закону «Яровой» (ФЗ-374). Оно анализирует весь трафик и может:</p>
                 <ul>
@@ -116,7 +115,7 @@ function openwiki() {
                 </div>
             </div>
 
-            <div class="help-section">
+            <div class="help-section id-7">
                 <h3>Варианты обхода ограничений</h3>
                 <p>Если тест показывает наличие ограничений, могут помочь следующие методы:</p>
                 <ul>
@@ -131,7 +130,7 @@ function openwiki() {
                 </div>
             </div>
 
-            <div class="help-section">
+            <div class="help-section id-8">
                 <h3>Режимы работы сети</h3>
                 <p>Наш тест определяет 4 основных режима работы интернета:</p>
                 <div class="mode-item">
@@ -152,7 +151,7 @@ function openwiki() {
                 </div>
             </div>
 
-<div class="help-section">
+<div class="help-section id-9">
     <h3>Индикаторы состояния сети</h3>
     <p>В интерфейсе приложения используются три индикатора, которые показывают состояние доступности сайтов в каждой категории:</p>
 
@@ -224,4 +223,16 @@ function checkNetworkAPI() {
     message += `<br>User Agent: ${navigator.userAgent.substring(0, 60)}...`;
 
     showConfirm("Проверка модуля", message, false)
+}
+function wikiLink(ID) {
+    openwiki()
+    setTimeout(() => {
+        const targetElement = document.querySelector(`.id-${ID}`);
+        if (targetElement) {
+            targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }, 400);
 }

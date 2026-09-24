@@ -19,7 +19,7 @@ function sleep(ms) {
 // ============================================================
 function showConfirm(label_text = 'Ошибка! (e404)', main_text = 'Не указан текст этого меню!', isShowCancel = true) {
     return new Promise((resolve) => {
-        // Показываем модалку
+        document.querySelector('body').style.overflow = 'hidden';
         confirm_modal.classList.add('info-modal--show');
         confirm_label.textContent = label_text;
         confirm_area.innerHTML = main_text;
@@ -104,6 +104,7 @@ function closeConfirm(result) {
         confirm_resolve(result);
         confirm_resolve = null;
     }
+    document.querySelector('body').style.overflow = 'auto';
 }
 
 // ============================================================

@@ -6,13 +6,13 @@ function updateConnectionInfo() {
     const typeEl = document.querySelector('.it-bar-1');
     const cgfEl = document.querySelector('.it-bar-2');
     if (!info) {
-        typeEl.textContent = 'Неизвестно';
+        typeEl.innerHTML = 'Неизвестно';
         return;
     }
     cgfEl.textContent = presetNames[currentPreset];
     const typeMap = CONFIG.connectionTypes.labels
     const typeLabel = typeMap[info.type] || 'Неизвестно';
-    typeEl.textContent = `${typeLabel}`;
+    typeEl.innerHTML = `${typeLabel}`;
     if (info.type === 'none') {
         typeEl.style.color = '#ff4757';
     } else {

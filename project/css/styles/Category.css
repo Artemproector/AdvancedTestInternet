@@ -53,6 +53,15 @@
     margin-top: 2px;
 }
 
+.sub-link {
+    font-size: 11px;
+    font-weight: 400;
+    color: #8892b0;
+    display: block;
+    margin-top: 2px;
+    text-decoration: underline;
+}
+
 /* ----- СТАТУС (иконка) ----- */
 .status-icon {
     width: 28px;
@@ -155,6 +164,20 @@
     overflow: hidden;
 }
 
+.max-logo--big {
+    position: absolute !important;
+    width: 150px !important;
+    height: 150px !important;
+    right: 0 !important;
+    opacity: 0.15 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    bottom: 0 !important;
+    transition: all 0.3s !important;
+    left: auto !important;
+    top: auto !important;
+}
+
 .max-logo {
     position: absolute;
     width: 70px;
@@ -165,18 +188,8 @@
     z-index: 0;
     pointer-events: none;
     transition: all 0.3s;
-}
-
-.max-logo--big {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    left: 0px;
-    opacity: 0.15;
-    z-index: 0;
-    pointer-events: none;
-    top: 35%;
-    transition: all 0.3s;
+    right: 0;
+        bottom: 0;
 }
 
 .max-category .main-info-category,
@@ -191,6 +204,7 @@
     align-items: flex-start;
     list-style: none;
 }
-.site-domain{
+
+.site-domain {
     color: #1a2238;
 }

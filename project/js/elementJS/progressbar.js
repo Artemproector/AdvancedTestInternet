@@ -48,7 +48,6 @@ function setProgressState(stage, state) {
             break;
         case 'reset':
         default:
-            // ничего не добавляем
             break;
     }
 }

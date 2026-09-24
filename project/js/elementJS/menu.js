@@ -42,7 +42,3 @@ function openlink() {
     let area = document.querySelector('.area');
     area.innerHTML = 'Внимание, данная кнопка ведет на другой сайт (github.com). Если вы действительно хотите перейти нажмите далее<br> <a href="https://github.com/Artemproector/AdvancedTestInternet" target="_blank">Далее</a>';
 }
-function openWikiLink(id) {
-    openwiki()
-    //скролл до объекта
-}

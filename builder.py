@@ -42,7 +42,7 @@ def get_js_files():
         'CFG_plus.js': 6,
         'CFG_lock.js': 7,
         'CFG_timeouts.js': 8,
-        
+        "FullWindow_mgr.js":9,
         # ── 2. МЕНЕДЖЕРЫ КОНФИГА И ДИЗАЙНА ─────────────────────
         'config_mgr.js': 20,
         'design_mgr.js': 21,

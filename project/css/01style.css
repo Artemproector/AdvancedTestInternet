@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Pliant:ital,wght@0,100..900;1,100..900&display=swap');
+
 :root {
     --main-bg-color: #0a0e1a;
     --main-text-color: #fff;
@@ -43,7 +44,7 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     padding: 20px;
     cursor: default;
 }
@@ -270,7 +271,7 @@ body {
     font-size: 22px;
     color: var(--main-text-color);
     border-bottom: 1px solid #2a3555;
-    padding-bottom: 15px;
+    padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -1017,4 +1018,11 @@ footer a {
     word-break: break-all;
     max-height: 300px;
     overflow-y: auto;
+}
+
+#it-bar-1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 }

@@ -140,10 +140,11 @@ function getHistoryStats(history = null) {
 function filterHistoryByMode(history, mode) {
     if (mode === 'all') return history;
     const modeMap = {
-        'no': 'Нет интернета',
+        'no': 'Полная блокировка',
         'white': 'Белые списки',
         'black': 'Черные списки',
-        'full': 'Полный доступ'
+        'full': 'Полный доступ',
+        'vpn':'VPN'
     };
     const targetMode = modeMap[mode];
     if (!targetMode) return history;
@@ -209,10 +210,11 @@ function applyFilter(historyData) {
         return historyData;
     }
     const modeMap = {
-        'no': 'Нет интернета',
+        'no': 'Полная блокировка',
         'white': 'Белые списки',
         'black': 'Черные списки',
-        'full': 'Полный доступ'
+        'full': 'Полный доступ',
+        'VPN': 'VPN'
     };
     const targetMode = modeMap[currentFilter];
     if (!targetMode) return historyData;
@@ -246,10 +248,11 @@ function historyload() {
     let html = `                    
         <div class="filter-bar">
             <div id="ft-bar-1" class="ft-bar-section ft-bar-1 ${currentFilter === 'all' ? 'ft-bar-section--active' : ''}" data-filter="all">Все</div>
-            <div id="ft-bar-2" class="ft-bar-section ft-bar-2 ${currentFilter === 'no' ? 'ft-bar-section--active' : ''}" data-filter="no">Нет интернета</div>
+            <div id="ft-bar-2" class="ft-bar-section ft-bar-2 ${currentFilter === 'no' ? 'ft-bar-section--active' : ''}" data-filter="no">Полная блокировка</div>
             <div id="ft-bar-3" class="ft-bar-section ft-bar-3 ${currentFilter === 'white' ? 'ft-bar-section--active' : ''}" data-filter="white">Белые списки</div>
             <div id="ft-bar-4" class="ft-bar-section ft-bar-4 ${currentFilter === 'black' ? 'ft-bar-section--active' : ''}" data-filter="black">Черные списки</div>
             <div id="ft-bar-5" class="ft-bar-section ft-bar-5 ${currentFilter === 'full' ? 'ft-bar-section--active' : ''}" data-filter="full">Полный доступ</div>
+            <div id="ft-bar-6" class="ft-bar-section ft-bar-6 ${currentFilter === 'VPN' ? 'ft-bar-section--active' : ''}" data-filter="VPN">VPN</div>
         </div>
         <button onclick="clearHistory()" class="history-clear-btn">
             Очистить историю
@@ -308,7 +311,7 @@ function historyload() {
             listHtml += `
                 <div class="history-item hisID-${historyID}">
                     <div class="history-item-label" onclick="openFullHistory(${historyID})">
-                        ${date} ${mode}
+                        ${date}<br> ${mode}
                         <svg class='list_arr' xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M459-381 314-526q-3-3-4.5-6.5T308-540q0-8 5.5-14t14.5-6h304q9 0 14.5 6t5.5 14q0 2-6 14L501-381q-5 5-10 7t-11 2q-6 0-11-2t-10-7Z"/></svg>
                     </div>
                     <div class="history-item-info" id="historyInfo-${historyID}">
@@ -392,10 +395,18 @@ function saveTestResult({ pingResult, mode, isSuccess, startTime, protocolResult
     const endTime = Date.now();
     const duration = ((endTime - startTime) / 1000).toFixed(1);
 
+    // Определяем текст режима
+    let modeText;
+    if (mode.mode === 'percent') {
+        modeText = `${mode.percent}% доступно`;
+    } else {
+        modeText = getBlockingText(mode.mode);
+    }
+
     addHistoryRecord({
         timestamp: Date.now(),
         ping: pingResult.success ? Math.round(pingResult.average) : '—',
-        mode: getBlockingText(mode.mode),
+        mode: modeText,
         date: new Date().toLocaleString(),
         success: isSuccess,
         duration: duration,

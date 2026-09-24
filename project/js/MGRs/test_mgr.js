@@ -1,6 +1,9 @@
 // ============================================================
 // МЕНЕДЖЕР ТЕСТА
 // ============================================================
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 const ERROR_ICON_SVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="12" cy="12" r="10" stroke="#ff4757" stroke-width="2"/>
@@ -48,14 +51,7 @@ async function testPing(url = CONFIG.ping.url, attempts = CONFIG.ping.attempts) 
 async function quickInternetCheck() {
     const connInfo = getConnectionType();
     const hasInternet = connInfo.type !== 'none';
-    const typeMap = CONFIG.connectionTypes.labels || {
-        'wifi': 'Wi-Fi',
-        'cellular': 'Мобильный интернет',
-        'ethernet': 'Проводное',
-        'bluetooth': 'Bluetooth',
-        'none': 'Нет сети',
-        'unknown': 'Неизвестно (подробнее в справке)'
-    };
+    const typeMap = CONFIG.connectionTypes.labels
 
     return {
         hasInternet: hasInternet,
@@ -308,7 +304,7 @@ function resetTestUI(testBtn, startTimeEl, stopTimeEl, testTimeEl) {
     document.querySelector('#proto').innerHTML = `-- <span class="proto-static-test">доступно</span>`;
 
     // Иконки категорий
-    ['ru1', 'ru2', 'en1', 'en2'].forEach(key => {
+    Object.keys(CONFIG.categories).forEach(key => {
         const icon = document.getElementById(`cat-${key}`);
         if (icon) {
             icon.className = 'status-icon';
@@ -352,7 +348,7 @@ async function runFullTest() {
     addToLog("═══════════════════════════════════════════════════");
     addToLog("НАЧАЛО ТЕСТА");
     addToLog("Пресет: " + currentPreset);
-    addToLog("Таймаут: " + currentTime + " (" + CONFIG.TIMEOUT_description + ")");
+    addToLog("Таймаут: " + currentTime);
     addToLog("Блокировка: " + currentblock);
     addToLog("Дизайн: " + currentdsgn);
 
@@ -360,14 +356,14 @@ async function runFullTest() {
     const startTimeEl = document.querySelector('.start-time');
     const stopTimeEl = document.querySelector('.stop-time');
     const testTimeEl = document.querySelector('.test-time');
-    const categoryKeys = ['ru1', 'ru2', 'en1', 'en2'];
-
+    const categoryKeys = Object.keys(CONFIG.categories);
     const startTime = Date.now();
     if (startTimeEl) {
+        console.log('data');
         const date = new Date(startTime);
         startTimeEl.textContent = date.toLocaleTimeString() + ' ' + date.toLocaleDateString();
     }
-
+    showcategories()
     updateVisibilityByPreset();
 
     // Прогресс-бары
@@ -400,7 +396,7 @@ async function runFullTest() {
         }
 
         if (quickCheck.connectionType) {
-            document.querySelector('.it-bar-1').textContent = quickCheck.connectionLabel || 'Подключено';
+            document.querySelector('.it-bar-1').innerHTML = quickCheck.connectionLabel || 'Подключено';
         }
 
         // ============================================================
@@ -434,7 +430,12 @@ async function runFullTest() {
         // ============================================================
         addToLog("ЭТАП 3: Определение режима сети");
         const mode = determineNetworkMode(categoryResults);
-        const modeText = getBlockingText(mode.mode);
+        let modeText;
+        if (mode.mode === 'percent') {
+            modeText = `${mode.percent}% доступно`;
+        } else {
+            modeText = getBlockingText(mode.mode);
+        }
         document.getElementById('networkMode').textContent = modeText;
         addToLog("Режим: " + modeText + " (" + mode.mode + ")");
 
@@ -478,7 +479,7 @@ async function runFullTest() {
             addToLog("HTTPS: " + (protocolResults.https.success ? "OK" : "FAIL"));
 
             const allSuccess = Object.values(protocolResults).every(r => r.success);
-            setProgressState(6, allSuccess ? 'pass' : 'fail');
+            setProgressState(6,'pass');
         } else {
             addToLog("ЭТАП 5: Протоколы пропущены");
             setProgressState(6, 'fail');

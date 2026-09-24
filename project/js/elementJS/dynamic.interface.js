@@ -51,7 +51,62 @@ async function generateMainContent() {
                         </div>
                     </div>`
     let phonesummary = document.querySelector('.phonesummary');
-    if (CONFIG.DYN_IsSummary) {
+    let progressBar = document.querySelector('.progress-bar');
+    let tmBar = document.querySelector('.timer-bar');
+    let categories = document.querySelector('.categories');
+    //if (!CONFIG.DYN_summary) {
+    //    phonesummary.style.display = 'none'
+    //    phonesummary.style.visibility = 'hidden'
+    //    phonesummary.style.width = '0px'
+    //    phonesummary.style.height = '0px'
+    //}
+    //if (!CONFIG.DYN_prBar) {
+    //    progressBar.style.display = 'none'
+    //}
+    //if (!CONFIG.DYN_tmBar) {
+    //    tmBar.style.display = 'none'
+    //}
+    //if (!CONFIG.DYN_categories) {
+    //    categories.style.display = 'none'
+    //}
+}
+function selectOffElem() {
+    const dsgn_ui = `
+        <ol class='selecter'>
+            <li class="select ui_dsgn summ ${CONFIG.DYN_summary ? 'selected' : ''}" data-dsgn="summ">Сводка данных</li>
+            <li class="select ui_dsgn prBar ${CONFIG.DYN_prBar ? 'selected' : ''}" data-dsgn="prBar">Прогресс-бар</li>
+            <li class="select ui_dsgn tmBar ${CONFIG.DYN_tmBar ? 'selected' : ''}" data-dsgn="tmBar">Таймер</li>
+            <li class="select ui_dsgn cat ${CONFIG.DYN_categories ? 'selected' : ''}" data-dsgn="cat">Категории</li>
+        </ol>`;
 
-    }
+    showWindow(false, "Дизайн", dsgn_ui);
+
+    document.querySelectorAll('.ui_dsgn').forEach(el => {
+        el.addEventListener('click', function () {
+            const key = this.dataset.dsgn;
+            applyUI(key);
+
+            // Обновляем визуальное выделение
+            document.querySelectorAll('.ui_dsgn').forEach(item => {
+                item.classList.remove('selected');
+            });
+            this.classList.add('selected');
+
+            // Меняем класс .selected в зависимости от нового состояния
+            const field = {
+                'summ': 'DYN_summary',
+                'prBar': 'DYN_prBar',
+                'tmBar': 'DYN_tmBar',
+                'cat': 'DYN_categories'
+            }[key];
+
+            if (CONFIG[field]) {
+                this.classList.add('selected');
+            } else {
+                this.classList.remove('selected');
+            }
+
+            notifySuccess("Применено!", 2000);
+        });
+    });
 }

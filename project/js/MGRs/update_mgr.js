@@ -53,9 +53,7 @@ async function checkupdate() {
     }
 }
 
-// ============================================================
 // ГЕНЕРАЦИЯ HTML ДЛЯ ПРОВЕРКИ ОБНОВЛЕНИЙ
-// ============================================================
 function checkupdateUI(result) {
     // Ошибка
     if (result.status === 'error') {
@@ -115,6 +113,18 @@ function checkupdateUI(result) {
 
     // Fallback
     return `<p style="color: #ff4757; text-align: center;">Неизвестный статус: ${result.status}</p>`;
+}
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ГЕНЕРАЦИЯ СООБЩЕНИЙ ДЛЯ ПРОВЕРКИ ОБНОВЛЕНИЙ
+async function notifiToUpdate() {
+    await sleep(1000)
+    let check = await checkupdate()
+    if (check.status === 'outdated') {
+        notifyWarning("Доступно обновление!")
+    }
 }
 
 // ============================================================

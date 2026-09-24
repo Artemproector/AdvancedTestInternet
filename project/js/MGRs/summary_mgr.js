@@ -90,6 +90,9 @@ function getSummaryStats(history, networkFilter = null) {
     };
 
     filteredHistory.forEach(item => {
+        // Определяем нормализованный режим
+        const normalizedMode = normalizeMode(item.mode || 'Неизвестно');
+
         // Успех/неудача
         if (item.success !== false && item.mode !== 'Полная блокировка' && item.mode !== 'Нет интернета') {
             success++;
@@ -98,8 +101,7 @@ function getSummaryStats(history, networkFilter = null) {
         }
 
         // Режимы сети — нормализуем названия
-        const mode = normalizeMode(item.mode || 'Неизвестно');
-        modes[mode] = (modes[mode] || 0) + 1;
+        modes[normalizedMode] = (modes[normalizedMode] || 0) + 1;
 
         // Пинг
         if (item.ping && item.ping !== '—' && !isNaN(item.ping)) {
@@ -119,7 +121,13 @@ function getSummaryStats(history, networkFilter = null) {
         }
     });
 
-    const successRate = total > 0 ? Math.round((success / total) * 100) : 0;
+    let successRate = total > 0 ? Math.round((success / total) * 100) : 0;
+
+    // Если среди тестов есть "Белые списки" — процент не должен падать ниже 50
+    const hasWhitelist = Object.keys(modes).includes('Белые списки');
+    if (hasWhitelist && successRate < 50) {
+        successRate = 50;
+    }
     const avgPing = pingCount > 0 ? Math.round(totalPing / pingCount) : 0;
 
     return {
